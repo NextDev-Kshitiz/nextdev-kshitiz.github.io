@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NextDev | Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.png">
+
+<style>
+:root{
+  --black:#000;
+  --blue:#2563eb;
+  --text:#e5e7eb;
+}
+
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:Segoe UI, Arial, sans-serif;
+  margin:0;
+  padding:0;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 50px;
+  background:#050505;
+  border-bottom:2px solid var(--blue);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+}
+
+.brand img{
+  height:40px;
+}
+
+.brand-text{
+  color:var(--blue);
+  font-weight:900;
+  font-size:1.5rem;
+}
+
+nav a{
+  color:white;
+  margin-left:25px;
+  text-decoration:none;
+}
+
+nav a:hover{
+  color:var(--blue);
+}
+
+/* ADMIN SECTION */
+.admin{
+  text-align:center;
+  padding:80px 20px;
+}
+
+.admin h1{
+  color:var(--blue);
+  margin-bottom:20px;
+}
+
+input[type="password"]{
+  padding:12px 20px;
+  font-size:16px;
+  border-radius:6px;
+  border:none;
+  margin-bottom:20px;
+}
+
+button{
+  padding:12px 30px;
+  font-size:16px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  margin:10px;
+  font-weight:bold;
+}
+
+.start{
+  background:green;
+  color:white;
+}
+
+.stop{
+  background:red;
+  color:white;
+}
+
+.toggle{
+  background:gray;
+  color:white;
+}
+
+#error{
+  color:red;
+  margin-top:10px;
+}
+
+#adminControls{
+  display:none; /* hidden initially */
+}
+
+/* FOOTER */
+footer{
+  background:#050505;
+  border-top:2px solid var(--blue);
+  text-align:center;
+  padding:50px 20px;
+  color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<a href="index.html" class="brand">
+<img src="logo.png" alt="NextDev">
+<span class="brand-text">NextDev</span>
+</a>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="courses.html">Courses</a>
+<a href="liveclasses.html">Live Classes</a>
+<a href="admin.html">Admin</a>
+</nav>
+</header>
+
+<section class="admin">
+<h1>NextDev Admin Panel</h1>
+<p>Enter admin password to open control panel</p>
+
+<input type="password" id="password" placeholder="Enter Password">
+<button onclick="login()">Login</button>
+<p id="error"></p>
+
+<div id="adminControls">
+<button class="start" onclick="startClass()">Start Live Class</button>
+<button class="stop" onclick="stopClass()">End Live Class</button>
+<p id="status">Live class is not started yet.</p>
+<button class="toggle" onclick="toggleControls()">Hide / Unhide Controls</button>
+</div>
+</section>
+
+<footer>
+© 2026 NextDev — Founder Kshitiz Jain
+</footer>
+
+<script>
+// Correct password (plain text client-side, just for toggle)
+const correctPassword = "NextDevwithKshitiz"; // tu yahan change kar sakta
+
+function login(){
+  const pass = document.getElementById("password").value;
+  if(pass === correctPassword){
+    document.getElementById("adminControls").style.display = "block";
+    document.getElementById("error").innerText = "";
+  } else {
+    document.getElementById("error").innerText = "Wrong password";
+  }
+}
+
+function startClass(){
+  localStorage.setItem("liveclass","on");
+  document.getElementById("status").innerText = "🟢 Live class started. Students can now join.";
+}
+
+function stopClass(){
+  localStorage.setItem("liveclass","off");
+  document.getElementById("status").innerText = "🔴 Live class ended.";
+}
+
+function toggleControls(){
+  let panel = document.getElementById("adminControls");
+  if(panel.style.display === "none"){
+    panel.style.display = "block";
+  } else {
+    panel.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
