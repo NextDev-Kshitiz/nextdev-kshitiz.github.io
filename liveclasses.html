@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NextDev | Live Classes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="icon" type="image/png" href="favicon.png">
+<script src="https://meet.jit.si/external_api.js"></script>
+
+<style>
+
+:root{
+--black:#000000;
+--blue:#2563eb;
+--white:#ffffff;
+--text:#e5e7eb;
+--persian:#1c39bb;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, Arial, sans-serif;
+}
+
+body{
+background:var(--black);
+color:var(--text);
+}
+
+/* NAVBAR */
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 50px;
+background:#050505;
+border-bottom:2px solid var(--blue);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:10px;
+text-decoration:none;
+}
+
+.brand img{
+height:40px;
+}
+
+.brand-text{
+color:var(--blue);
+font-weight:900;
+font-size:1.5rem;
+}
+
+nav a{
+color:white;
+margin-left:25px;
+text-decoration:none;
+}
+
+nav a:hover{
+color:var(--blue);
+}
+
+/* MAIN */
+
+.main{
+padding:70px 40px;
+text-align:center;
+}
+
+.main h1{
+color:var(--blue);
+font-size:2.5rem;
+margin-bottom:20px;
+}
+
+.main p{
+max-width:700px;
+margin:auto;
+line-height:1.6;
+margin-bottom:20px;
+}
+
+/* BUTTON */
+
+.join-btn{
+padding:14px 30px;
+font-size:16px;
+border:none;
+border-radius:6px;
+background:var(--persian);
+color:white;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+}
+
+.join-btn:disabled{
+background:gray;
+cursor:not-allowed;
+}
+
+/* STATUS */
+
+#status{
+margin-top:15px;
+font-size:18px;
+}
+
+/* VIDEO AREA */
+
+#meet{
+margin-top:40px;
+width:100%;
+height:600px;
+}
+
+/* FOOTER */
+
+.footer{
+background:#050505;
+border-top:2px solid var(--blue);
+margin-top:80px;
+}
+
+.footer-container{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:40px;
+padding:50px;
+}
+
+.footer-box h3{
+color:var(--blue);
+margin-bottom:15px;
+}
+
+.footer-box p{
+line-height:1.6;
+color:#ccc;
+}
+
+.footer-box a{
+display:block;
+color:white;
+text-decoration:none;
+margin-bottom:8px;
+}
+
+.footer-box a:hover{
+color:var(--blue);
+}
+
+.footer-bottom{
+text-align:center;
+padding:20px;
+border-top:1px solid #222;
+font-size:14px;
+color:#aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<a href="index.html" class="brand">
+<img src="logo.png" alt="NextDev">
+<span class="brand-text">NextDev</span>
+</a>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="courses.html">Courses</a>
+<a href="liveclasses.html">Live Classes</a>
+<a href="admin.html">Admin</a>
+</nav>
+
+</header>
+
+
+<section class="main">
+
+<h1>NextDev Live Classes</h1>
+
+<p>
+Welcome to the **NextDev Live Learning Platform**.
+Here students learn modern technology skills like
+<b>Artificial Intelligence, Coding, Web Development and MS Office</b>
+directly from <b>Founder Kshitiz Jain</b>.
+</p>
+
+<p>
+Live classes include:
+• Real-time teaching  
+• Student interaction  
+• Coding demonstrations  
+• Practical projects  
+• Doubt solving
+</p>
+
+<button id="joinBtn" class="join-btn" disabled>Join Live Class</button>
+
+<div id="status"></div>
+
+<div id="meet"></div>
+
+</section>
+
+
+<footer class="footer">
+
+<div class="footer-container">
+
+<div class="footer-box">
+<h3>NextDev</h3>
+<p>
+NextDev is a modern learning platform where students learn
+AI tools, coding, web development and MS Office with
+practical projects and real-world skills.
+</p>
+</div>
+
+<div class="footer-box">
+<h3>Quick Links</h3>
+<a href="index.html">Home</a>
+<a href="courses.html">Courses</a>
+<a href="liveclasses.html">Live Classes</a>
+<a href="admin.html">Admin</a>
+</div>
+
+<div class="footer-box">
+<h3>Founder</h3>
+<p>Kshitiz Jain</p>
+<p>Founder of NextDev</p>
+<p>Helping students build their future with technology.</p>
+</div>
+
+</div>
+
+<div class="footer-bottom">
+© 2026 NextDev — Founder Kshitiz Jain
+</div>
+
+</footer>
+
+
+<script>
+
+const joinBtn=document.getElementById("joinBtn");
+const statusText=document.getElementById("status");
+
+function checkClass(){
+
+let live=localStorage.getItem("liveclass");
+
+if(live==="on"){
+joinBtn.disabled=false;
+statusText.innerText="🟢 Live class is running. You can join now.";
+}
+else{
+joinBtn.disabled=true;
+statusText.innerText="🔴 Live class has not started yet.";
+}
+
+}
+
+checkClass();
+
+
+joinBtn.onclick=function(){
+
+const domain="meet.jit.si";
+
+const options={
+roomName:"NextDevLiveClass",
+width:"100%",
+height:600,
+parentNode:document.querySelector("#meet"),
+userInfo:{
+displayName:"NextDev Student"
+}
+};
+
+new JitsiMeetExternalAPI(domain,options);
+
+}
+
+</script>
+
+</body>
+</html>
