@@ -6,6 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link rel="icon" type="image/png" href="favicon.png">
+<!-- Font Awesome for social media icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 
@@ -185,6 +187,23 @@ text-align:center;
 padding:25px;
 background:#050505;
 border-top:2px solid var(--blue);
+position:relative;
+}
+
+footer .social-icons{
+margin-top:10px;
+}
+
+footer .social-icons a{
+color:white;
+margin:0 12px;
+font-size:22px;
+transition:.3s;
+}
+
+footer .social-icons a:hover{
+color:var(--persian);
+transform:scale(1.2);
 }
 
 </style>
@@ -193,7 +212,6 @@ border-top:2px solid var(--blue);
 <body>
 
 <header>
-
 <a href="index.html" class="brand">
 <img src="logo.png" alt="NextDev">
 <span class="brand-text">NextDev</span>
@@ -205,34 +223,24 @@ border-top:2px solid var(--blue);
 <a href="liveclasses.html">Live Classes</a>
 <a href="admin.html">Admin</a>
 </nav>
-
 </header>
 
-
 <section class="hero">
-
 <canvas id="ai"></canvas>
-
 <div class="hero-wrapper">
-
 <div class="hero-content">
 <h1>Build The Future With AI</h1>
 <p>NextDev helps students learn coding, AI tools and web development.</p>
 <button onclick="location.href='courses.html'">Start Learning</button>
 </div>
-
 <div class="hero-image">
 <img src="Founder.png" alt="Founder Kshitiz Jain">
 </div>
-
 </div>
 </section>
 
-
 <section>
-
 <h2>About NextDev</h2>
-
 <div class="products">
 
 <div class="card">
@@ -269,17 +277,37 @@ with practical projects and real skills.
 </div>
 </div>
 
+<!-- Certificates -->
+<div class="card">
+<img src="Certificate 1.jpg" alt="Certificate 1">
+<div>
+<h3>Certificate 1</h3>
+<p>Mahindra Certificate .</p>
+</div>
 </div>
 
+<div class="card">
+<img src="Certificate 2.jpg" alt="Certificate 2">
+<div>
+<h3>Certificate 2</h3>
+<p>Ai for Buisness professionals.</p>
+</div>
+</div>
+
+<div class="card">
+<img src="Certificate 3.jpg" alt="Certificate 3">
+<div>
+<h3>Certificate 3</h3>
+<p>Critical Thinking In Ai Era.</p>
+</div>
+</div>
+
+</div>
 </section>
 
-
 <section>
-
 <h2>Why Choose NextDev</h2>
-
 <div class="products">
-
 <div class="card">
 <div>
 <h3>Modern Skills</h3>
@@ -300,19 +328,20 @@ with practical projects and real skills.
 <p>Build websites and real coding projects.</p>
 </div>
 </div>
-
 </div>
-
 </section>
-
 
 <footer>
 © 2026 NextDev — Founder Kshitiz Jain
+<div class="social-icons">
+<a href="https://www.facebook.com/profile.php?id=61578644240559" target="_blank"><i class="fab fa-facebook-f"></i></a>
+<a href="https://www.instagram.com/next_devofficial/" target="_blank"><i class="fab fa-instagram"></i></a>
+<a href="https://www.linkedin.com/in/kshitiz-jain-9797493b7/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+<a href="https://www.youtube.com/@NextDev-Kshitiz" target="_blank"><i class="fab fa-youtube"></i></a>
+</div>
 </footer>
 
-
 <script>
-
 const canvas=document.getElementById("ai");
 const ctx=canvas.getContext("2d");
 
@@ -337,11 +366,9 @@ size:2
 }
 
 function draw(){
-
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 particles.forEach(p=>{
-
 p.x+=p.vx;
 p.y+=p.vy;
 
@@ -354,30 +381,23 @@ ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
 ctx.fill();
 
 particles.forEach(p2=>{
-
 let dx=p.x-p2.x;
 let dy=p.y-p2.y;
 let dist=Math.sqrt(dx*dx+dy*dy);
-
 if(dist<120){
-
 ctx.strokeStyle="rgba(37,99,235,0.15)";
 ctx.beginPath();
 ctx.moveTo(p.x,p.y);
 ctx.lineTo(p2.x,p2.y);
 ctx.stroke();
-
 }
-
 });
-
 });
 
 requestAnimationFrame(draw);
 }
 
 draw();
-
 </script>
 
 </body>
