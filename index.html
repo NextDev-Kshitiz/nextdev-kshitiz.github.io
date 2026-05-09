@@ -24,6 +24,7 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:Segoe UI, Arial, sans-serif;
+scroll-behavior:smooth;
 }
 
 body{
@@ -33,6 +34,7 @@ overflow-x:hidden;
 }
 
 /* NAVBAR */
+
 header{
 display:flex;
 justify-content:space-between;
@@ -40,6 +42,9 @@ align-items:center;
 padding:15px 50px;
 background:#050505;
 border-bottom:2px solid var(--blue);
+position:sticky;
+top:0;
+z-index:1000;
 }
 
 .brand{
@@ -66,14 +71,42 @@ letter-spacing:3px;
 color:var(--blue);
 }
 
+nav{
+display:flex;
+align-items:center;
+flex-wrap:wrap;
+}
+
 nav a{
 color:var(--white);
 margin-left:25px;
 text-decoration:none;
 font-weight:500;
+transition:.3s;
+position:relative;
+}
+
+nav a:hover{
+color:#60a5fa;
+}
+
+nav a::after{
+content:"";
+position:absolute;
+left:0;
+bottom:-5px;
+width:0%;
+height:2px;
+background:#2563eb;
+transition:.4s;
+}
+
+nav a:hover::after{
+width:100%;
 }
 
 /* HERO */
+
 .hero{
 position:relative;
 min-height:85vh;
@@ -97,6 +130,7 @@ align-items:center;
 width:100%;
 position:relative;
 z-index:2;
+gap:40px;
 }
 
 .hero-content{
@@ -106,21 +140,30 @@ max-width:520px;
 .hero h1{
 font-size:3rem;
 color:var(--blue);
+text-shadow:0 0 15px rgba(37,99,235,.8);
 }
 
 .hero p{
 margin:20px 0;
 line-height:1.6;
+font-size:1.1rem;
 }
 
-.hero button{
-padding:12px 28px;
-background:var(--persian);
+.hero-btn{
+padding:14px 32px;
+background:linear-gradient(45deg,#2563eb,#1c39bb);
 border:none;
+border-radius:10px;
 color:white;
 font-weight:bold;
 cursor:pointer;
-border-radius:6px;
+transition:.4s;
+box-shadow:0 0 20px rgba(37,99,235,.5);
+}
+
+.hero-btn:hover{
+transform:translateY(-5px) scale(1.05);
+box-shadow:0 0 40px rgba(37,99,235,.8);
 }
 
 .hero-image img{
@@ -131,6 +174,7 @@ box-shadow:0 0 40px rgba(37,99,235,.7);
 }
 
 /* SECTIONS */
+
 section{
 padding:70px 50px;
 }
@@ -143,6 +187,7 @@ margin-bottom:40px;
 }
 
 /* CARDS */
+
 .products{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -151,9 +196,10 @@ gap:30px;
 
 .card{
 background:#020617;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
 transition:.4s;
+border:1px solid rgba(37,99,235,.15);
 }
 
 .card:hover{
@@ -173,9 +219,113 @@ padding:20px;
 
 .card h3{
 color:var(--blue);
+margin-bottom:10px;
+}
+
+/* NEXUS SECTION */
+
+.nexus-section{
+background:linear-gradient(to bottom,#000,#020617);
+position:relative;
+overflow:hidden;
+}
+
+.glow{
+position:absolute;
+width:400px;
+height:400px;
+background:#2563eb;
+filter:blur(150px);
+opacity:.15;
+border-radius:50%;
+top:-100px;
+right:-100px;
+animation:float 6s infinite alternate ease-in-out;
+}
+
+@keyframes float{
+from{
+transform:translateY(0px);
+}
+to{
+transform:translateY(40px);
+}
+}
+
+.nexus-box{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:50px;
+flex-wrap:wrap;
+background:rgba(255,255,255,0.04);
+backdrop-filter:blur(12px);
+border:1px solid rgba(37,99,235,.3);
+padding:40px;
+border-radius:20px;
+box-shadow:0 0 40px rgba(37,99,235,.25);
+position:relative;
+z-index:2;
+}
+
+.nexus-content{
+flex:1;
+min-width:300px;
+}
+
+.nexus-content h2{
+font-size:3rem;
+margin-bottom:20px;
+color:#3b82f6;
+text-shadow:0 0 18px #2563eb;
+}
+
+.nexus-content p{
+line-height:1.8;
+font-size:1.05rem;
+color:#cbd5e1;
+margin-bottom:30px;
+}
+
+.play-btn{
+padding:15px 34px;
+background:#2563eb;
+border:none;
+border-radius:10px;
+font-weight:bold;
+font-size:1rem;
+color:white;
+cursor:pointer;
+transition:.4s;
+box-shadow:0 0 20px rgba(37,99,235,.6);
+}
+
+.play-btn:hover{
+transform:translateY(-5px) scale(1.05);
+box-shadow:0 0 35px rgba(37,99,235,.9);
+}
+
+.nexus-image{
+flex:1;
+min-width:280px;
+text-align:center;
+}
+
+.nexus-image img{
+width:100%;
+max-width:450px;
+border-radius:18px;
+border:2px solid #2563eb;
+box-shadow:0 0 50px rgba(37,99,235,.5);
+transition:.5s;
+}
+
+.nexus-image img:hover{
+transform:scale(1.04);
 }
 
 /* FOOTER */
+
 footer{
 text-align:center;
 padding:25px;
@@ -200,121 +350,201 @@ color:var(--persian);
 transform:scale(1.2);
 }
 
+/* MOBILE */
+
+@media(max-width:900px){
+
+header{
+padding:15px 20px;
+flex-direction:column;
+gap:20px;
+}
+
+nav{
+justify-content:center;
+}
+
+.hero{
+padding:40px 20px;
+}
+
+.hero-wrapper{
+flex-direction:column;
+text-align:center;
+}
+
+.hero h1{
+font-size:2.2rem;
+}
+
+.hero-image img{
+width:240px;
+}
+
+section{
+padding:60px 20px;
+}
+
+.nexus-content h2{
+font-size:2.2rem;
+}
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
+
 <a href="index.html" class="brand">
 <img src="logo.png" alt="NextDev">
 <span class="brand-text">NextDev</span>
 </a>
 
 <nav>
+
 <a href="index.html">Home</a>
 <a href="courses.html">Courses</a>
 <a href="liveclasses.html">Live Classes</a>
-
-<!-- New Page Added -->
 <a href="Portfolio.html">About Founder</a>
+
+<!-- NEXUS GAME BUTTON -->
+<a href="nexus.html">Nexus</a>
 
 <a href="admin.html">
 <img src="logo-phy.png" style="height:35px; margin-left:20px; cursor:pointer;">
 </a>
+
 </nav>
 </header>
 
+<!-- HERO -->
+
 <section class="hero">
+
 <canvas id="ai"></canvas>
+
 <div class="hero-wrapper">
+
 <div class="hero-content">
 <h1>Build The Future With AI</h1>
-<p>NextDev helps students learn coding, AI tools and web development.</p>
-<button onclick="location.href='courses.html'">Start Learning</button>
+
+<p>
+NextDev helps students learn coding,
+AI tools and web development.
+</p>
+
+<button class="hero-btn"
+onclick="location.href='courses.html'">
+Start Learning
+</button>
 </div>
+
 <div class="hero-image">
 <img src="Founder.png" alt="Founder Kshitiz Jain">
 </div>
+
 </div>
 </section>
 
+<!-- ABOUT -->
+
 <section>
+
 <h2>About NextDev</h2>
+
 <div class="products">
 
 <div class="card">
 <img src="Founder.png" alt="Founder">
+
 <div>
 <h3>Founder – Kshitiz Jain</h3>
+
 <p>
-NextDev was founded by <b>Kshitiz Jain</b> with the goal of helping students
-learn modern technology skills like Artificial Intelligence, Coding,
-Web Development and productivity tools.
+NextDev was founded by <b>Kshitiz Jain</b>
+with the goal of helping students
+learn modern technology skills.
 </p>
 </div>
 </div>
 
 <div class="card">
 <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c">
+
 <div>
 <h3>Our Mission</h3>
+
 <p>
-Our mission is to make technology education simple and affordable
-so every student can build their future in the digital world.
+Making technology education simple,
+modern and affordable.
 </p>
 </div>
 </div>
 
 <div class="card">
 <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085">
+
 <div>
 <h3>What We Teach</h3>
+
 <p>
-Learn AI tools, Web Development, Coding and MS Office
-with practical projects and real skills.
+Learn AI tools, Web Development,
+Coding and productivity skills.
 </p>
-</div>
-</div>
-
-<div class="card">
-<img src="Certificate 1.jpg" alt="Certificate 1">
-<div>
-<h3>Certificate 1</h3>
-<p>Mahindra Certificate.</p>
-</div>
-</div>
-
-<div class="card">
-<img src="Certificate 2.jpg" alt="Certificate 2">
-<div>
-<h3>Certificate 2</h3>
-<p>AI for Business Professionals.</p>
-</div>
-</div>
-
-<div class="card">
-<img src="Certificate 3.jpg" alt="Certificate 3">
-<div>
-<h3>Certificate 3</h3>
-<p>Critical Thinking in AI Era.</p>
-</div>
-</div>
-
-<div class="card">
-<img src="Certificate 4.jpg" alt="Certificate 4">
-<div>
-<h3>Certificate 4</h3>
-<p>AI Grind Certificate.</p>
 </div>
 </div>
 
 </div>
 </section>
 
+<!-- NEXUS GAME SECTION -->
+
+<section class="nexus-section">
+
+<div class="glow"></div>
+
+<h2>Nexus Game</h2>
+
+<div class="nexus-box">
+
+<div class="nexus-content">
+
+<h2>NEXUS</h2>
+
+<p>
+Enter the futuristic world of Nexus —
+a cyberpunk action experience created by
+Kshitiz Jain.
+Fight enemies, unlock powers and survive
+inside a digital AI universe.
+</p>
+
+<button class="play-btn"
+onclick="location.href='nexus.html'">
+
+Play Nexus
+
+</button>
+
+</div>
+
+<div class="nexus-image">
+<img src="nexus.jpg" alt="Nexus Game">
+</div>
+
+</div>
+</section>
+
+<!-- WHY CHOOSE -->
+
 <section>
+
 <h2>Why Choose NextDev</h2>
+
 <div class="products">
+
 <div class="card">
 <div>
 <h3>Modern Skills</h3>
@@ -335,21 +565,43 @@ with practical projects and real skills.
 <p>Build websites and real coding projects.</p>
 </div>
 </div>
+
 </div>
 </section>
 
+<!-- FOOTER -->
+
 <footer>
+
 © 2026 NextDev — Founder Kshitiz Jain
+
 <div class="social-icons">
-<a href="https://www.facebook.com/profile.php?id=61578644240559" target="_blank"><i class="fab fa-facebook-f"></i></a>
-<a href="https://www.instagram.com/next_devofficial/" target="_blank"><i class="fab fa-instagram"></i></a>
-<a href="https://www.linkedin.com/in/kshitiz-jain-nextdev/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-<a href="https://www.youtube.com/@NextDev-Kshitiz" target="_blank"><i class="fab fa-youtube"></i></a>
-<a href="https://github.com/NextDev-Kshitiz" target="_blank"><i class="fab fa-github"></i></a>
+
+<a href="https://www.facebook.com/profile.php?id=61578644240559" target="_blank">
+<i class="fab fa-facebook-f"></i>
+</a>
+
+<a href="https://www.instagram.com/next_devofficial/" target="_blank">
+<i class="fab fa-instagram"></i>
+</a>
+
+<a href="https://www.linkedin.com/in/kshitiz-jain-nextdev/" target="_blank">
+<i class="fab fa-linkedin-in"></i>
+</a>
+
+<a href="https://www.youtube.com/@NextDev-Kshitiz" target="_blank">
+<i class="fab fa-youtube"></i>
+</a>
+
+<a href="https://github.com/NextDev-Kshitiz" target="_blank">
+<i class="fab fa-github"></i>
+</a>
+
 </div>
 </footer>
 
 <script>
+
 const canvas=document.getElementById("ai");
 const ctx=canvas.getContext("2d");
 
@@ -364,6 +616,7 @@ window.addEventListener("resize",resize);
 let particles=[];
 
 for(let i=0;i<90;i++){
+
 particles.push({
 x:Math.random()*canvas.width,
 y:Math.random()*canvas.height,
@@ -371,12 +624,15 @@ vx:(Math.random()-0.5)*0.6,
 vy:(Math.random()-0.5)*0.6,
 size:2
 });
+
 }
 
 function draw(){
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 particles.forEach(p=>{
+
 p.x+=p.vx;
 p.y+=p.vy;
 
@@ -384,31 +640,39 @@ if(p.x<0||p.x>canvas.width) p.vx*=-1;
 if(p.y<0||p.y>canvas.height) p.vy*=-1;
 
 ctx.fillStyle="#2563eb";
+
 ctx.beginPath();
 ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
 ctx.fill();
 
 particles.forEach(p2=>{
+
 let dx=p.x-p2.x;
 let dy=p.y-p2.y;
+
 let dist=Math.sqrt(dx*dx+dy*dy);
+
 if(dist<120){
+
 ctx.strokeStyle="rgba(37,99,235,0.15)";
+
 ctx.beginPath();
 ctx.moveTo(p.x,p.y);
 ctx.lineTo(p2.x,p2.y);
 ctx.stroke();
+
 }
+
 });
+
 });
 
 requestAnimationFrame(draw);
 }
 
 draw();
-</script>
 
-<script src="https://www.noupe.com/embed/019d10b69da67deba9de1c119b464ca59ec2.js" defer></script>
+</script>
 
 </body>
 </html>
