@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NEXUS — Chess & Code Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --neon-cyan:#00f5ff;
+  --neon-gold:#ffd700;
+  --neon-violet:#b44fff;
+  --neon-green:#00ff88;
+  --bg-dark:#050810;
+  --bg-panel:#0a0f1e;
+  --bg-card:#0f1628;
+  --border-glow:rgba(0,245,255,0.25);
+  --text-primary:#e8f4ff;
+  --text-muted:#4a6080;
+  --font-display:'Orbitron',monospace;
+  --font-mono:'Share Tech Mono',monospace;
+  --font-body:'Exo 2',sans-serif;
+}
+html,body{height:100%;background:var(--bg-dark);color:var(--text-primary);font-family:var(--font-body);overflow-x:hidden;}
+
+/* Animated starfield */
+#starfield{position:fixed;inset:0;pointer-events:none;z-index:0;}
+.star{position:absolute;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:0.2;transform:scale(1);}50%{opacity:1;transform:scale(1.4);}}
+
+/* Grid lines background */
+.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,245,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,245,255,0.03) 1px,transparent 1px);
+  background-size:60px 60px;}
+
+/* Scanline overlay */
+.scanlines{position:fixed;inset:0;pointer-events:none;z-index:1;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);}
+
+/* App shell */
+#app{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;
+  border-bottom:1px solid var(--border-glow);background:rgba(5,8,16,0.85);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:100;}
+.logo{font-family:var(--font-display);font-size:1.5rem;font-weight:900;letter-spacing:0.15em;
+  background:linear-gradient(135deg,var(--neon-cyan),var(--neon-violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  text-shadow:none;cursor:pointer;}
+.logo span{-webkit-text-fill-color:var(--neon-gold);}
+nav .nav-links{display:flex;gap:0.5rem;}
+.nav-btn{background:transparent;border:1px solid transparent;color:var(--text-muted);font-family:var(--font-body);
+  padding:0.5rem 1.2rem;border-radius:4px;cursor:pointer;font-size:0.85rem;letter-spacing:0.05em;transition:all 0.2s;}
+.nav-btn:hover,.nav-btn.active{border-color:var(--neon-cyan);color:var(--neon-cyan);text-shadow:0 0 10px var(--neon-cyan);}
+.nav-xp{font-family:var(--font-mono);font-size:0.8rem;color:var(--neon-gold);display:flex;align-items:center;gap:0.5rem;}
+.xp-bar-wrap{width:80px;height:6px;background:#1a2240;border-radius:3px;overflow:hidden;}
+.xp-bar{height:100%;background:linear-gradient(90deg,var(--neon-gold),var(--neon-violet));border-radius:3px;transition:width 0.5s;}
+
+/* Pages */
+.page{display:none;flex:1;}
+.page.active{display:flex;flex-direction:column;}
+
+/* LANDING */
+#landing{align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;}
+.landing-title{font-family:var(--font-display);font-size:clamp(2.5rem,6vw,5rem);font-weight:900;
+  letter-spacing:0.1em;line-height:1.1;margin-bottom:1rem;
+  background:linear-gradient(135deg,var(--neon-cyan) 0%,var(--neon-violet) 50%,var(--neon-gold) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.landing-sub{font-size:1.1rem;color:#5a7a9a;margin-bottom:3rem;font-family:var(--font-mono);letter-spacing:0.05em;}
+.mode-cards{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;}
+.mode-card{width:320px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:12px;
+  padding:2.5rem 2rem;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;}
+.mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;}
+.mode-card.chess-card::before{background:radial-gradient(circle at 50% 0%,rgba(255,215,0,0.12),transparent 70%);}
+.mode-card.code-card::before{background:radial-gradient(circle at 50% 0%,rgba(0,245,255,0.12),transparent 70%);}
+.mode-card:hover{transform:translateY(-6px);border-color:rgba(0,245,255,0.5);}
+.mode-card:hover::before{opacity:1;}
+.mode-icon{font-size:4rem;margin-bottom:1.5rem;display:block;}
+.mode-title{font-family:var(--font-display);font-size:1.3rem;font-weight:700;margin-bottom:0.75rem;letter-spacing:0.08em;}
+.chess-card .mode-title{color:var(--neon-gold);}
+.code-card .mode-title{color:var(--neon-cyan);}
+.mode-desc{color:#4a6a8a;font-size:0.9rem;line-height:1.6;margin-bottom:1.5rem;}
+.mode-tags{display:flex;flex-wrap:wrap;gap:0.4rem;}
+.tag{font-family:var(--font-mono);font-size:0.7rem;padding:0.2rem 0.6rem;border-radius:3px;border:1px solid;}
+.chess-card .tag{border-color:rgba(255,215,0,0.3);color:var(--neon-gold);}
+.code-card .tag{border-color:rgba(0,245,255,0.3);color:var(--neon-cyan);}
+.enter-btn{width:100%;margin-top:1.5rem;padding:0.8rem;border:none;border-radius:6px;
+  font-family:var(--font-display);font-size:0.85rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;}
+.chess-card .enter-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;}
+.code-card .enter-btn{background:linear-gradient(135deg,var(--neon-cyan),var(--neon-violet));color:#000;}
+.enter-btn:hover{filter:brightness(1.15);transform:translateY(-1px);}
+
+/* CHESS MODE */
+#chess-mode{flex-direction:row;padding:1.5rem;gap:1.5rem;align-items:flex-start;}
+.chess-sidebar{width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:1rem;}
+.panel{background:var(--bg-card);border:1px solid var(--border-glow);border-radius:10px;padding:1.2rem;}
+.panel-title{font-family:var(--font-display);font-size:0.7rem;letter-spacing:0.15em;color:var(--text-muted);
+  text-transform:uppercase;margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border-glow);}
+.chess-main{flex:1;display:flex;flex-direction:column;align-items:center;gap:1rem;}
+.chess-right{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:1rem;}
+
+/* Board */
+.board-wrap{position:relative;}
+#chess-board{display:grid;grid-template-columns:repeat(8,1fr);border:2px solid rgba(255,215,0,0.3);
+  border-radius:4px;overflow:hidden;box-shadow:0 0 40px rgba(255,215,0,0.15),0 0 80px rgba(0,0,0,0.8);}
+.sq{width:68px;height:68px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  position:relative;transition:background 0.1s;font-size:44px;line-height:1;user-select:none;}
+.sq.light{background:#1e2d4a;}
+.sq.dark{background:#0d1829;}
+.sq.selected{background:#3a4a00!important;box-shadow:inset 0 0 0 3px var(--neon-gold);}
+.sq.legal-move::after{content:'';position:absolute;width:28px;height:28px;border-radius:50%;
+  background:rgba(0,245,255,0.3);border:2px solid rgba(0,245,255,0.6);}
+.sq.legal-capture::after{content:'';position:absolute;inset:0;border:3px solid rgba(0,245,255,0.6);border-radius:2px;}
+.sq.check-sq{background:rgba(255,50,50,0.4)!important;}
+.sq:hover{filter:brightness(1.3);}
+.sq .piece{z-index:2;position:relative;transition:transform 0.1s;text-shadow:0 2px 4px rgba(0,0,0,0.8);}
+.sq:hover .piece{transform:scale(1.05);}
+.rank-label{position:absolute;top:2px;left:3px;font-size:10px;font-family:var(--font-mono);
+  color:rgba(0,245,255,0.4);pointer-events:none;}
+.file-label{position:absolute;bottom:2px;right:3px;font-size:10px;font-family:var(--font-mono);
+  color:rgba(0,245,255,0.4);pointer-events:none;}
+
+/* Status banner */
+.status-banner{font-family:var(--font-mono);font-size:0.85rem;padding:0.6rem 1.5rem;
+  border-radius:6px;border:1px solid var(--border-glow);background:var(--bg-card);
+  text-align:center;min-width:400px;letter-spacing:0.05em;}
+
+/* Move history */
+.move-list{max-height:300px;overflow-y:auto;font-family:var(--font-mono);font-size:0.78rem;}
+.move-list::-webkit-scrollbar{width:4px;}
+.move-list::-webkit-scrollbar-track{background:transparent;}
+.move-list::-webkit-scrollbar-thumb{background:var(--border-glow);border-radius:2px;}
+.move-row{display:flex;gap:0.5rem;padding:0.2rem 0;color:#4a6a8a;}
+.move-row .num{color:var(--text-muted);min-width:22px;}
+.move-row .wm{color:var(--text-primary);min-width:55px;}
+.move-row .bm{color:#8a9aba;}
+
+/* Controls */
+.ctrl-btn{width:100%;padding:0.55rem;border-radius:5px;border:1px solid var(--border-glow);
+  background:transparent;color:var(--text-primary);font-family:var(--font-body);font-size:0.82rem;
+  cursor:pointer;transition:all 0.2s;margin-bottom:0.4rem;}
+.ctrl-btn:hover{background:rgba(0,245,255,0.08);border-color:var(--neon-cyan);color:var(--neon-cyan);}
+.ctrl-btn.primary{background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,140,0,0.1));
+  border-color:rgba(255,215,0,0.4);color:var(--neon-gold);}
+.ctrl-btn.primary:hover{background:linear-gradient(135deg,rgba(255,215,0,0.25),rgba(255,140,0,0.2));}
+
+/* Difficulty indicator */
+.diff-display{text-align:center;padding:0.5rem;}
+.diff-label{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);margin-bottom:0.3rem;}
+.diff-bars{display:flex;gap:3px;justify-content:center;}
+.diff-bar{width:16px;height:20px;border-radius:2px;background:#1a2240;transition:all 0.4s;}
+.diff-bar.active{background:var(--neon-gold);box-shadow:0 0 8px var(--neon-gold);}
+
+/* Capture display */
+.captures{display:flex;flex-wrap:wrap;gap:2px;font-size:18px;}
+
+/* CODE MODE */
+#code-mode{flex-direction:column;padding:0;}
+.code-header{display:flex;align-items:center;gap:1.5rem;padding:1rem 2rem;
+  border-bottom:1px solid var(--border-glow);background:rgba(10,15,30,0.8);}
+.code-header .back-btn{background:transparent;border:1px solid var(--border-glow);color:var(--text-muted);
+  font-family:var(--font-mono);padding:0.4rem 0.8rem;border-radius:4px;cursor:pointer;font-size:0.8rem;}
+.code-header .back-btn:hover{color:var(--neon-cyan);border-color:var(--neon-cyan);}
+.lang-tabs{display:flex;gap:0.5rem;overflow-x:auto;flex:1;}
+.lang-tab{flex-shrink:0;padding:0.4rem 1rem;border-radius:20px;border:1px solid transparent;
+  cursor:pointer;font-family:var(--font-mono);font-size:0.75rem;transition:all 0.2s;
+  display:flex;align-items:center;gap:0.4rem;}
+.lang-tab:hover{border-color:var(--border-glow);}
+.lang-tab.active{border-color:var(--neon-cyan);background:rgba(0,245,255,0.08);color:var(--neon-cyan);}
+.lang-dot{width:8px;height:8px;border-radius:50%;}
+.code-body{display:flex;flex:1;overflow:hidden;}
+
+/* Track sidebar */
+.track-sidebar{width:280px;flex-shrink:0;background:var(--bg-panel);
+  border-right:1px solid var(--border-glow);overflow-y:auto;padding:1.2rem;}
+.track-sidebar::-webkit-scrollbar{width:4px;}
+.track-sidebar::-webkit-scrollbar-thumb{background:var(--border-glow);}
+.track-section{margin-bottom:1.5rem;}
+.track-section-title{font-family:var(--font-display);font-size:0.65rem;letter-spacing:0.15em;
+  color:var(--text-muted);text-transform:uppercase;margin-bottom:0.75rem;}
+.lesson-item{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.75rem;
+  border-radius:6px;cursor:pointer;transition:all 0.2s;margin-bottom:0.3rem;border:1px solid transparent;}
+.lesson-item:hover{background:rgba(0,245,255,0.05);border-color:var(--border-glow);}
+.lesson-item.active{background:rgba(0,245,255,0.1);border-color:rgba(0,245,255,0.3);}
+.lesson-item.completed{opacity:0.6;}
+.lesson-num{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);min-width:20px;}
+.lesson-name{font-size:0.82rem;flex:1;}
+.lesson-item.completed .lesson-name::after{content:' ✓';color:var(--neon-green);}
+.lesson-xp{font-family:var(--font-mono);font-size:0.68rem;color:var(--neon-gold);}
+
+/* Lesson area */
+.lesson-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.lesson-top{padding:1.5rem 2rem;border-bottom:1px solid var(--border-glow);}
+.lesson-challenge-title{font-family:var(--font-display);font-size:1.1rem;font-weight:700;
+  color:var(--neon-cyan);margin-bottom:0.5rem;letter-spacing:0.05em;}
+.lesson-prompt{font-size:0.9rem;color:#7a9aba;line-height:1.6;margin-bottom:1rem;}
+.lesson-hint{font-family:var(--font-mono);font-size:0.8rem;color:rgba(180,79,255,0.8);
+  padding:0.6rem 1rem;border-left:2px solid var(--neon-violet);background:rgba(180,79,255,0.05);
+  border-radius:0 6px 6px 0;}
+
+.lesson-middle{display:flex;flex:1;overflow:hidden;}
+.code-editor-wrap{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border-glow);}
+.editor-toolbar{display:flex;align-items:center;justify-content:space-between;
+  padding:0.5rem 1rem;border-bottom:1px solid var(--border-glow);background:rgba(5,8,16,0.6);}
+.editor-lang-badge{font-family:var(--font-mono);font-size:0.72rem;padding:0.2rem 0.6rem;
+  border-radius:3px;border:1px solid;color:var(--neon-cyan);border-color:rgba(0,245,255,0.3);}
+.run-btn{padding:0.4rem 1.2rem;border:none;border-radius:4px;
+  background:linear-gradient(135deg,var(--neon-green),#00cc6a);color:#000;
+  font-family:var(--font-display);font-size:0.72rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;}
+.run-btn:hover{filter:brightness(1.2);}
+#code-input{flex:1;width:100%;background:var(--bg-dark);color:#a8d8ff;
+  font-family:var(--font-mono);font-size:0.9rem;border:none;padding:1.5rem;
+  resize:none;outline:none;line-height:1.7;caret-color:var(--neon-cyan);}
+
+.output-panel{width:320px;flex-shrink:0;display:flex;flex-direction:column;background:var(--bg-panel);}
+.output-title{font-family:var(--font-display);font-size:0.65rem;letter-spacing:0.15em;
+  color:var(--text-muted);text-transform:uppercase;padding:0.75rem 1rem;
+  border-bottom:1px solid var(--border-glow);}
+.output-content{flex:1;padding:1rem;overflow-y:auto;font-family:var(--font-mono);font-size:0.82rem;line-height:1.6;}
+.output-content::-webkit-scrollbar{width:4px;}
+.output-content::-webkit-scrollbar-thumb{background:var(--border-glow);}
+.out-success{color:var(--neon-green);}
+.out-error{color:#ff5555;}
+.out-info{color:#7a9aba;}
+.out-result{color:var(--neon-cyan);}
+
+.quiz-section{padding:1rem;border-top:1px solid var(--border-glow);}
+.quiz-title{font-family:var(--font-display);font-size:0.65rem;letter-spacing:0.15em;
+  color:var(--text-muted);text-transform:uppercase;margin-bottom:0.75rem;}
+.quiz-q{font-size:0.85rem;color:var(--text-primary);margin-bottom:0.75rem;line-height:1.5;}
+.quiz-options{display:flex;flex-direction:column;gap:0.4rem;}
+.quiz-opt{background:transparent;border:1px solid var(--border-glow);color:var(--text-primary);
+  padding:0.5rem 0.75rem;border-radius:5px;cursor:pointer;font-family:var(--font-body);
+  font-size:0.82rem;text-align:left;transition:all 0.2s;}
+.quiz-opt:hover{border-color:var(--neon-cyan);background:rgba(0,245,255,0.05);}
+.quiz-opt.correct{border-color:var(--neon-green);background:rgba(0,255,136,0.1);color:var(--neon-green);}
+.quiz-opt.wrong{border-color:#ff5555;background:rgba(255,85,85,0.1);color:#ff5555;}
+
+/* Promotion modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal{background:var(--bg-card);border:1px solid rgba(255,215,0,0.4);border-radius:12px;
+  padding:2rem;text-align:center;box-shadow:0 0 40px rgba(255,215,0,0.2);}
+.modal-title{font-family:var(--font-display);font-size:1rem;color:var(--neon-gold);margin-bottom:1.2rem;letter-spacing:0.1em;}
+.promo-pieces{display:flex;gap:1rem;justify-content:center;}
+.promo-piece{width:70px;height:70px;display:flex;align-items:center;justify-content:center;
+  font-size:2.8rem;border:1px solid rgba(255,215,0,0.3);border-radius:8px;cursor:pointer;
+  background:var(--bg-panel);transition:all 0.2s;}
+.promo-piece:hover{border-color:var(--neon-gold);background:rgba(255,215,0,0.1);}
+
+/* XP toast */
+.xp-toast{position:fixed;bottom:2rem;right:2rem;z-index:300;
+  background:var(--bg-card);border:1px solid var(--neon-gold);border-radius:8px;
+  padding:0.75rem 1.2rem;font-family:var(--font-mono);font-size:0.85rem;color:var(--neon-gold);
+  box-shadow:0 0 20px rgba(255,215,0,0.3);opacity:0;transform:translateY(20px);
+  transition:all 0.3s;pointer-events:none;}
+.xp-toast.show{opacity:1;transform:translateY(0);}
+
+/* Streak */
+.streak{display:flex;align-items:center;gap:0.4rem;font-family:var(--font-mono);
+  font-size:0.8rem;color:var(--neon-gold);}
+
+/* Responsive */
+@media(max-width:900px){
+  #chess-mode{flex-direction:column;}
+  .chess-sidebar,.chess-right{width:100%;}
+  .sq{width:44px;height:44px;font-size:28px;}
+  .status-banner{min-width:unset;width:100%;}
+}
+
+/* Animations */
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 10px rgba(0,245,255,0.3);}50%{box-shadow:0 0 25px rgba(0,245,255,0.6);}}
+@keyframes slide-in{from{opacity:0;transform:translateX(-20px);}to{opacity:1;transform:translateX(0);}}
+@keyframes fade-up{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+.panel{animation:fade-up 0.4s ease both;}
+.mode-card{animation:fade-up 0.5s ease both;}
+.mode-card:nth-child(2){animation-delay:0.1s;}
+
+/* Code syntax coloring */
+.kw{color:#b44fff;}
+.fn{color:#00f5ff;}
+.str{color:#00ff88;}
+.num{color:#ffd700;}
+.cmt{color:#3a5070;}
+.op{color:#ff6b9d;}
+</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+
+<div id="app">
+  <nav>
+    <div class="logo" onclick="showPage('landing')">NEX<span>U</span>S</div>
+    <div class="nav-links">
+      <button class="nav-btn active" onclick="showPage('landing')">HOME</button>
+      <button class="nav-btn" onclick="showPage('chess-mode');initChess()">CHESS</button>
+      <button class="nav-btn" onclick="showPage('code-mode');initCode()">CODE</button>
+    </div>
+    <div class="nav-xp">
+      <span>⚡</span>
+      <div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar" style="width:0%"></div></div>
+      <span id="xp-val">0 XP</span>
+      <span style="margin-left:0.5rem;" class="streak">🔥 <span id="streak-val">0</span></span>
+    </div>
+  </nav>
+
+  <!-- LANDING -->
+  <div class="page active" id="landing">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;">
+      <div class="landing-title">MASTER THE<br>MIND & THE CODE</div>
+      <div class="landing-sub">// A futuristic academy for chess grandmasters & code architects //</div>
+      <div class="mode-cards">
+        <div class="mode-card chess-card" onclick="showPage('chess-mode');initChess()">
+          <span class="mode-icon">♟</span>
+          <div class="mode-title">CHESS ARENA</div>
+          <div class="mode-desc">Play against adaptive AI that learns your style. Study openings, tactics, and endgames in a cyberpunk arena.</div>
+          <div class="mode-tags">
+            <span class="tag">Adaptive AI</span>
+            <span class="tag">Puzzles</span>
+            <span class="tag">Analysis</span>
+            <span class="tag">2-Player</span>
+          </div>
+          <button class="enter-btn">ENTER ARENA →</button>
+        </div>
+        <div class="mode-card code-card" onclick="showPage('code-mode');initCode()">
+          <span class="mode-icon">⌨</span>
+          <div class="mode-title">CODE ACADEMY</div>
+          <div class="mode-desc">Learn 8 programming languages through interactive challenges. From Python basics to advanced algorithms.</div>
+          <div class="mode-tags">
+            <span class="tag">Python</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">Rust</span>
+            <span class="tag">+5 more</span>
+          </div>
+          <button class="enter-btn">START LEARNING →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHESS MODE -->
+  <div class="page" id="chess-mode">
+    <div style="display:flex;flex:1;padding:1.5rem;gap:1.5rem;align-items:flex-start;flex-wrap:wrap;">
+      <!-- Left sidebar -->
+      <div class="chess-sidebar">
+        <div class="panel">
+          <div class="panel-title">Game Mode</div>
+          <button class="ctrl-btn primary" onclick="setChessMode('ai')">🤖 vs AI</button>
+          <button class="ctrl-btn" onclick="setChessMode('hvh')">👥 vs Human</button>
+          <button class="ctrl-btn" onclick="setChessMode('puzzle')">🧩 Puzzle</button>
+        </div>
+        <div class="panel">
+          <div class="panel-title">AI Difficulty</div>
+          <div class="diff-display">
+            <div class="diff-label">DEPTH <span id="diff-num">2</span></div>
+            <div class="diff-bars">
+              <div class="diff-bar active" id="db0"></div>
+              <div class="diff-bar active" id="db1"></div>
+              <div class="diff-bar" id="db2"></div>
+              <div class="diff-bar" id="db3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Captured</div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.4rem;">WHITE</div>
+          <div class="captures" id="cap-white"></div>
+          <div style="font-size:0.72rem;color:var(--text-muted);margin:0.5rem 0 0.4rem;">BLACK</div>
+          <div class="captures" id="cap-black"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Controls</div>
+          <button class="ctrl-btn" onclick="undoMove()">↩ Undo Move</button>
+          <button class="ctrl-btn" onclick="initChess()">↺ New Game</button>
+          <button class="ctrl-btn" onclick="flipBoard()">⇅ Flip Board</button>
+        </div>
+      </div>
+
+      <!-- Main board -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;flex:1;">
+        <div class="status-banner" id="chess-status">WHITE TO MOVE</div>
+        <div class="board-wrap">
+          <div id="chess-board"></div>
+        </div>
+        <div id="puzzle-info" style="display:none;font-family:var(--font-mono);font-size:0.82rem;color:var(--neon-violet);text-align:center;max-width:544px;"></div>
+      </div>
+
+      <!-- Right sidebar -->
+      <div class="chess-right">
+        <div class="panel" style="flex:1;">
+          <div class="panel-title">Move History</div>
+          <div class="move-list" id="move-list"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-title">Piece Legend</div>
+          <div style="font-family:var(--font-mono);font-size:0.75rem;color:#4a6a8a;line-height:1.8;">
+            ♔♚ King · ♕♛ Queen<br>♖♜ Rook · ♗♝ Bishop<br>♘♞ Knight · ♙♟ Pawn
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CODE MODE -->
+  <div class="page" id="code-mode">
+    <div class="code-header">
+      <button class="back-btn" onclick="showPage('landing')">← BACK</button>
+      <div class="lang-tabs" id="lang-tabs"></div>
+    </div>
+    <div class="code-body">
+      <div class="track-sidebar" id="track-sidebar"></div>
+      <div class="lesson-area">
+        <div class="lesson-top">
+          <div class="lesson-challenge-title" id="lesson-title">Select a lesson</div>
+          <div class="lesson-prompt" id="lesson-prompt">Choose a language and topic from the sidebar to begin.</div>
+          <div class="lesson-hint" id="lesson-hint" style="display:none;"></div>
+        </div>
+        <div class="lesson-middle">
+          <div class="code-editor-wrap">
+            <div class="editor-toolbar">
+              <span class="editor-lang-badge" id="editor-lang">// SELECT LANGUAGE</span>
+              <button class="run-btn" onclick="runCode()">▶ RUN CODE</button>
+            </div>
+            <textarea id="code-input" spellcheck="false" placeholder="// Your code here..."></textarea>
+          </div>
+          <div class="output-panel">
+            <div class="output-title">OUTPUT CONSOLE</div>
+            <div class="output-content" id="output-content">
+              <div class="out-info">// Ready. Press RUN to execute.</div>
+            </div>
+            <div class="quiz-section" id="quiz-section" style="display:none;">
+              <div class="quiz-title">Quick Check</div>
+              <div class="quiz-q" id="quiz-q"></div>
+              <div class="quiz-options" id="quiz-opts"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Promotion modal -->
+<div class="modal-overlay" id="promo-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-title">PROMOTE PAWN</div>
+    <div class="promo-pieces">
+      <div class="promo-piece" onclick="doPromotion('Q')" title="Queen">♕</div>
+      <div class="promo-piece" onclick="doPromotion('R')" title="Rook">♖</div>
+      <div class="promo-piece" onclick="doPromotion('B')" title="Bishop">♗</div>
+      <div class="promo-piece" onclick="doPromotion('N')" title="Knight">♘</div>
+    </div>
+  </div>
+</div>
+
+<!-- XP Toast -->
+<div class="xp-toast" id="xp-toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STARFIELD
+// ═══════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('starfield');
+  const ctx=c.getContext('2d');
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  const stars=[];
+  for(let i=0;i<180;i++){
+    stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.5+0.3,
+      speed:Math.random()*0.3+0.05,pulse:Math.random()*Math.PI*2});
+  }
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    const t=Date.now()/1000;
+    stars.forEach(s=>{
+      const op=0.3+0.7*Math.sin(s.pulse+t*s.speed*3);
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,220,255,${op})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+  window.addEventListener('resize',()=>{c.width=window.innerWidth;c.height=window.innerHeight;});
+})();
+
+// ═══════════════════════════════════════════════
+// PAGE NAV
+// ═══════════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+}
+
+// ═══════════════════════════════════════════════
+// XP SYSTEM
+// ═══════════════════════════════════════════════
+let xp=0,streak=0,maxXP=500;
+function addXP(amount,label){
+  xp=Math.min(xp+amount,maxXP);
+  streak++;
+  document.getElementById('xp-val').textContent=xp+' XP';
+  document.getElementById('xp-bar').style.width=(xp/maxXP*100)+'%';
+  document.getElementById('streak-val').textContent=streak;
+  const t=document.getElementById('xp-toast');
+  t.textContent='+'+amount+' XP — '+label;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+// CHESS ENGINE
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+const PIECE_UNICODE={wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'};
+const PIECE_VALS={P:100,N:320,B:330,R:500,Q:900,K:20000};
+const PST_P=[[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]];
+const PST_N=[[-50,-40,-30,-30,-30,-30,-40,-50],[-40,-20,0,0,0,0,-20,-40],[-30,0,10,15,15,10,0,-30],[-30,5,15,20,20,15,5,-30],[-30,0,15,20,20,15,0,-30],[-30,5,10,15,15,10,5,-30],[-40,-20,0,5,5,0,-20,-40],[-50,-40,-30,-30,-30,-30,-40,-50]];
+const PST_B=[[-20,-10,-10,-10,-10,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,10,10,5,0,-10],[-10,5,5,10,10,5,5,-10],[-10,0,10,10,10,10,0,-10],[-10,10,10,10,10,10,10,-10],[-10,5,0,0,0,0,5,-10],[-20,-10,-10,-10,-10,-10,-10,-20]];
+
+const INIT_BOARD=[
+  ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+  ['bP','bP','bP','bP','bP','bP','bP','bP'],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  ['wP','wP','wP','wP','wP','wP','wP','wP'],
+  ['wR','wN','wB','wQ','wK','wB','wN','wR'],
+];
+
+let chess={
+  board:null,turn:'w',selected:null,legalSqs:[],
+  history:[],enPassant:null,
+  castling:{wK:true,wQ:true,bK:true,bQ:true},
+  status:'',gameOver:false,mode:'ai',aiColor:'b',
+  aiDepth:2,playerMoveHistory:[],
+  pendingPromo:null,flipped:false,
+  capturedW:[],capturedB:[],
+  boardHistory:[]
+};
+
+const PUZZLES_DATA=[
+  {desc:'WHITE to move — Deliver checkmate in one!',
+   board:(()=>{const b=Array(8).fill(null).map(()=>Array(8).fill(null));
+     b[0][4]='bK';b[1][3]='bP';b[1][5]='bP';b[2][4]='bP';
+     b[7][4]='wK';b[6][0]='wQ';b[0][7]='wR';return b;})(),
+   solution:[[6,0],[0,4]],turn:'w'},
+  {desc:'WHITE to move — Fork the king and rook with your knight!',
+   board:(()=>{const b=Array(8).fill(null).map(()=>Array(8).fill(null));
+     b[0][0]='bK';b[0][7]='bR';b[2][5]='wN';b[7][4]='wK';return b;})(),
+   solution:[[2,5],[1,7]],turn:'w'},
+  {desc:'WHITE to move — Pin and win! Find the winning tactic.',
+   board:(()=>{const b=Array(8).fill(null).map(()=>Array(8).fill(null));
+     b[0][0]='bK';b[0][3]='bQ';b[3][3]='wR';b[7][4]='wK';return b;})(),
+   solution:[[3,3],[0,3]],turn:'w'},
+];
+let puzzleIdx=0,puzzleSolved=false;
+
+function cloneB(b){return b.map(r=>r.slice());}
+function pc(p){return p?p[0]:null;}
+function pt(p){return p?p[1]:null;}
+function inB(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+function findKing(b,color){for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(b[r][c]===color+'K')return[r,c];return null;}
+
+function isAttacked(b,r,c,byColor){
+  for(let fr=0;fr<8;fr++)for(let fc=0;fc<8;fc++){
+    const p=b[fr][fc];if(!p||pc(p)!==byColor)continue;
+    if(rawMoves(b,fr,fc).some(([tr,tc])=>tr===r&&tc===c))return true;
+  }
+  return false;
+}
+
+function rawMoves(b,r,c){
+  const p=b[r][c];if(!p)return[];
+  const color=pc(p),t=pt(p),mv=[];
+  const slide=dirs=>{for(const[dr,dc]of dirs){let nr=r+dr,nc=c+dc;while(inB(nr,nc)){if(!b[nr][nc]){mv.push([nr,nc]);}else{if(pc(b[nr][nc])!==color)mv.push([nr,nc]);break;}nr+=dr;nc+=dc;}}};
+  if(t==='P'){const d=color==='w'?-1:1,sr=color==='w'?6:1;
+    if(inB(r+d,c)&&!b[r+d][c]){mv.push([r+d,c]);if(r===sr&&!b[r+2*d][c])mv.push([r+2*d,c]);}
+    for(const dc of[-1,1])if(inB(r+d,c+dc)&&b[r+d][c+dc]&&pc(b[r+d][c+dc])!==color)mv.push([r+d,c+dc]);}
+  else if(t==='N'){for(const[dr,dc]of[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]){const nr=r+dr,nc=c+dc;if(inB(nr,nc)&&pc(b[nr][nc])!==color)mv.push([nr,nc]);}}
+  else if(t==='B')slide([[-1,-1],[-1,1],[1,-1],[1,1]]);
+  else if(t==='R')slide([[-1,0],[1,0],[0,-1],[0,1]]);
+  else if(t==='Q')slide([[-1,-1],[-1,1],[1,-1],[1,1],[-1,0],[1,0],[0,-1],[0,1]]);
+  else if(t==='K'){for(const[dr,dc]of[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]){const nr=r+dr,nc=c+dc;if(inB(nr,nc)&&pc(b[nr][nc])!==color)mv.push([nr,nc]);}}
+  return mv;
+}
+
+function legalMoves(b,r,c,ep,cast){
+  const p=b[r][c];if(!p)return[];
+  const color=pc(p),t=pt(p);
+  let mv=rawMoves(b,r,c);
+  if(t==='P'&&ep){const d=color==='w'?-1:1;const[er,ec]=ep;if(r+d===er&&Math.abs(c-ec)===1)mv.push([er,ec,'ep']);}
+  if(t==='K'&&cast){const row=color==='w'?7:0;const opp=color==='w'?'b':'w';
+    if(r===row&&c===4){
+      if(cast[color+'K']&&!b[row][5]&&!b[row][6]&&!isAttacked(b,row,4,opp)&&!isAttacked(b,row,5,opp)&&!isAttacked(b,row,6,opp))mv.push([row,6,'ck']);
+      if(cast[color+'Q']&&!b[row][3]&&!b[row][2]&&!b[row][1]&&!isAttacked(b,row,4,opp)&&!isAttacked(b,row,3,opp)&&!isAttacked(b,row,2,opp))mv.push([row,2,'cq']);}}
+  return mv.filter(([tr,tc,flag])=>{
+    const nb=cloneB(b);const p2=nb[r][c];
+    if(flag==='ep'){nb[r][c]=null;nb[tr][tc]=p2;const cr=color==='w'?tr+1:tr-1;nb[cr][tc]=null;}
+    else if(flag==='ck'){nb[r][c]=null;nb[tr][tc]=p2;nb[r][7]=null;nb[r][5]=color+'R';}
+    else if(flag==='cq'){nb[r][c]=null;nb[tr][tc]=p2;nb[r][0]=null;nb[r][3]=color+'R';}
+    else{nb[tr][tc]=p2;nb[r][c]=null;}
+    const k=findKing(nb,color);
+    return k&&!isAttacked(nb,k[0],k[1],color==='w'?'b':'w');
+  });
+}
+
+function applyMove(b,fr,fc,tr,tc,flag,prom='Q'){
+  const nb=cloneB(b);const p=nb[fr][fc];const color=pc(p);
+  if(flag==='ep'){nb[fr][fc]=null;nb[tr][tc]=p;const cr=color==='w'?tr+1:tr-1;nb[cr][tc]=null;}
+  else if(flag==='ck'){nb[fr][fc]=null;nb[tr][tc]=p;nb[fr][7]=null;nb[fr][5]=color+'R';}
+  else if(flag==='cq'){nb[fr][fc]=null;nb[tr][tc]=p;nb[fr][0]=null;nb[fr][3]=color+'R';}
+  else{nb[tr][tc]=p;nb[fr][fc]=null;}
+  if(pt(p)==='P'&&(tr===0||tr===7))nb[tr][tc]=color+prom;
+  return nb;
+}
+
+function toAlg(b,fr,fc,tr,tc,flag){
+  const p=b[fr][fc],t=pt(p);
+  const files='abcdefgh';
+  if(flag==='ck')return'O-O';if(flag==='cq')return'O-O-O';
+  let s=t==='P'?'':t;
+  if(t==='P'&&b[tr][tc])s=files[fc];
+  if(b[tr][tc]||flag==='ep')s+='x';
+  s+=files[tc]+(8-tr);
+  if(t==='P'&&(tr===0||tr===7))s+='=Q';
+  return s;
+}
+
+function evaluate(b){
+  let score=0;
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const p=b[r][c];if(!p)continue;
+    const t=pt(p),color=pc(p),sign=color==='w'?1:-1;
+    let v=PIECE_VALS[t]||0;
+    if(t==='P'){const pr=color==='w'?r:7-r;v+=PST_P[pr][c];}
+    else if(t==='N'){const pr=color==='w'?r:7-r;v+=PST_N[pr][c];}
+    else if(t==='B'){const pr=color==='w'?r:7-r;v+=PST_B[pr][c];}
+    score+=sign*v;
+  }
+  return score;
+}
+
+function getAllMoves(b,color,ep,cast){
+  const mv=[];
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    if(pc(b[r][c])!==color)continue;
+    for(const[tr,tc,flag]of legalMoves(b,r,c,ep,cast))mv.push({fr:r,fc:c,tr,tc,flag});
+  }
+  return mv;
+}
+
+function minimax(b,depth,alpha,beta,max,ep,cast){
+  const color=max?'w':'b';
+  const moves=getAllMoves(b,color,ep,cast);
+  if(depth===0||moves.length===0)return{score:evaluate(b)};
+  // Move ordering: captures first
+  moves.sort((a,b2)=>(b2.flag||b[b2.tr][b2.tc])?(1):0);
+  let best=max?{score:-Infinity}:{score:Infinity};
+  for(const m of moves){
+    const nb=applyMove(b,m.fr,m.fc,m.tr,m.tc,m.flag);
+    const newEP=(pt(b[m.fr][m.fc])==='P'&&Math.abs(m.tr-m.fr)===2)?[m.tr,m.tc]:null;
+    const r=minimax(nb,depth-1,alpha,beta,!max,newEP,cast);
+    if(max){if(r.score>best.score){best={...m,score:r.score};}alpha=Math.max(alpha,best.score);}
+    else{if(r.score<best.score){best={...m,score:r.score};}beta=Math.min(beta,best.score);}
+    if(beta<=alpha)break;
+  }
+  return best;
+}
+
+function setChessMode(mode){
+  chess.mode=mode;
+  if(mode==='puzzle'){loadPuzzle(0);}
+  else{initChess();}
+  chess.aiColor=mode==='ai'?'b':'none';
+  if(mode==='hvh')chess.aiColor='none';
+  document.getElementById('puzzle-info').style.display=mode==='puzzle'?'block':'none';
+}
+
+function initChess(){
+  chess.board=cloneB(INIT_BOARD);
+  chess.turn='w';chess.selected=null;chess.legalSqs=[];
+  chess.history=[];chess.enPassant=null;
+  chess.castling={wK:true,wQ:true,bK:true,bQ:true};
+  chess.gameOver=false;chess.pendingPromo=null;
+  chess.capturedW=[];chess.capturedB=[];chess.boardHistory=[];
+  chess.playerMoveHistory=[];chess.aiDepth=2;
+  if(chess.mode==='ai')chess.aiColor='b';
+  setStatus('WHITE TO MOVE');renderBoard();renderHistory();updateDiffDisplay();
+  document.getElementById('puzzle-info').style.display='none';
+}
+
+function loadPuzzle(idx){
+  puzzleIdx=idx;puzzleSolved=false;
+  const pz=PUZZLES_DATA[idx];
+  chess.board=cloneB(pz.board);
+  chess.turn=pz.turn;chess.selected=null;chess.legalSqs=[];
+  chess.history=[];chess.enPassant=null;chess.gameOver=false;
+  chess.castling={wK:false,wQ:false,bK:false,bQ:false};
+  chess.capturedW=[];chess.capturedB=[];
+  chess.mode='puzzle';chess.aiColor='none';
+  setStatus('PUZZLE MODE — '+pz.desc);
+  const pi=document.getElementById('puzzle-info');
+  pi.style.display='block';
+  pi.innerHTML=pz.desc+'<br><button onclick="showPuzzleSolution()" style="margin-top:0.5rem;background:transparent;border:1px solid rgba(180,79,255,0.4);color:var(--neon-violet);padding:0.3rem 0.7rem;border-radius:4px;cursor:pointer;font-size:0.78rem;">Show Solution</button>'+(idx<PUZZLES_DATA.length-1?'<button onclick="loadPuzzle('+(idx+1)+')" style="margin-left:0.5rem;margin-top:0.5rem;background:transparent;border:1px solid rgba(0,245,255,0.3);color:var(--neon-cyan);padding:0.3rem 0.7rem;border-radius:4px;cursor:pointer;font-size:0.78rem;">Next Puzzle →</button>':'');
+  renderBoard();renderHistory();
+}
+
+function showPuzzleSolution(){
+  const pz=PUZZLES_DATA[puzzleIdx];
+  const f=pz.solution[0],t=pz.solution[1];
+  const files='abcdefgh';
+  document.getElementById('puzzle-info').innerHTML+='<br><span style="color:var(--neon-green);">Solution: '+files[f[1]]+(8-f[0])+' → '+files[t[1]]+(8-t[0])+'</span>';
+}
+
+function setStatus(msg){
+  chess.status=msg;
+  document.getElementById('chess-status').textContent=msg;
+}
+
+function checkGameState(b,nextTurn,ep,cast){
+  const moves=getAllMoves(b,nextTurn,ep,cast);
+  const k=findKing(b,nextTurn);
+  const inCheck=k&&isAttacked(b,k[0],k[1],nextTurn==='w'?'b':'w');
+  if(moves.length===0){
+    if(inCheck){setStatus(nextTurn==='w'?'★ BLACK WINS BY CHECKMATE! ★':'★ WHITE WINS BY CHECKMATE! ★');chess.gameOver=true;addXP(50,'Checkmate!');}
+    else{setStatus('STALEMATE — DRAW!');chess.gameOver=true;}
+  }else if(inCheck){setStatus((nextTurn==='w'?'WHITE':'BLACK')+' IS IN CHECK! ♦');}
+  else{setStatus((nextTurn==='w'?'WHITE':'BLACK')+' TO MOVE');}
+  return inCheck;
+}
+
+function squareClick(r,c){
+  if(chess.gameOver)return;
+  const isAITurn=chess.mode==='ai'&&chess.turn===chess.aiColor;
+  if(isAITurn)return;
+  const p=chess.board[r][c];
+  if(chess.selected){
+    const move=chess.legalSqs.find(([tr,tc])=>tr===r&&tc===c);
+    if(move){
+      const[,, flag]=move;
+      const p2=chess.board[chess.selected[0]][chess.selected[1]];
+      // Promotion check
+      if(pt(p2)==='P'&&(r===0||r===7)){
+        chess.pendingPromo={fr:chess.selected[0],fc:chess.selected[1],tr:r,tc:c,flag};
+        document.getElementById('promo-modal').style.display='flex';
+        // Update promo piece display for color
+        const promoSymbols=pc(p2)==='w'?['♕','♖','♗','♘']:['♛','♜','♝','♞'];
+        document.querySelectorAll('.promo-piece').forEach((el,i)=>el.textContent=promoSymbols[i]);
+        return;
+      }
+      executeMove(chess.selected[0],chess.selected[1],r,c,flag);
+    }else if(p&&pc(p)===chess.turn){
+      chess.selected=[r,c];
+      chess.legalSqs=legalMoves(chess.board,r,c,chess.enPassant,chess.castling);
+    }else{chess.selected=null;chess.legalSqs=[];}
+  }else if(p&&pc(p)===chess.turn){
+    chess.selected=[r,c];
+    chess.legalSqs=legalMoves(chess.board,r,c,chess.enPassant,chess.castling);
+  }
+  renderBoard();
+}
+
+function doPromotion(piece){
+  document.getElementById('promo-modal').style.display='none';
+  if(!chess.pendingPromo)return;
+  const{fr,fc,tr,tc,flag}=chess.pendingPromo;
+  chess.pendingPromo=null;
+  executeMove(fr,fc,tr,tc,flag,piece);
+}
+
+function executeMove(fr,fc,tr,tc,flag,prom='Q'){
+  const b=chess.board;
+  const captured=flag==='ep'?b[pc(b[fr][fc])==='w'?tr+1:tr-1][tc]:b[tr][tc];
+  if(captured){
+    if(pc(captured)==='w')chess.capturedW.push(captured);
+    else chess.capturedB.push(captured);
+  }
+  const alg=toAlg(b,fr,fc,tr,tc,flag);
+  chess.boardHistory.push({board:cloneB(b),turn:chess.turn,ep:chess.enPassant,cast:{...chess.castling}});
+  const nb=applyMove(b,fr,fc,tr,tc,flag,prom);
+  const newEP=(pt(b[fr][fc])==='P'&&Math.abs(tr-fr)===2)?[tr,tc]:null;
+  const newCast={...chess.castling};
+  if(pt(b[fr][fc])==='K'){newCast[chess.turn+'K']=false;newCast[chess.turn+'Q']=false;}
+  if(pt(b[fr][fc])==='R'){if(fc===7)newCast[chess.turn+'K']=false;if(fc===0)newCast[chess.turn+'Q']=false;}
+  chess.board=nb;chess.turn=chess.turn==='w'?'b':'w';
+  chess.history.push({notation:alg,color:chess.turn==='b'?'w':'b'});
+  chess.enPassant=newEP;chess.castling=newCast;chess.selected=null;chess.legalSqs=[];
+
+  // Puzzle check
+  if(chess.mode==='puzzle'&&!puzzleSolved){
+    const pz=PUZZLES_DATA[puzzleIdx];
+    if(fr===pz.solution[0][0]&&fc===pz.solution[0][1]&&tr===pz.solution[1][0]&&tc===pz.solution[1][1]){
+      puzzleSolved=true;setStatus('✓ CORRECT! PUZZLE SOLVED!');chess.gameOver=true;
+      addXP(30,'Puzzle Solved!');
+    }else{setStatus('✗ NOT QUITE — KEEP TRYING');}
+  }
+
+  checkGameState(nb,chess.turn,newEP,newCast);
+  renderBoard();renderHistory();updateCaptures();
+  // Adaptive AI
+  if(chess.mode==='ai'&&!chess.gameOver&&chess.turn===chess.aiColor){
+    setTimeout(runAI,80);
+  }
+}
+
+function runAI(){
+  if(chess.gameOver)return;
+  const best=minimax(chess.board,chess.aiDepth,-Infinity,Infinity,chess.aiColor==='w',chess.enPassant,chess.castling);
+  if(best.fr!==undefined){
+    // Adapt depth
+    const evalBefore=evaluate(chess.board);
+    executeMove(best.fr,best.fc,best.tr,best.tc,best.flag);
+    const evalAfter=evaluate(chess.board);
+    const swing=(chess.aiColor==='w'?1:-1)*(evalAfter-evalBefore);
+    chess.playerMoveHistory.push(swing);
+    if(chess.playerMoveHistory.length>=4){
+      const avg=chess.playerMoveHistory.slice(-4).reduce((a,b)=>a+b,0)/4;
+      const newDepth=avg<-150?Math.max(1,chess.aiDepth-1):avg>100?Math.min(4,chess.aiDepth+1):chess.aiDepth;
+      if(newDepth!==chess.aiDepth){chess.aiDepth=newDepth;updateDiffDisplay();}
+    }
+  }
+}
+
+function undoMove(){
+  if(chess.boardHistory.length<1)return;
+  const prev=chess.boardHistory.pop();
+  chess.board=prev.board;chess.turn=prev.turn;
+  chess.enPassant=prev.ep;chess.castling=prev.cast;
+  chess.history.pop();chess.gameOver=false;
+  chess.selected=null;chess.legalSqs=[];chess.capturedW=[];chess.capturedB=[];
+  setStatus((chess.turn==='w'?'WHITE':'BLACK')+' TO MOVE');
+  renderBoard();renderHistory();updateCaptures();
+}
+
+function flipBoard(){chess.flipped=!chess.flipped;renderBoard();}
+
+function updateDiffDisplay(){
+  document.getElementById('diff-num').textContent=chess.aiDepth;
+  for(let i=0;i<4;i++){
+    const el=document.getElementById('db'+i);
+    el.classList.toggle('active',i<chess.aiDepth);
+  }
+}
+
+function updateCaptures(){
+  document.getElementById('cap-white').textContent=chess.capturedW.map(p=>PIECE_UNICODE[p]).join('');
+  document.getElementById('cap-black').textContent=chess.capturedB.map(p=>PIECE_UNICODE[p]).join('');
+}
+
+function renderBoard(){
+  const board=document.getElementById('chess-board');
+  board.innerHTML='';
+  const rows=chess.flipped?[0,1,2,3,4,5,6,7]:[7,6,5,4,3,2,1,0];
+  const cols=chess.flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];
+  for(const r of rows){
+    for(const c of cols){
+      const sq=document.createElement('div');
+      const isLight=(r+c)%2!==0;
+      sq.className='sq '+(isLight?'light':'dark');
+      const p=chess.board[r][c];
+      const isSel=chess.selected&&chess.selected[0]===r&&chess.selected[1]===c;
+      const isLegal=chess.legalSqs.some(([tr,tc])=>tr===r&&tc===c);
+      if(isSel)sq.classList.add('selected');
+      if(isLegal){if(p)sq.classList.add('legal-capture');else sq.classList.add('legal-move');}
+      // Check highlight
+      if(chess.turn&&!chess.gameOver){
+        const k=findKing(chess.board,chess.turn);
+        if(k&&k[0]===r&&k[1]===c){
+          const inCheck=isAttacked(chess.board,r,c,chess.turn==='w'?'b':'w');
+          if(inCheck)sq.classList.add('check-sq');
+        }
+      }
+      if(p){const span=document.createElement('span');span.className='piece';span.textContent=PIECE_UNICODE[p];sq.appendChild(span);}
+      // Labels
+      if((!chess.flipped&&c===0)||(chess.flipped&&c===7)){const l=document.createElement('span');l.className='rank-label';l.textContent=8-r;sq.appendChild(l);}
+      if((!chess.flipped&&r===0)||(chess.flipped&&r===7)){const l=document.createElement('span');l.className='file-label';l.textContent='abcdefgh'[c];sq.appendChild(l);}
+      sq.onclick=()=>squareClick(r,c);
+      board.appendChild(sq);
+    }
+  }
+}
+
+function renderHistory(){
+  const ml=document.getElementById('move-list');
+  ml.innerHTML='';
+  for(let i=0;i<chess.history.length;i+=2){
+    const row=document.createElement('div');row.className='move-row';
+    row.innerHTML=`<span class="num">${i/2+1}.</span><span class="wm">${chess.history[i]?.notation||''}</span><span class="bm">${chess.history[i+1]?.notation||''}</span>`;
+    ml.appendChild(row);
+  }
+  ml.scrollTop=ml.scrollHeight;
+}
+
+// ═══════════════════════════════════════════════
+// CODE ACADEMY
+// ═══════════════════════════════════════════════
+const LANGUAGES=[
+  {id:'python',name:'Python',color:'#3d85c8',dot:'#3d85c8',icon:'🐍'},
+  {id:'javascript',name:'JavaScript',color:'#f0db4f',dot:'#f0db4f',icon:'⚡'},
+  {id:'typescript',name:'TypeScript',color:'#007acc',dot:'#007acc',icon:'🔷'},
+  {id:'rust',name:'Rust',color:'#ce422b',dot:'#ce422b',icon:'⚙'},
+  {id:'go',name:'Go',color:'#00acd7',dot:'#00acd7',icon:'🐹'},
+  {id:'java',name:'Java',color:'#e76f00',dot:'#e76f00',icon:'☕'},
+  {id:'cpp',name:'C++',color:'#00599c',dot:'#6295cb',icon:'⚡'},
+  {id:'sql',name:'SQL',color:'#e48e00',dot:'#e48e00',icon:'🗄'},
+];
+
+const CURRICULUM={
+  python:[
+    {title:'Hello, World!',prompt:'Print "Hello, NEXUS!" to the console. Python uses the print() function.',hint:'Try: print("Hello, NEXUS!")',starter:'# Python - Hello World\n# Your mission: print a greeting\n\n',expected:'Hello, NEXUS!',xp:10,
+     quiz:{q:'What function prints output in Python?',opts:['console.log()','print()','echo()','puts()'],ans:1}},
+    {title:'Variables & Types',prompt:'Create variables: name="NEXUS", version=4.6, active=True. Print all three.',hint:'Use: print(name, version, active)',starter:'# Variables\nname = "NEXUS"\nversion = 4.6\nactive = True\n\n# Print all three variables\n',expected:'NEXUS 4.6 True',xp:15,
+     quiz:{q:'Which is a valid Python boolean?',opts:['true','TRUE','True','1==true'],ans:2}},
+    {title:'Lists & Loops',prompt:'Create a list of 5 languages, then print each one with a for loop.',hint:'for lang in languages: print(lang)',starter:'languages = ["Python","JavaScript","Rust","Go","Java"]\n\n# Loop and print each\n',expected:'Python\nJavaScript\nRust\nGo\nJava',xp:20,
+     quiz:{q:'How do you access the first item of list L?',opts:['L(0)','L[1]','L[0]','L.first()'],ans:2}},
+    {title:'Functions',prompt:'Write a function add(a, b) that returns the sum. Then print add(7, 13).',hint:'def add(a, b): return a + b',starter:'# Define function\ndef add(a, b):\n    return a + b\n\n# Call it\nprint(add(7, 13))\n',expected:'20',xp:25,
+     quiz:{q:'What keyword defines a function in Python?',opts:['func','function','def','lambda'],ans:2}},
+    {title:'Dictionaries',prompt:'Create a dict with keys "name","lang","xp" and print the "lang" value.',hint:'d = {"name": "Nexus", "lang": "Python", "xp": 100}',starter:'# Dictionaries store key-value pairs\nd = {"name": "Nexus", "lang": "Python", "xp": 100}\n\n# Print the value of "lang"\n',expected:'Python',xp:20,
+     quiz:{q:'How do you access a dict key?',opts:['d.key','d[key]','d->key','d.get[key]'],ans:1}},
+  ],
+  javascript:[
+    {title:'Hello, Console!',prompt:'Use console.log() to print "Hello from JS!"',hint:'console.log("Hello from JS!")',starter:'// JavaScript\n// Print to console\n\n',expected:'Hello from JS!',xp:10,
+     quiz:{q:'JavaScript output function?',opts:['print()','echo()','console.log()','document.write()'],ans:2}},
+    {title:'let & const',prompt:'Declare: const PI = 3.14; let radius = 5; print PI * radius * radius',hint:'console.log(PI * radius * radius)',starter:'const PI = 3.14;\nlet radius = 5;\n\n// Print area of circle\n',expected:'78.5',xp:15,
+     quiz:{q:'Which cannot be reassigned?',opts:['let','var','const','all can'],ans:2}},
+    {title:'Arrow Functions',prompt:'Write an arrow function square = n => n*n and log square(9)',hint:'const square = n => n * n;',starter:'// Arrow function\nconst square = n => n * n;\n\nconsole.log(square(9));\n',expected:'81',xp:20,
+     quiz:{q:'Arrow function syntax for x => x+1?',opts:['function(x){return x+1}','x => x+1','fn x: x+1','lambda x: x+1'],ans:1}},
+    {title:'Array Methods',prompt:'Use .map() to double [1,2,3,4,5] and log the result.',hint:'[1,2,3,4,5].map(x => x * 2)',starter:'const nums = [1, 2, 3, 4, 5];\nconst doubled = nums.map(x => x * 2);\nconsole.log(doubled.join(","));\n',expected:'2,4,6,8,10',xp:25,
+     quiz:{q:'What does .filter() do?',opts:['Transforms each element','Removes elements failing a test','Sums elements','Sorts elements'],ans:1}},
+    {title:'Promises & Async',prompt:'Create a Promise that resolves with "Data loaded!" and log the result.',hint:'new Promise(resolve => resolve("Data loaded!"))',starter:'// Async JavaScript\nconst p = new Promise(resolve => resolve("Data loaded!"));\np.then(msg => console.log(msg));\n',expected:'Data loaded!',xp:30,
+     quiz:{q:'What does async/await handle?',opts:['Loops','Asynchronous operations','Variables','DOM manipulation'],ans:1}},
+  ],
+  rust:[
+    {title:'Rust Hello World',prompt:'Print "Ferris says hello!" using println! macro.',hint:'println!("Ferris says hello!");',starter:'// Rust\nfn main() {\n    // Print greeting\n    println!("Ferris says hello!");\n}\n',expected:'Ferris says hello!',xp:10,
+     quiz:{q:'Rust uses ___ for output?',opts:['print()','println!','console.log','fmt.Println'],ans:1}},
+    {title:'Ownership',prompt:'In Rust, each value has one owner. Declare: let s = String::from("NEXUS"); and print it.',hint:'println!("{}", s);',starter:'fn main() {\n    let s = String::from("NEXUS");\n    println!("{}", s);\n}\n',expected:'NEXUS',xp:20,
+     quiz:{q:'What is Rust\'s key safety feature?',opts:['Garbage collection','Ownership system','Manual memory','Reference counting'],ans:1}},
+    {title:'Match Expression',prompt:'Use match on number 3 to print "Three". Handle other cases with "Other".',hint:'match num { 3 => println!("Three"), _ => println!("Other") }',starter:'fn main() {\n    let num = 3;\n    match num {\n        3 => println!("Three"),\n        _ => println!("Other"),\n    }\n}\n',expected:'Three',xp:25,
+     quiz:{q:'What is the wildcard pattern in Rust match?',opts:['*','else','default','_'],ans:3}},
+  ],
+  go:[
+    {title:'Go Hello World',prompt:'Print "Go is fast!" using fmt.Println',hint:'fmt.Println("Go is fast!")',starter:'package main\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Go is fast!")\n}\n',expected:'Go is fast!',xp:10,
+     quiz:{q:'Go\'s output package?',opts:['sys','fmt','io','print'],ans:1}},
+    {title:'Goroutines',prompt:'Go uses goroutines for concurrency. Print "Concurrent!" (concept lesson)',hint:'go func() { ... }()',starter:'package main\nimport "fmt"\n\nfunc main() {\n    // Goroutines enable concurrency\n    // For this exercise just print:\n    fmt.Println("Concurrent!")\n}\n',expected:'Concurrent!',xp:20,
+     quiz:{q:'Goroutines are like?',opts:['Classes','Lightweight threads','Variables','Functions'],ans:1}},
+  ],
+  java:[
+    {title:'Java Hello World',prompt:'Print "Java is everywhere!" inside the main method.',hint:'System.out.println("Java is everywhere!");',starter:'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Java is everywhere!");\n    }\n}\n',expected:'Java is everywhere!',xp:10,
+     quiz:{q:'Java\'s print statement?',opts:['print()','console.log()','System.out.println()','echo()'],ans:2}},
+    {title:'OOP Classes',prompt:'Java is object-oriented. Define a class concept: print "Class: Robot, Method: speak"',hint:'System.out.println("Class: Robot, Method: speak")',starter:'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Class: Robot, Method: speak");\n    }\n}\n',expected:'Class: Robot, Method: speak',xp:20,
+     quiz:{q:'OOP stands for?',opts:['Open Object Programming','Object-Oriented Programming','Optimized Output Protocol','Online Object Platform'],ans:1}},
+  ],
+  typescript:[
+    {title:'Typed Variables',prompt:'TypeScript adds types to JS. Print: const msg: string = "TypeScript rocks!"; console.log(msg)',hint:'const msg: string = "TypeScript rocks!";',starter:'// TypeScript adds static typing\nconst msg: string = "TypeScript rocks!";\nconsole.log(msg);\n',expected:'TypeScript rocks!',xp:10,
+     quiz:{q:'TypeScript is a superset of?',opts:['Java','Python','JavaScript','C++'],ans:2}},
+    {title:'Interfaces',prompt:'Declare: interface User { name: string; xp: number } and print a user\'s name.',hint:'const u: User = { name: "Neo", xp: 500 }',starter:'interface User {\n    name: string;\n    xp: number;\n}\nconst u: User = { name: "Neo", xp: 500 };\nconsole.log(u.name);\n',expected:'Neo',xp:20,
+     quiz:{q:'TypeScript interfaces define?',opts:['Functions only','Object shapes/contracts','Database tables','CSS styles'],ans:1}},
+  ],
+  cpp:[
+    {title:'C++ Hello World',prompt:'Print "Power of C++!" using cout.',hint:'cout << "Power of C++!" << endl;',starter:'#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Power of C++!" << endl;\n    return 0;\n}\n',expected:'Power of C++!',xp:10,
+     quiz:{q:'C++ output operator?',opts:['<<','>>','->','::'],ans:0}},
+    {title:'Pointers',prompt:'C++ uses pointers. Print "Pointer: memory address concept" (concept lesson)',hint:'int x = 42; int* ptr = &x;',starter:'#include <iostream>\nusing namespace std;\n\nint main() {\n    // Pointers hold memory addresses\n    cout << "Pointer: memory address concept" << endl;\n    return 0;\n}\n',expected:'Pointer: memory address concept',xp:25,
+     quiz:{q:'& operator in C++ gets?',opts:['Value','Address','Size','Type'],ans:1}},
+  ],
+  sql:[
+    {title:'SELECT Basics',prompt:'SQL queries data. Print concept: "SELECT * FROM users" retrieves all users.',hint:'Think: SELECT column FROM table WHERE condition',starter:'-- SQL is a query language\n-- This editor simulates SQL concepts\n-- Print the query result concept:\nconsole.log("All users retrieved");\n',expected:'All users retrieved',xp:10,
+     quiz:{q:'SQL SELECT retrieves?',opts:['Deletes data','Updates data','Reads/queries data','Creates tables'],ans:2}},
+    {title:'WHERE Clause',prompt:'Filter data with WHERE. Print "Filtered: users WHERE xp > 100"',hint:'SELECT * FROM users WHERE xp > 100',starter:'// SQL concept: filtering\nconsole.log("Filtered: users WHERE xp > 100");\n',expected:'Filtered: users WHERE xp > 100',xp:15,
+     quiz:{q:'WHERE clause does?',opts:['Orders results','Filters rows','Joins tables','Creates indexes'],ans:1}},
+  ],
+};
+
+let currentLang='python';
+let currentLesson=0;
+let completedLessons={};
+
+function initCode(){
+  renderLangTabs();
+  loadLang('python');
+}
+
+function renderLangTabs(){
+  const tabs=document.getElementById('lang-tabs');
+  tabs.innerHTML='';
+  LANGUAGES.forEach(lang=>{
+    const tab=document.createElement('div');
+    tab.className='lang-tab'+(lang.id===currentLang?' active':'');
+    tab.innerHTML=`<span class="lang-dot" style="background:${lang.color}"></span>${lang.name}`;
+    tab.onclick=()=>loadLang(lang.id);
+    tabs.appendChild(tab);
+  });
+}
+
+function loadLang(langId){
+  currentLang=langId;currentLesson=0;
+  renderLangTabs();
+  renderTrackSidebar();
+  loadLesson(0);
+}
+
+function renderTrackSidebar(){
+  const sb=document.getElementById('track-sidebar');
+  sb.innerHTML='';
+  const lang=LANGUAGES.find(l=>l.id===currentLang);
+  const lessons=CURRICULUM[currentLang]||[];
+  const section=document.createElement('div');
+  section.className='track-section';
+  section.innerHTML=`<div class="track-section-title">${lang?.icon||''} ${lang?.name||currentLang} Track</div>`;
+  lessons.forEach((lesson,i)=>{
+    const key=currentLang+'-'+i;
+    const done=completedLessons[key];
+    const item=document.createElement('div');
+    item.className='lesson-item'+(i===currentLesson?' active':'')+(done?' completed':'');
+    item.innerHTML=`<span class="lesson-num">${i+1}</span><span class="lesson-name">${lesson.title}</span><span class="lesson-xp">+${lesson.xp}XP</span>`;
+    item.onclick=()=>loadLesson(i);
+    section.appendChild(item);
+  });
+  sb.appendChild(section);
+}
+
+function loadLesson(idx){
+  currentLesson=idx;
+  const lessons=CURRICULUM[currentLang]||[];
+  const lesson=lessons[idx];
+  if(!lesson)return;
+  document.getElementById('lesson-title').textContent=lesson.title;
+  document.getElementById('lesson-prompt').textContent=lesson.prompt;
+  const hintEl=document.getElementById('lesson-hint');
+  hintEl.style.display='block';
+  hintEl.textContent='💡 Hint: '+lesson.hint;
+  document.getElementById('code-input').value=lesson.starter||'';
+  document.getElementById('output-content').innerHTML='<div class="out-info">// Ready. Press RUN to execute.</div>';
+  const lang=LANGUAGES.find(l=>l.id===currentLang);
+  document.getElementById('editor-lang').textContent=lang?.name||currentLang;
+  // Quiz
+  document.getElementById('quiz-section').style.display='none';
+  renderTrackSidebar();
+}
+
+function runCode(){
+  const code=document.getElementById('code-input').value;
+  const lessons=CURRICULUM[currentLang]||[];
+  const lesson=lessons[currentLesson];
+  if(!lesson)return;
+  const out=document.getElementById('output-content');
+  // Simulate execution by checking expected output patterns
+  let output='';
+  let success=false;
+  try{
+    // Simple JS eval for JS/TS lessons
+    if(currentLang==='javascript'||currentLang==='typescript'){
+      const logs=[];
+      const fakeConsole={log:(...args)=>logs.push(args.map(a=>typeof a==='object'?JSON.stringify(a):String(a)).join(' '))};
+      const fn=new Function('console',code);
+      fn(fakeConsole);
+      output=logs.join('\n');
+    }else{
+      // For other languages: check if starter code / expected output is present
+      // Smart check: does the code contain the expected output text?
+      const exp=lesson.expected;
+      // Check if code seems correct based on keywords
+      if(code.includes(exp)||simulateOutput(code,lesson,currentLang)){
+        output=exp;
+      }else{
+        output=simulatePartialOutput(code,lesson,currentLang);
+      }
+    }
+    success=output.trim()===lesson.expected.trim();
+  }catch(e){
+    output='Error: '+e.message;
+    out.innerHTML=`<div class="out-error">✗ Runtime Error:</div><div class="out-error">${e.message}</div>`;
+    return;
+  }
+  if(success){
+    const key=currentLang+'-'+currentLesson;
+    const firstTime=!completedLessons[key];
+    completedLessons[key]=true;
+    out.innerHTML=`<div class="out-success">✓ Correct output!</div><div class="out-result" style="margin-top:0.5rem;">${output.replace(/\n/g,'<br>')}</div>`;
+    if(firstTime){addXP(lesson.xp,'Lesson complete!');}
+    renderTrackSidebar();
+    // Show quiz after short delay
+    setTimeout(()=>showQuiz(lesson),600);
+  }else{
+    out.innerHTML=`<div class="out-error">✗ Output mismatch</div><div style="margin-top:0.5rem;color:#7a9aba;">Got: <span class="out-result">${output||'(empty)'}</span></div><div style="margin-top:0.25rem;color:#7a9aba;">Expected: <span class="out-success">${lesson.expected}</span></div>`;
+  }
+}
+
+function simulateOutput(code,lesson,lang){
+  // Check if code matches expected patterns for each language
+  const exp=lesson.expected;
+  const codeLC=code.toLowerCase();
+  if(lang==='python'){
+    return code.includes('print(')&&(code.includes(exp)||checkPythonOutput(code,lesson));
+  }
+  if(lang==='rust'){return code.includes('println!');}
+  if(lang==='go'){return code.includes('fmt.Println');}
+  if(lang==='java'){return code.includes('System.out.println')&&code.includes(exp);}
+  if(lang==='cpp'){return code.includes('cout')&&code.includes(exp);}
+  if(lang==='sql'){return code.includes('console.log')&&code.includes(exp);}
+  return false;
+}
+
+function checkPythonOutput(code,lesson){
+  // Simulate Python print evaluation
+  const lines=code.split('\n');
+  const outputs=[];
+  for(const line of lines){
+    const m=line.match(/^\s*print\s*\((.+)\)\s*$/);
+    if(m){
+      try{
+        const val=m[1].replace(/'/g,'"');
+        // Handle string literals
+        const strMatch=val.match(/^"([^"]*)"$/);
+        if(strMatch)outputs.push(strMatch[1]);
+        // Handle variables - basic simulation
+        else outputs.push(eval(val));
+      }catch(e){}
+    }
+  }
+  return outputs.join('\n')===lesson.expected;
+}
+
+function simulatePartialOutput(code,lesson,lang){
+  if(!code.trim())return '';
+  // Best-effort guess
+  if(lang==='python'&&code.includes('print('))return'[Python output - check syntax]';
+  if(lang==='rust'&&code.includes('println!'))return lesson.expected;
+  if(lang==='go'&&code.includes('fmt.Println'))return lesson.expected;
+  if(lang==='java'&&code.includes('System.out.println')&&code.includes(lesson.expected))return lesson.expected;
+  if(lang==='cpp'&&code.includes('cout')&&code.includes(lesson.expected))return lesson.expected;
+  return 'Check your code and try again.';
+}
+
+function showQuiz(lesson){
+  if(!lesson.quiz)return;
+  const qs=document.getElementById('quiz-section');
+  qs.style.display='block';
+  document.getElementById('quiz-q').textContent=lesson.quiz.q;
+  const opts=document.getElementById('quiz-opts');
+  opts.innerHTML='';
+  lesson.quiz.opts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-opt';btn.textContent=opt;
+    btn.onclick=()=>{
+      document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+      if(i===lesson.quiz.ans){
+        btn.classList.add('correct');addXP(5,'Quiz correct!');
+      }else{
+        btn.classList.add('wrong');
+        document.querySelectorAll('.quiz-opt')[lesson.quiz.ans].classList.add('correct');
+      }
+    };
+    opts.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+window.onload=function(){
+  initChess();
+};
+</script>
+</body>
+</html>
