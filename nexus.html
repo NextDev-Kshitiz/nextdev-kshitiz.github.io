@@ -9,14 +9,12 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --neon-cyan:#00f5ff;--neon-gold:#ffd700;--neon-violet:#b44fff;--neon-green:#00ff88;
-  --neon-red:#ff4466;--neon-pink:#ff6eb4;
+  --neon-red:#ff4466;
   --bg-dark:#050810;--bg-panel:#0a0f1e;--bg-card:#0f1628;
   --border-glow:rgba(0,245,255,0.2);--text-primary:#e8f4ff;--text-muted:#4a6080;
   --font-display:'Orbitron',monospace;--font-mono:'Share Tech Mono',monospace;--font-body:'Exo 2',sans-serif;
 }
 html,body{height:100%;background:var(--bg-dark);color:var(--text-primary);font-family:var(--font-body);overflow-x:hidden;}
-
-/* Starfield canvas - CSS only stars for performance */
 .star-bg{position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse at 20% 50%,rgba(0,80,120,0.15) 0%,transparent 60%),
              radial-gradient(ellipse at 80% 20%,rgba(80,0,120,0.1) 0%,transparent 50%),var(--bg-dark);}
@@ -25,10 +23,7 @@ html,body{height:100%;background:var(--bg-dark);color:var(--text-primary);font-f
   background-size:60px 60px;}
 .scanlines{position:fixed;inset:0;pointer-events:none;z-index:1;
   background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.02) 3px,rgba(0,0,0,0.02) 4px);}
-
 #app{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;}
-
-/* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1.5rem;
   border-bottom:1px solid var(--border-glow);background:rgba(5,8,16,0.9);backdrop-filter:blur(20px);
   position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:0.5rem;}
@@ -42,19 +37,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
 .nav-xp{font-family:var(--font-mono);font-size:0.78rem;color:var(--neon-gold);display:flex;align-items:center;gap:0.5rem;flex-shrink:0;}
 .xp-bar-wrap{width:70px;height:5px;background:#1a2240;border-radius:3px;overflow:hidden;}
 .xp-bar{height:100%;background:linear-gradient(90deg,var(--neon-gold),var(--neon-violet));border-radius:3px;transition:width 0.5s;}
-
-/* PAGES */
 .page{display:none;flex:1;flex-direction:column;}
 .page.active{display:flex;}
-
-/* ── LANDING ── */
 #landing{align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;}
 .landing-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,4rem);font-weight:900;
   letter-spacing:0.1em;line-height:1.1;margin-bottom:0.75rem;
   background:linear-gradient(135deg,var(--neon-cyan) 0%,var(--neon-violet) 50%,var(--neon-gold) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .landing-sub{font-size:0.95rem;color:#5a7a9a;margin-bottom:2rem;font-family:var(--font-mono);}
-.mode-cards{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;max-width:1100px;}
+.mode-cards{display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;max-width:900px;}
 .mode-card{width:230px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:12px;
   padding:1.8rem 1.5rem;cursor:pointer;transition:transform 0.25s,border-color 0.25s,box-shadow 0.25s;
   position:relative;overflow:hidden;}
@@ -64,27 +55,21 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
 .chess-card .mode-title{color:var(--neon-gold);}
 .code-card .mode-title{color:var(--neon-cyan);}
 .action-card .mode-title{color:var(--neon-red);}
-.anniversary-card-card .mode-title{color:var(--neon-pink);}
 .mode-desc{color:#4a6a8a;font-size:0.82rem;line-height:1.5;margin-bottom:1rem;}
 .enter-btn{width:100%;padding:0.65rem;border:none;border-radius:6px;
   font-family:var(--font-display);font-size:0.75rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;}
 .chess-card .enter-btn{background:linear-gradient(135deg,#ffd700,#ff8c00);color:#000;}
 .code-card .enter-btn{background:linear-gradient(135deg,var(--neon-cyan),var(--neon-violet));color:#000;}
 .action-card .enter-btn{background:linear-gradient(135deg,var(--neon-red),#ff8c00);color:#fff;}
-.anniversary-card-card .enter-btn{background:linear-gradient(135deg,var(--neon-pink),var(--neon-violet));color:#fff;}
 .enter-btn:hover{filter:brightness(1.15);}
-
-/* ── CHESS MODE ── */
 #chess-mode{padding:1rem;gap:1rem;}
 .chess-layout{display:flex;flex:1;gap:1rem;align-items:flex-start;flex-wrap:wrap;}
 .chess-sidebar{width:210px;flex-shrink:0;display:flex;flex-direction:column;gap:0.75rem;}
 .chess-center{flex:1;min-width:260px;display:flex;flex-direction:column;align-items:center;gap:0.75rem;}
 .chess-right{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:0.75rem;}
-
 .panel{background:var(--bg-card);border:1px solid var(--border-glow);border-radius:10px;padding:1rem;}
 .panel-title{font-family:var(--font-display);font-size:0.65rem;letter-spacing:0.15em;color:var(--text-muted);
   text-transform:uppercase;margin-bottom:0.75rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border-glow);}
-
 #chess-board{display:grid;grid-template-columns:repeat(8,1fr);border:2px solid rgba(255,215,0,0.3);
   border-radius:4px;overflow:hidden;box-shadow:0 0 30px rgba(255,215,0,0.1);}
 .sq{width:62px;height:62px;display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -118,8 +103,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
 .diff-bar{width:14px;height:18px;border-radius:2px;background:#1a2240;transition:all 0.3s;}
 .diff-bar.active{background:var(--neon-gold);box-shadow:0 0 6px var(--neon-gold);}
 .captures{display:flex;flex-wrap:wrap;gap:2px;font-size:16px;min-height:20px;}
-
-/* ── CODE MODE ── */
 #code-mode{padding:0;}
 .code-header{display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;
   border-bottom:1px solid var(--border-glow);background:rgba(10,15,30,0.9);flex-wrap:wrap;}
@@ -178,8 +161,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
 .quiz-opt:hover{border-color:var(--neon-cyan);background:rgba(0,245,255,0.05);}
 .quiz-opt.correct{border-color:var(--neon-green);background:rgba(0,255,136,0.1);color:var(--neon-green);}
 .quiz-opt.wrong{border-color:#ff5555;background:rgba(255,85,85,0.1);color:#ff5555;}
-
-/* ── GAMES MODE ── */
 #games-mode{padding:1.5rem;flex-direction:column;}
 .games-grid{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem;}
 .game-card{width:200px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:10px;
@@ -191,68 +172,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
 .game-desc{font-size:0.75rem;color:#4a6a8a;}
 .game-area{flex:1;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:10px;
   display:flex;align-items:center;justify-content:center;min-height:400px;overflow:hidden;position:relative;}
-
-/* Snake */
 #snake-canvas{display:block;background:#050810;border-radius:8px;}
-/* Tetris */
 #tetris-canvas{display:block;background:#050810;border-radius:8px;}
-/* Breakout */
 #breakout-canvas{display:block;background:#050810;border-radius:8px;}
-
-.game-ui-overlay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;
-  font-family:var(--font-display);z-index:10;}
 .game-score-display{position:absolute;top:1rem;left:50%;transform:translateX(-50%);
   font-family:var(--font-mono);font-size:0.82rem;color:var(--neon-cyan);
   background:rgba(5,8,16,0.8);padding:0.4rem 1rem;border-radius:4px;border:1px solid var(--border-glow);}
-.game-start-btn{padding:0.7rem 2rem;border:2px solid var(--neon-red);border-radius:6px;
-  background:rgba(255,68,102,0.15);color:var(--neon-red);font-family:var(--font-display);font-size:0.9rem;
-  font-weight:700;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;}
-.game-start-btn:hover{background:rgba(255,68,102,0.3);}
 .game-instructions{font-family:var(--font-mono);font-size:0.72rem;color:#4a6a8a;margin-top:0.75rem;line-height:1.6;}
-
-/* ── ANNIVERSARY CARD ── */
-#anniversary-mode{align-items:center;justify-content:center;padding:2rem 1rem;flex-direction:column;}
-.anniversary-card{
-  width:min(600px,95vw);
-  background:linear-gradient(145deg,#0d0820,#1a0535,#0d0820);
-  border:2px solid rgba(255,110,180,0.4);border-radius:20px;
-  padding:3rem 2.5rem;text-align:center;position:relative;overflow:hidden;
-  box-shadow:0 0 60px rgba(255,110,180,0.15),0 0 120px rgba(180,79,255,0.08);}
-.anniversary-card::before{
-  content:'';position:absolute;inset:-50%;
-  background:conic-gradient(transparent 0deg,rgba(255,110,180,0.05) 90deg,transparent 180deg,rgba(180,79,255,0.05) 270deg,transparent 360deg);
-  animation:spin 20s linear infinite;pointer-events:none;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.card-hearts{font-size:1.8rem;margin-bottom:0.5rem;animation:heartbeat 1.5s ease-in-out infinite;}
-@keyframes heartbeat{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
-.card-title{font-family:var(--font-display);font-size:clamp(1.2rem,4vw,2rem);font-weight:900;
-  background:linear-gradient(135deg,var(--neon-pink),var(--neon-violet),var(--neon-gold));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  letter-spacing:0.08em;margin-bottom:0.5rem;line-height:1.2;}
-.card-subtitle{font-family:var(--font-mono);font-size:0.82rem;color:rgba(255,110,180,0.6);
-  letter-spacing:0.15em;margin-bottom:2rem;text-transform:uppercase;}
-.card-names{display:flex;align-items:center;justify-content:center;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap;}
-.name-block{background:rgba(255,110,180,0.08);border:1px solid rgba(255,110,180,0.25);border-radius:12px;padding:1.2rem 2rem;}
-.name-label{font-family:var(--font-mono);font-size:0.65rem;color:rgba(255,110,180,0.5);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.3rem;}
-.name-text{font-family:var(--font-display);font-size:clamp(1rem,3vw,1.4rem);font-weight:700;
-  color:var(--neon-pink);text-shadow:0 0 20px rgba(255,110,180,0.5);}
-.heart-divider{font-size:2rem;animation:heartbeat 1.5s ease-in-out infinite;}
-.card-message{font-size:1rem;color:#c8a8d8;line-height:1.8;margin-bottom:2rem;font-style:italic;}
-.card-message strong{color:var(--neon-gold);font-style:normal;}
-.card-flowers{font-size:1.5rem;letter-spacing:0.3rem;margin-bottom:1.5rem;opacity:0.8;}
-.card-year{font-family:var(--font-display);font-size:2.5rem;font-weight:900;
-  background:linear-gradient(135deg,var(--neon-gold),#ffa500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  margin-bottom:0.25rem;}
-.card-year-label{font-family:var(--font-mono);font-size:0.72rem;color:rgba(255,215,0,0.5);letter-spacing:0.2em;text-transform:uppercase;}
-.floating-hearts{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.fheart{position:absolute;font-size:1rem;opacity:0;animation:floatHeart var(--dur,8s) var(--delay,0s) ease-in infinite;}
-@keyframes floatHeart{0%{opacity:0;transform:translateY(100%) scale(0.5);}10%{opacity:0.6;}90%{opacity:0.3;}100%{opacity:0;transform:translateY(-100%) scale(1) rotate(20deg);}}
-.card-btn{margin-top:1.5rem;padding:0.75rem 2rem;border:1px solid rgba(255,110,180,0.4);border-radius:8px;
-  background:rgba(255,110,180,0.1);color:var(--neon-pink);font-family:var(--font-display);font-size:0.8rem;
-  font-weight:700;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;}
-.card-btn:hover{background:rgba(255,110,180,0.2);border-color:var(--neon-pink);}
-
-/* Modals */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;
   display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .modal{background:var(--bg-card);border:1px solid rgba(255,215,0,0.4);border-radius:12px;
@@ -263,17 +189,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
   font-size:2.5rem;border:1px solid rgba(255,215,0,0.3);border-radius:8px;cursor:pointer;
   background:var(--bg-panel);transition:all 0.2s;}
 .promo-piece:hover{border-color:var(--neon-gold);background:rgba(255,215,0,0.1);}
-
-/* XP Toast */
 .xp-toast{position:fixed;bottom:2rem;right:2rem;z-index:300;
   background:var(--bg-card);border:1px solid var(--neon-gold);border-radius:8px;
   padding:0.65rem 1rem;font-family:var(--font-mono);font-size:0.82rem;color:var(--neon-gold);
   box-shadow:0 0 20px rgba(255,215,0,0.2);opacity:0;transform:translateY(20px);
   transition:all 0.3s;pointer-events:none;}
 .xp-toast.show{opacity:1;transform:translateY(0);}
-
 .streak{display:flex;align-items:center;gap:0.3rem;font-family:var(--font-mono);font-size:0.78rem;color:var(--neon-gold);}
-
 @media(max-width:800px){
   .chess-layout{flex-direction:column;align-items:center;}
   .chess-sidebar,.chess-right{width:100%;max-width:500px;}
@@ -301,7 +223,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
       <button class="nav-btn" id="nav-chess" onclick="showPage('chess-mode');initChess()">CHESS</button>
       <button class="nav-btn" id="nav-code" onclick="showPage('code-mode');initCode()">CODE</button>
       <button class="nav-btn" id="nav-games" onclick="showPage('games-mode');initGames()">GAMES</button>
-      <button class="nav-btn" id="nav-anniversary" onclick="showPage('anniversary-mode')">💖 ANNIVERSARY</button>
     </div>
     <div class="nav-xp">
       ⚡<div class="xp-bar-wrap"><div class="xp-bar" id="xp-bar" style="width:0%"></div></div>
@@ -310,11 +231,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
     </div>
   </nav>
 
-  <!-- LANDING -->
   <div class="page" id="landing">
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;text-align:center;">
       <div class="landing-title">NEXUS PLATFORM</div>
-      <div class="landing-sub">// Chess · Code · Games · Celebration //</div>
+      <div class="landing-sub">// Chess · Code · Games //</div>
       <div class="mode-cards">
         <div class="mode-card chess-card" onclick="showPage('chess-mode');initChess()">
           <span class="mode-icon">♟</span>
@@ -334,17 +254,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
           <div class="mode-desc">Snake, Tetris, Breakout &amp; more arcade classics.</div>
           <button class="enter-btn">PLAY NOW →</button>
         </div>
-        <div class="mode-card anniversary-card-card" onclick="showPage('anniversary-mode')">
-          <span class="mode-icon">💖</span>
-          <div class="mode-title">ANNIVERSARY</div>
-          <div class="mode-desc">A special card for Harendra &amp; Arti Jain.</div>
-          <button class="enter-btn">VIEW CARD →</button>
-        </div>
       </div>
     </div>
   </div>
 
-  <!-- CHESS MODE -->
   <div class="page" id="chess-mode">
     <div class="chess-layout" style="padding:1rem;flex:1;">
       <div class="chess-sidebar">
@@ -398,7 +311,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
     </div>
   </div>
 
-  <!-- CODE MODE -->
   <div class="page" id="code-mode">
     <div class="code-header">
       <button class="back-btn" onclick="showPage('landing')">← BACK</button>
@@ -434,7 +346,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
     </div>
   </div>
 
-  <!-- GAMES MODE -->
   <div class="page" id="games-mode">
     <div style="padding:1rem 1.5rem;border-bottom:1px solid var(--border-glow);display:flex;align-items:center;gap:1rem;flex-shrink:0;">
       <button class="back-btn" onclick="stopAllGames();showPage('landing')">← BACK</button>
@@ -464,53 +375,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
         </div>
       </div>
       <div class="game-area" id="game-area">
-        <div class="game-ui-overlay" id="game-start-ui">
+        <div id="game-start-ui" style="text-align:center;">
           <div style="font-family:var(--font-display);font-size:1.2rem;color:var(--neon-red);margin-bottom:1rem;letter-spacing:0.1em;">SELECT A GAME</div>
           <div style="font-family:var(--font-mono);font-size:0.78rem;color:#4a6a8a;">Choose from the cards above to start playing</div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- ANNIVERSARY MODE -->
-  <div class="page" id="anniversary-mode">
-    <div style="padding:0.75rem 1.5rem;border-bottom:1px solid var(--border-glow);display:flex;align-items:center;gap:1rem;flex-shrink:0;">
-      <button class="back-btn" onclick="showPage('landing')">← BACK</button>
-    </div>
-    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:1.5rem;">
-      <div class="anniversary-card">
-        <div class="floating-hearts" id="floating-hearts"></div>
-        <div class="card-hearts">💖 💕 💖</div>
-        <div class="card-title">HAPPY ANNIVERSARY</div>
-        <div class="card-subtitle">✦ With all our love ✦</div>
-        <div class="card-names">
-          <div class="name-block">
-            <div class="name-label">Dad</div>
-            <div class="name-text">Harendra Jain</div>
-          </div>
-          <div class="heart-divider">💗</div>
-          <div class="name-block">
-            <div class="name-label">Mom</div>
-            <div class="name-text">Arti Jain</div>
-          </div>
-        </div>
-        <div class="card-flowers">🌹 🌺 🌸 🌼 🌺 🌹</div>
-        <div class="card-message">
-          Through every sunrise and every storm,<br>
-          your love has been our <strong>home</strong> and our <strong>strength</strong>.<br>
-          Two hearts, one beautiful journey —<br>
-          together, you have shown us what<br>
-          <strong>true love</strong> really means. 🌟
-        </div>
-        <div class="card-year" id="anniversary-year">♾</div>
-        <div class="card-year-label">Years of Love &amp; Togetherness</div>
-        <button class="card-btn" onclick="sendHearts()">💌 Send Love &amp; Wishes</button>
-      </div>
-    </div>
-  </div>
 </div>
 
-<!-- Promotion modal -->
 <div class="modal-overlay" id="promo-modal" style="display:none;">
   <div class="modal">
     <div class="modal-title">PROMOTE PAWN</div>
@@ -525,22 +398,16 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0.75re
 <div class="xp-toast" id="xp-toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
-// PAGE NAV — no heavy starfield animation
-// ═══════════════════════════════════════════════
 let activeGame=null,gameAnimId=null;
 function showPage(id){
   if(id!=='games-mode')stopAllGames();
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const map={landing:'nav-home','chess-mode':'nav-chess','code-mode':'nav-code','games-mode':'nav-games','anniversary-mode':'nav-anniversary'};
+  const map={landing:'nav-home','chess-mode':'nav-chess','code-mode':'nav-code','games-mode':'nav-games'};
   if(map[id])document.getElementById(map[id]).classList.add('active');
 }
 
-// ═══════════════════════════════════════════════
-// XP SYSTEM
-// ═══════════════════════════════════════════════
 let xp=0,streak=0,maxXP=1000;
 function addXP(amount,label){
   xp=Math.min(xp+amount,maxXP);streak++;
@@ -552,9 +419,6 @@ function addXP(amount,label){
   clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-// ═══════════════════════════════════════════════
-// CHESS ENGINE (optimised — AI runs via setTimeout to avoid blocking)
-// ═══════════════════════════════════════════════
 const PU={wK:'♔',wQ:'♕',wR:'♖',wB:'♗',wN:'♘',wP:'♙',bK:'♚',bQ:'♛',bR:'♜',bB:'♝',bN:'♞',bP:'♟'};
 const PV={P:100,N:320,B:330,R:500,Q:900,K:20000};
 const PST_P=[[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]];
@@ -597,9 +461,6 @@ function updateCaptures(){document.getElementById('cap-white').textContent=ch.ca
 function renderBoard(){const board=document.getElementById('chess-board');board.innerHTML='';const rows=ch.flipped?[0,1,2,3,4,5,6,7]:[7,6,5,4,3,2,1,0],cols=ch.flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];for(const r of rows){for(const c of cols){const sq=document.createElement('div');sq.className='sq '+((r+c)%2!==0?'light':'dark');const p=ch.board[r][c],isSel=ch.selected&&ch.selected[0]===r&&ch.selected[1]===c,isLegal=ch.legalSqs.some(([tr,tc])=>tr===r&&tc===c);if(isSel)sq.classList.add('selected');if(isLegal){if(p)sq.classList.add('legal-capture');else sq.classList.add('legal-move');}if(!ch.gameOver&&ch.turn){const k=findKing(ch.board,ch.turn);if(k&&k[0]===r&&k[1]===c&&isAttacked(ch.board,r,c,ch.turn==='w'?'b':'w'))sq.classList.add('check-sq');}if(p){const span=document.createElement('span');span.className='piece';span.textContent=PU[p];sq.appendChild(span);}if((!ch.flipped&&c===0)||(ch.flipped&&c===7)){const l=document.createElement('span');l.className='rank-label';l.textContent=8-r;sq.appendChild(l);}if((!ch.flipped&&r===0)||(ch.flipped&&r===7)){const l=document.createElement('span');l.className='file-label';l.textContent='abcdefgh'[c];sq.appendChild(l);}sq.onclick=()=>squareClick(r,c);board.appendChild(sq);}}}
 function renderHistory(){const ml=document.getElementById('move-list');ml.innerHTML='';for(let i=0;i<ch.history.length;i+=2){const row=document.createElement('div');row.className='move-row';row.innerHTML=`<span class="num">${i/2+1}.</span><span class="wm">${ch.history[i]?.notation||''}</span><span class="bm">${ch.history[i+1]?.notation||''}</span>`;ml.appendChild(row);}ml.scrollTop=ml.scrollHeight;}
 
-// ═══════════════════════════════════════════════
-// CODE ACADEMY
-// ═══════════════════════════════════════════════
 const LANGS=[{id:'python',name:'Python',color:'#3d85c8',icon:'🐍'},{id:'javascript',name:'JavaScript',color:'#f0db4f',icon:'⚡'},{id:'typescript',name:'TypeScript',color:'#007acc',icon:'🔷'},{id:'rust',name:'Rust',color:'#ce422b',icon:'⚙'},{id:'go',name:'Go',color:'#00acd7',icon:'🐹'},{id:'java',name:'Java',color:'#e76f00',icon:'☕'},{id:'cpp',name:'C++',color:'#6295cb',icon:'⚡'},{id:'sql',name:'SQL',color:'#e48e00',icon:'🗄'}];
 const CUR={python:[{title:'Hello World',prompt:'Print "Hello, NEXUS!" to the console.',hint:'print("Hello, NEXUS!")',starter:'# Python Hello World\nprint("Hello, NEXUS!")\n',expected:'Hello, NEXUS!',xp:10,quiz:{q:'Python output function?',opts:['console.log()','print()','echo()','puts()'],ans:1}},{title:'Variables & Types',prompt:'Variables: name="NEXUS", version=4.6, active=True. Print all.',hint:'print(name, version, active)',starter:'name = "NEXUS"\nversion = 4.6\nactive = True\nprint(name, version, active)\n',expected:'NEXUS 4.6 True',xp:15,quiz:{q:'Valid Python boolean?',opts:['true','TRUE','True','1==true'],ans:2}},{title:'Lists & Loops',prompt:'Loop over a list of 5 languages and print each.',hint:'for lang in languages: print(lang)',starter:'languages = ["Python","JavaScript","Rust","Go","Java"]\nfor lang in languages:\n    print(lang)\n',expected:'Python\nJavaScript\nRust\nGo\nJava',xp:20,quiz:{q:'First item of list L?',opts:['L(0)','L[1]','L[0]','L.first()'],ans:2}},{title:'Functions',prompt:'Write add(a,b) and print add(7,13).',hint:'def add(a, b): return a + b',starter:'def add(a, b):\n    return a + b\nprint(add(7, 13))\n',expected:'20',xp:25,quiz:{q:'Define a function in Python?',opts:['func','function','def','lambda'],ans:2}},{title:'Dictionaries',prompt:'Create dict with name,lang,xp and print lang.',hint:'d = {"lang": "Python"}',starter:'d = {"name":"Nexus","lang":"Python","xp":100}\nprint(d["lang"])\n',expected:'Python',xp:20,quiz:{q:'Access dict key?',opts:['d.key','d[key]','d->key','d.get[key]'],ans:1}}],javascript:[{title:'Hello Console',prompt:'Use console.log() to print "Hello from JS!"',hint:'console.log("Hello from JS!")',starter:'console.log("Hello from JS!");\n',expected:'Hello from JS!',xp:10,quiz:{q:'JS output function?',opts:['print()','echo()','console.log()','document.write()'],ans:2}},{title:'let & const',prompt:'Print PI * radius * radius for PI=3.14, radius=5.',hint:'console.log(PI * radius * radius)',starter:'const PI = 3.14;\nlet radius = 5;\nconsole.log(PI * radius * radius);\n',expected:'78.5',xp:15,quiz:{q:'Cannot be reassigned?',opts:['let','var','const','all can'],ans:2}},{title:'Arrow Functions',prompt:'Arrow fn square = n => n*n, log square(9).',hint:'const square = n => n * n;',starter:'const square = n => n * n;\nconsole.log(square(9));\n',expected:'81',xp:20,quiz:{q:'Arrow function syntax?',opts:['function(x){return x+1}','x => x+1','fn x: x+1','lambda x: x+1'],ans:1}},{title:'Array Methods',prompt:'Double [1,2,3,4,5] with .map() and log joined.',hint:'[1,2,3,4,5].map(x => x * 2)',starter:'const nums = [1,2,3,4,5];\nconsole.log(nums.map(x=>x*2).join(","));\n',expected:'2,4,6,8,10',xp:25,quiz:{q:'.filter() does?',opts:['Transforms each','Removes failing test','Sums elements','Sorts'],ans:1}}],rust:[{title:'Hello World',prompt:'Print "Ferris says hello!" using println!',hint:'println!("Ferris says hello!");',starter:'fn main() {\n    println!("Ferris says hello!");\n}\n',expected:'Ferris says hello!',xp:10,quiz:{q:'Rust output macro?',opts:['print()','println!','console.log','fmt.Println'],ans:1}},{title:'Ownership',prompt:'Declare String::from("NEXUS") and print it.',hint:'println!("{}", s);',starter:'fn main() {\n    let s = String::from("NEXUS");\n    println!("{}", s);\n}\n',expected:'NEXUS',xp:20,quiz:{q:'Rust safety feature?',opts:['Garbage collection','Ownership','Manual memory','Ref counting'],ans:1}}],go:[{title:'Hello World',prompt:'Print "Go is fast!" with fmt.Println.',hint:'fmt.Println("Go is fast!")',starter:'package main\nimport "fmt"\nfunc main() {\n    fmt.Println("Go is fast!")\n}\n',expected:'Go is fast!',xp:10,quiz:{q:'Go output package?',opts:['sys','fmt','io','print'],ans:1}}],java:[{title:'Hello World',prompt:'Print "Java is everywhere!" in main.',hint:'System.out.println("Java is everywhere!");',starter:'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Java is everywhere!");\n    }\n}\n',expected:'Java is everywhere!',xp:10,quiz:{q:'Java print statement?',opts:['print()','console.log()','System.out.println()','echo()'],ans:2}}],typescript:[{title:'Typed Variables',prompt:'Declare const msg:string and log it.',hint:'const msg: string = "TypeScript rocks!";',starter:'const msg: string = "TypeScript rocks!";\nconsole.log(msg);\n',expected:'TypeScript rocks!',xp:10,quiz:{q:'TypeScript is superset of?',opts:['Java','Python','JavaScript','C++'],ans:2}}],cpp:[{title:'Hello World',prompt:'Print "Power of C++!" using cout.',hint:'cout << "Power of C++!" << endl;',starter:'#include <iostream>\nusing namespace std;\nint main() {\n    cout << "Power of C++!" << endl;\n    return 0;\n}\n',expected:'Power of C++!',xp:10,quiz:{q:'C++ output operator?',opts:['<<','>>','->','::'],ans:0}}],sql:[{title:'SELECT Basics',prompt:'Print: All users retrieved.',hint:'SELECT * FROM users',starter:'console.log("All users retrieved");\n',expected:'All users retrieved',xp:10,quiz:{q:'SQL SELECT does?',opts:['Delete data','Update data','Read/query data','Create tables'],ans:2}}]};
 let curLang='python',curLesson=0,completedLessons={};
@@ -614,14 +475,10 @@ function checkPy(code,lesson){const lines=code.split('\n'),outs=[];for(const lin
 function partialOutput(code,lesson,lang){if(!code.trim())return'';if(lang==='rust'&&code.includes('println!'))return lesson.expected;if(lang==='go'&&code.includes('fmt.Println'))return lesson.expected;if(lang==='java'&&code.includes('System.out.println')&&code.includes(lesson.expected))return lesson.expected;if(lang==='cpp'&&code.includes('cout')&&code.includes(lesson.expected))return lesson.expected;return'Check syntax and try again.';}
 function showQuiz(lesson){if(!lesson.quiz)return;document.getElementById('quiz-section').style.display='block';document.getElementById('quiz-q').textContent=lesson.quiz.q;const opts=document.getElementById('quiz-opts');opts.innerHTML='';lesson.quiz.opts.forEach((opt,i)=>{const btn=document.createElement('button');btn.className='quiz-opt';btn.textContent=opt;btn.onclick=()=>{document.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);if(i===lesson.quiz.ans){btn.classList.add('correct');addXP(5,'Quiz!');}else{btn.classList.add('wrong');document.querySelectorAll('.quiz-opt')[lesson.quiz.ans].classList.add('correct');}};opts.appendChild(btn);});}
 
-// ═══════════════════════════════════════════════
-// ACTION GAMES
-// ═══════════════════════════════════════════════
-function initGames(){stopAllGames();document.querySelectorAll('.game-card').forEach(c=>c.classList.remove('active-game'));document.getElementById('game-area').innerHTML='<div class="game-ui-overlay" id="game-start-ui"><div style="font-family:var(--font-display);font-size:1.2rem;color:var(--neon-red);margin-bottom:1rem;letter-spacing:0.1em;">SELECT A GAME</div><div style="font-family:var(--font-mono);font-size:0.78rem;color:#4a6a8a;">Choose from the cards above</div></div>';}
+function initGames(){stopAllGames();document.querySelectorAll('.game-card').forEach(c=>c.classList.remove('active-game'));document.getElementById('game-area').innerHTML='<div id="game-start-ui" style="text-align:center;"><div style="font-family:var(--font-display);font-size:1.2rem;color:var(--neon-red);margin-bottom:1rem;letter-spacing:0.1em;">SELECT A GAME</div><div style="font-family:var(--font-mono);font-size:0.78rem;color:#4a6a8a;">Choose from the cards above</div></div>';}
 function stopAllGames(){if(gameAnimId){cancelAnimationFrame(gameAnimId);gameAnimId=null;}activeGame=null;}
 function selectGame(game){stopAllGames();document.querySelectorAll('.game-card').forEach(c=>c.classList.remove('active-game'));document.getElementById('gc-'+game).classList.add('active-game');activeGame=game;if(game==='snake')initSnake();else if(game==='tetris')initTetris();else if(game==='breakout')initBreakout();else if(game==='dodge')initDodge();}
 
-// ─── SNAKE ───
 let snakeState=null;
 function initSnake(){const area=document.getElementById('game-area');const W=360,H=360,SZ=18;area.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:0.75rem;"><div class="game-score-display" style="position:relative;top:auto;left:auto;transform:none;" id="snake-score">Score: 0</div><canvas id="snake-canvas" width="${W}" height="${H}"></canvas><div class="game-instructions">Arrow Keys or WASD to move</div></div>`;
 const canvas=document.getElementById('snake-canvas'),ctx=canvas.getContext('2d');
@@ -635,7 +492,6 @@ function snakeKeyHandler(e){if(!snakeState||!snakeState.alive)return;const k={Ar
 function spawnSnakeFood(){const s=snakeState;let f;do{f={x:Math.floor(Math.random()*s.cols),y:Math.floor(Math.random()*s.rows)};}while(s.snake.some(seg=>seg.x===f.x&&seg.y===f.y));s.food=f;}
 function drawSnake(ctx,dead=false){const s=snakeState,{SZ,W,H}=s;ctx.fillStyle='#050810';ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(0,245,255,0.05)';for(let x=0;x<W;x+=SZ){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=SZ){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}s.snake.forEach((seg,i)=>{ctx.fillStyle=i===0?(dead?'#ff4466':'#00ff88'):`rgba(0,${200-i*3},${100+i*2},${1-i*0.02})`;ctx.fillRect(seg.x*SZ+1,seg.y*SZ+1,SZ-2,SZ-2);});ctx.fillStyle='#ffd700';ctx.shadowColor='#ffd700';ctx.shadowBlur=10;ctx.fillRect(s.food.x*SZ+2,s.food.y*SZ+2,SZ-4,SZ-4);ctx.shadowBlur=0;if(dead){ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff4466';ctx.font='bold 24px Orbitron';ctx.textAlign='center';ctx.fillText('GAME OVER',W/2,H/2-15);ctx.fillStyle='#00f5ff';ctx.font='14px Share Tech Mono';ctx.fillText('Score: '+s.score+'  — Click to restart',W/2,H/2+15);}}
 
-// ─── TETRIS ───
 function initTetris(){const area=document.getElementById('game-area');const W=200,H=400,BW=20;area.innerHTML=`<div style="display:flex;gap:1.5rem;align-items:flex-start;"><div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;"><div class="game-score-display" style="position:relative;top:auto;left:auto;transform:none;" id="tet-score">Score: 0</div><canvas id="tetris-canvas" width="${W}" height="${H}"></canvas><div class="game-instructions">← → move · ↑ rotate · ↓ drop<br>Space = hard drop</div></div><div style="font-family:var(--font-mono);font-size:0.75rem;color:#4a6a8a;padding-top:2rem;"><div style="color:var(--neon-cyan);margin-bottom:0.5rem;">NEXT</div><canvas id="tet-next" width="80" height="80"></canvas><div style="margin-top:1rem;color:var(--text-muted);">Lines: <span id="tet-lines">0</span></div></div></div>`;
 const canvas=document.getElementById('tetris-canvas'),ctx=canvas.getContext('2d'),nctx=document.getElementById('tet-next').getContext('2d');
 const PIECES=[[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[1,1,0],[0,1,1]],[[0,1,1],[1,1,0]],[[1,0],[1,1],[0,1]],[[0,1],[1,1],[1,0]]];
@@ -655,7 +511,6 @@ function tetKeyHandler(e){if(!activeGame||activeGame!=='tetris'||tOver)return;if
 function tetLoop(ts){if(!activeGame||activeGame!=='tetris'){document.removeEventListener('keydown',tetKeyHandler);return;}gameAnimId=requestAnimationFrame(tetLoop);if(tOver||ts-tLastTime<tDrop)return;tLastTime=ts;if(canPlace(tPiece,0,1))tPiece.y++;else lockPiece();drawTetris();}
 gameAnimId=requestAnimationFrame(tetLoop);}
 
-// ─── BREAKOUT ───
 function initBreakout(){const area=document.getElementById('game-area');const W=480,H=360;area.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;"><div class="game-score-display" style="position:relative;top:auto;left:auto;transform:none;" id="bo-score">Score: 0 | Lives: ❤❤❤</div><canvas id="breakout-canvas" width="${W}" height="${H}"></canvas><div class="game-instructions">← → Arrow Keys or Mouse to move paddle</div></div>`;
 const canvas=document.getElementById('breakout-canvas'),ctx=canvas.getContext('2d');
 let bricks=[],boScore=0,boLives=3,boOver=false,boStarted=false;
@@ -675,7 +530,6 @@ document.addEventListener('keyup',e=>{if(e.key==='ArrowLeft')boKeys.left=false;i
 function boLoop(){if(!activeGame||activeGame!=='breakout'){document.removeEventListener('keydown',boKeyHandler);return;}gameAnimId=requestAnimationFrame(boLoop);ctx.fillStyle='#050810';ctx.fillRect(0,0,W,H);if(!boStarted){ctx.fillStyle='#00f5ff';ctx.font='bold 18px Orbitron';ctx.textAlign='center';ctx.fillText('BREAKOUT',W/2,H/2-30);ctx.fillStyle='#ffd700';ctx.font='13px Share Tech Mono';ctx.fillText('Click to Start',W/2,H/2);return;}if(mouseX!==null){PAD.x=Math.max(0,Math.min(W-PAD.w,mouseX-PAD.w/2));}if(boKeys.left)PAD.x=Math.max(0,PAD.x-PAD.speed);if(boKeys.right)PAD.x=Math.min(W-PAD.w,PAD.x+PAD.speed);if(!boOver){BALL.x+=BALL.dx;BALL.y+=BALL.dy;if(BALL.x-BALL.r<0||BALL.x+BALL.r>W)BALL.dx=-BALL.dx;if(BALL.y-BALL.r<0)BALL.dy=-BALL.dy;if(BALL.y+BALL.r>BALL.y&&BALL.x>PAD.x&&BALL.x<PAD.x+PAD.w&&BALL.y+BALL.r>PAD.y&&BALL.y+BALL.r<PAD.y+PAD.h+10){BALL.dy=-Math.abs(BALL.dy);BALL.dx+=((BALL.x-(PAD.x+PAD.w/2))/(PAD.w/2))*2;}if(BALL.y+BALL.r>H){boLives--;if(boLives<=0){boOver=true;}else{BALL.x=W/2;BALL.y=H/2;BALL.dy=-4;document.getElementById('bo-score').textContent=`Score: ${boScore} | Lives: ${'❤'.repeat(boLives)}`;}}for(const b of bricks){if(!b.alive)continue;if(BALL.x+BALL.r>b.x&&BALL.x-BALL.r<b.x+BW&&BALL.y+BALL.r>b.y&&BALL.y-BALL.r<b.y+BH){b.alive=false;BALL.dy=-BALL.dy;boScore+=10;document.getElementById('bo-score').textContent=`Score: ${boScore} | Lives: ${'❤'.repeat(boLives)}`;break;}}}bricks.forEach(b=>{if(!b.alive)return;ctx.fillStyle=b.color;ctx.fillRect(b.x,b.y,BW,BH);ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fillRect(b.x,b.y,BW,3);});ctx.fillStyle='#00f5ff';ctx.shadowColor='#00f5ff';ctx.shadowBlur=8;ctx.fillRect(PAD.x,PAD.y,PAD.w,PAD.h);ctx.shadowBlur=0;ctx.beginPath();ctx.arc(BALL.x,BALL.y,BALL.r,0,Math.PI*2);ctx.fillStyle='#ffd700';ctx.shadowColor='#ffd700';ctx.shadowBlur=10;ctx.fill();ctx.shadowBlur=0;if(boOver){ctx.fillStyle='rgba(0,0,0,0.65)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff4466';ctx.font='bold 22px Orbitron';ctx.textAlign='center';ctx.fillText(bricks.every(b=>!b.alive)?'YOU WIN! 🏆':'GAME OVER',W/2,H/2-15);ctx.fillStyle='#00f5ff';ctx.font='13px Share Tech Mono';ctx.fillText('Score: '+boScore+' — Click to restart',W/2,H/2+15);}if(bricks.every(b=>!b.alive)&&!boOver){boOver=true;}}
 gameAnimId=requestAnimationFrame(boLoop);}
 
-// ─── DODGE ───
 function initDodge(){const area=document.getElementById('game-area');const W=400,H=400;area.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:0.5rem;"><div class="game-score-display" style="position:relative;top:auto;left:auto;transform:none;" id="dg-score">Score: 0</div><canvas id="dodge-canvas" width="${W}" height="${H}"></canvas><div class="game-instructions">← → Arrow Keys or Mouse to dodge meteors</div></div>`;
 const canvas=document.getElementById('dodge-canvas'),ctx=canvas.getContext('2d');
 let dgScore=0,dgOver=false,dgStarted=false,meteors=[],dgLastTime=0,dgSpawnTime=0,dgInterval=1200,dgPlayer={x:W/2,y:H-50,w:30,h:30},dgSpeed=5,dgKeys={};
@@ -687,40 +541,9 @@ canvas.addEventListener('click',()=>{if(!dgStarted||dgOver){dgStarted=true;if(dg
 function dgLoop(ts){if(!activeGame||activeGame!=='dodge')return;gameAnimId=requestAnimationFrame(dgLoop);const dt=ts-dgLastTime;dgLastTime=ts;ctx.fillStyle='#050810';ctx.fillRect(0,0,W,H);if(!dgStarted){ctx.fillStyle='#ff4466';ctx.font='bold 18px Orbitron';ctx.textAlign='center';ctx.fillText('DODGE',W/2,H/2-30);ctx.fillStyle='#ffd700';ctx.font='13px Share Tech Mono';ctx.fillText('Click to Start',W/2,H/2);return;}if(!dgOver){if(dgMouseX!==null)dgPlayer.x=Math.max(dgPlayer.w/2,Math.min(W-dgPlayer.w/2,dgMouseX));if(dgKeys.left)dgPlayer.x=Math.max(dgPlayer.w/2,dgPlayer.x-dgSpeed);if(dgKeys.right)dgPlayer.x=Math.min(W-dgPlayer.w/2,dgPlayer.x+dgSpeed);dgSpawnTime+=dt;if(dgSpawnTime>dgInterval){meteors.push({x:Math.random()*(W-30)+15,y:-20,r:8+Math.random()*12,speed:2+Math.random()*3,rot:0,rotSpeed:(Math.random()-0.5)*0.2});dgSpawnTime=0;dgInterval=Math.max(300,dgInterval-5);}meteors.forEach(m=>{m.y+=m.speed;m.rot+=m.rotSpeed;});meteors=meteors.filter(m=>m.y<H+30);dgScore+=0.05;document.getElementById('dg-score').textContent='Score: '+Math.floor(dgScore);for(const m of meteors){const dx=m.x-dgPlayer.x,dy=m.y-(dgPlayer.y-dgPlayer.h/2);if(Math.sqrt(dx*dx+dy*dy)<m.r+dgPlayer.w/2-5){dgOver=true;break;}}}meteors.forEach(m=>{ctx.save();ctx.translate(m.x,m.y);ctx.rotate(m.rot);ctx.fillStyle='#ff8c00';ctx.shadowColor='#ff4466';ctx.shadowBlur=10;ctx.font=`${m.r*2}px serif`;ctx.textAlign='center';ctx.fillText('☄',0,m.r);ctx.shadowBlur=0;ctx.restore();});ctx.fillStyle='#00f5ff';ctx.shadowColor='#00f5ff';ctx.shadowBlur=15;ctx.font='28px serif';ctx.textAlign='center';ctx.fillText('🚀',dgPlayer.x,dgPlayer.y);ctx.shadowBlur=0;if(dgOver){ctx.fillStyle='rgba(0,0,0,0.65)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff4466';ctx.font='bold 22px Orbitron';ctx.textAlign='center';ctx.fillText('GAME OVER',W/2,H/2-15);ctx.fillStyle='#00f5ff';ctx.font='13px Share Tech Mono';ctx.fillText('Score: '+Math.floor(dgScore)+' — Click to restart',W/2,H/2+15);}}
 gameAnimId=requestAnimationFrame(dgLoop);}
 
-// ═══════════════════════════════════════════════
-// ANNIVERSARY CARD
-// ═══════════════════════════════════════════════
-function initAnniversaryCard(){
-  const container=document.getElementById('floating-hearts');
-  container.innerHTML='';
-  const emojis=['💖','💗','💕','💞','🌹','✨','💫','🌸'];
-  for(let i=0;i<12;i++){
-    const h=document.createElement('div');
-    h.className='fheart';
-    h.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    h.style.cssText=`left:${Math.random()*100}%;--dur:${6+Math.random()*8}s;--delay:${Math.random()*6}s;font-size:${0.8+Math.random()*1}rem;`;
-    container.appendChild(h);
-  }
-}
-function sendHearts(){
-  const btn=event.target;btn.textContent='💌 Sent with Love! 💖';btn.style.color='var(--neon-green)';btn.style.borderColor='var(--neon-green)';
-  addXP(20,'Anniversary Wishes!');
-  setTimeout(()=>{btn.textContent='💌 Send Love & Wishes';btn.style.color='';btn.style.borderColor='';},3000);
-}
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
 window.addEventListener('load',function(){
   showPage('landing');
   initChess();
-  initAnniversaryCard();
-  // Keyboard guard: stop game keys from interfering with chess/code
-  document.addEventListener('keydown',e=>{
-    if(activeGame&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)){
-      // only preventDefault inside game canvas
-    }
-  });
 });
 </script>
 </body>
