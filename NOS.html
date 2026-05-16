@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>N.O.S — Nitrogen Oxidiser System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ BOOT SCREEN ══ -->
+<div id="bootScreen" class="boot-screen active">
+  <canvas id="bootCanvas"></canvas>
+  <div class="boot-content">
+    <div class="boot-logo">
+      <div class="boot-logo-ring ring1"></div>
+      <div class="boot-logo-ring ring2"></div>
+      <div class="boot-logo-ring ring3"></div>
+      <div class="boot-logo-core">
+        <span class="nos-text">N.O.S</span>
+      </div>
+    </div>
+    <div class="boot-title">NITROGEN OXIDISER SYSTEM</div>
+    <div class="boot-version">BUILD 2.9.1 — CLASSIFIED</div>
+    <div class="boot-logs" id="bootLogs"></div>
+    <div class="boot-progress-wrap">
+      <div class="boot-progress-bar"><div class="boot-progress-fill" id="bootProgress"></div></div>
+      <div class="boot-progress-pct" id="bootPct">0%</div>
+    </div>
+    <div class="boot-status" id="bootStatus">INITIALIZING CORE SYSTEMS...</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ LOGIN SCREEN ══ -->
+<div id="loginScreen" class="login-screen">
+  <canvas id="loginCanvas"></canvas>
+  <div class="login-content">
+    <div class="login-header">
+      <div class="login-logo">N.O.S</div>
+      <div class="login-subtitle">NITROGEN OXIDISER SYSTEM</div>
+    </div>
+    <div class="login-panel">
+      <div class="scan-container">
+        <div class="face-scan">
+          <div class="scan-line"></div>
+          <div class="scan-corners">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+          </div>
+          <div class="scan-user-icon"><i class="fas fa-user-astronaut"></i></div>
+          <div class="scan-label" id="scanLabel">SCANNING IDENTITY...</div>
+        </div>
+      </div>
+      <div class="login-options">
+        <div class="login-input-wrap">
+          <input type="password" id="loginInput" class="login-input" placeholder="ACCESS CODE" maxlength="20">
+          <button class="login-btn" id="loginBtn" onclick="attemptLogin()"><i class="fas fa-unlock-alt"></i> AUTHENTICATE</button>
+        </div>
+        <div class="login-divider"><span>OR</span></div>
+        <button class="guest-btn" onclick="guestLogin()"><i class="fas fa-user-secret"></i> GUEST ACCESS</button>
+      </div>
+      <div class="login-hint">Say <span class="hint-phrase">"Nitrogen Oxidiser"</span> to wake the system</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ MAIN OS ══ -->
+<div id="mainOS" class="main-os">
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">N.O.S</div>
+      <div class="topbar-sep"></div>
+      <div class="topbar-time" id="topbarTime">00:00:00</div>
+      <div class="topbar-date" id="topbarDate">--</div>
+    </div>
+    <div class="topbar-center">
+      <div class="topbar-status-dot"></div>
+      <span id="topbarStatus">SYSTEM NOMINAL</span>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon" onclick="toggleMute()" title="Mute"><i class="fas fa-volume-up" id="muteIcon"></i></div>
+      <div class="topbar-icon" id="voiceBtn" onclick="toggleVoiceRecognition()" title="Voice">
+        <i class="fas fa-microphone" id="micIcon"></i>
+      </div>
+      <div class="topbar-icon" onclick="showPanel('notifPanel')" title="Alerts"><i class="fas fa-bell"></i><span class="badge" id="notifBadge">3</span></div>
+      <div class="topbar-icon" onclick="shutdownOS()" title="Shutdown"><i class="fas fa-power-off"></i></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-item active" onclick="switchView('dashboard')" title="Dashboard"><i class="fas fa-th-large"></i><span>Dashboard</span></div>
+    <div class="sidebar-item" onclick="switchView('terminal')" title="Terminal"><i class="fas fa-terminal"></i><span>Terminal</span></div>
+    <div class="sidebar-item" onclick="switchView('launcher')" title="Launch"><i class="fas fa-rocket"></i><span>Launch</span></div>
+    <div class="sidebar-item" onclick="switchView('ai')" title="AI Core"><i class="fas fa-brain"></i><span>AI Core</span></div>
+    <div class="sidebar-item" onclick="switchView('radar')" title="Radar"><i class="fas fa-satellite-dish"></i><span>Radar</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-item" onclick="showPanel('settingsPanel')" title="Settings"><i class="fas fa-sliders-h"></i><span>Settings</span></div>
+  </div>
+
+  <!-- ── VIEWS ────────────────────────────────────────────── -->
+
+  <!-- DASHBOARD VIEW -->
+  <div class="view active" id="view-dashboard">
+    <div class="dashboard-grid">
+
+      <!-- Clock widget -->
+      <div class="widget widget-clock">
+        <div class="widget-header"><i class="fas fa-clock"></i> CHRONOMETER</div>
+        <div class="clock-display" id="clockDisplay">00:00:00</div>
+        <div class="clock-date" id="clockDate">SATURDAY · MAY 16 · 2026</div>
+        <div class="clock-ring"></div>
+      </div>
+
+      <!-- System metrics -->
+      <div class="widget widget-metrics">
+        <div class="widget-header"><i class="fas fa-microchip"></i> SYSTEM METRICS</div>
+        <div class="metric-row">
+          <span class="metric-label">CPU</span>
+          <div class="metric-bar"><div class="metric-fill cpu-fill" id="cpuFill"></div></div>
+          <span class="metric-val" id="cpuVal">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">RAM</span>
+          <div class="metric-bar"><div class="metric-fill ram-fill" id="ramFill"></div></div>
+          <span class="metric-val" id="ramVal">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">NET</span>
+          <div class="metric-bar"><div class="metric-fill net-fill" id="netFill"></div></div>
+          <span class="metric-val" id="netVal">--</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">GPU</span>
+          <div class="metric-bar"><div class="metric-fill gpu-fill" id="gpuFill"></div></div>
+          <span class="metric-val" id="gpuVal">--</span>
+        </div>
+      </div>
+
+      <!-- AI Monitor -->
+      <div class="widget widget-ai-monitor">
+        <div class="widget-header"><i class="fas fa-brain"></i> AI ACTIVITY MONITOR</div>
+        <canvas id="aiActivityChart" width="280" height="100"></canvas>
+        <div class="ai-status-row">
+          <div class="ai-status-dot active-dot"></div>
+          <span id="aiMonitorStatus">NEURAL NETWORK ACTIVE</span>
+        </div>
+      </div>
+
+      <!-- Weather -->
+      <div class="widget widget-weather">
+        <div class="widget-header"><i class="fas fa-satellite"></i> ENVIRONMENT SCAN</div>
+        <div class="weather-main">
+          <div class="weather-icon"><i class="fas fa-cloud-sun"></i></div>
+          <div class="weather-temp">28°C</div>
+        </div>
+        <div class="weather-desc">NEW DELHI · PARTLY CLOUDY</div>
+        <div class="weather-stats">
+          <div class="w-stat"><i class="fas fa-wind"></i> 12 km/h</div>
+          <div class="w-stat"><i class="fas fa-tint"></i> 65%</div>
+          <div class="w-stat"><i class="fas fa-eye"></i> 10 km</div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="widget widget-notif">
+        <div class="widget-header"><i class="fas fa-bell"></i> SIGNAL INTERCEPTS</div>
+        <div class="notif-list" id="notifList">
+          <div class="notif-item"><div class="notif-dot"></div><span>AI Core fully initialized</span></div>
+          <div class="notif-item"><div class="notif-dot warn"></div><span>Voice recognition standby</span></div>
+          <div class="notif-item"><div class="notif-dot info"></div><span>Network uplink established</span></div>
+        </div>
+      </div>
+
+      <!-- Music Player -->
+      <div class="widget widget-music">
+        <div class="widget-header"><i class="fas fa-music"></i> AUDIO MATRIX</div>
+        <div class="music-visualizer" id="musicViz">
+          <div class="viz-bar" style="--h:60%"></div><div class="viz-bar" style="--h:80%"></div>
+          <div class="viz-bar" style="--h:40%"></div><div class="viz-bar" style="--h:90%"></div>
+          <div class="viz-bar" style="--h:55%"></div><div class="viz-bar" style="--h:75%"></div>
+          <div class="viz-bar" style="--h:30%"></div><div class="viz-bar" style="--h:85%"></div>
+          <div class="viz-bar" style="--h:50%"></div><div class="viz-bar" style="--h:70%"></div>
+        </div>
+        <div class="music-track">SYSTEM AMBIENT LOOP v3.1</div>
+        <div class="music-controls">
+          <button class="music-btn" onclick="musicControl('prev')"><i class="fas fa-step-backward"></i></button>
+          <button class="music-btn music-play" id="musicPlayBtn" onclick="musicControl('play')"><i class="fas fa-play" id="musicPlayIcon"></i></button>
+          <button class="music-btn" onclick="musicControl('next')"><i class="fas fa-step-forward"></i></button>
+        </div>
+        <div class="music-open-btn" onclick="openSite('spotify')"><i class="fab fa-spotify"></i> OPEN SPOTIFY</div>
+      </div>
+
+      <!-- Quick Launch -->
+      <div class="widget widget-launch">
+        <div class="widget-header"><i class="fas fa-rocket"></i> QUICK LAUNCH</div>
+        <div class="launch-grid">
+          <div class="launch-item" onclick="openSite('youtube')"><i class="fab fa-youtube"></i><span>YouTube</span></div>
+          <div class="launch-item" onclick="openSite('github')"><i class="fab fa-github"></i><span>GitHub</span></div>
+          <div class="launch-item" onclick="openSite('chatgpt')"><i class="fas fa-robot"></i><span>ChatGPT</span></div>
+          <div class="launch-item" onclick="openSite('gmail')"><i class="fas fa-envelope"></i><span>Gmail</span></div>
+          <div class="launch-item" onclick="openSite('netflix')"><i class="fab fa-netflix"></i><span>Netflix</span></div>
+          <div class="launch-item" onclick="openSite('discord')"><i class="fab fa-discord"></i><span>Discord</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TERMINAL VIEW -->
+  <div class="view" id="view-terminal">
+    <div class="terminal-wrap">
+      <div class="terminal-titlebar">
+        <span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span>
+        <span class="term-title">N.O.S — CYBER TERMINAL v2.9</span>
+        <button class="term-clear-btn" onclick="terminalClear()">CLEAR</button>
+      </div>
+      <div class="terminal-output" id="termOutput"></div>
+      <div class="terminal-input-row">
+        <span class="term-prompt">nos@system:~$</span>
+        <input type="text" class="term-input" id="termInput" placeholder="enter command..." autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+  </div>
+
+  <!-- LAUNCHER VIEW -->
+  <div class="view" id="view-launcher">
+    <div class="launcher-wrap">
+      <div class="launcher-title">MISSION CONTROL — SITE LAUNCHER</div>
+      <div class="launcher-subtitle">SELECT TARGET TO DEPLOY</div>
+      <div class="launcher-apps">
+        <div class="app-card" onclick="openSite('spotify')">
+          <div class="app-icon"><i class="fab fa-spotify"></i></div>
+          <div class="app-name">SPOTIFY</div>
+          <div class="app-status">MUSIC STREAM</div>
+        </div>
+        <div class="app-card" onclick="openSite('youtube')">
+          <div class="app-icon"><i class="fab fa-youtube"></i></div>
+          <div class="app-name">YOUTUBE</div>
+          <div class="app-status">VIDEO STREAM</div>
+        </div>
+        <div class="app-card" onclick="openSite('github')">
+          <div class="app-icon"><i class="fab fa-github"></i></div>
+          <div class="app-name">GITHUB</div>
+          <div class="app-status">CODE REPOSITORY</div>
+        </div>
+        <div class="app-card" onclick="openSite('gmail')">
+          <div class="app-icon"><i class="fas fa-envelope"></i></div>
+          <div class="app-name">GMAIL</div>
+          <div class="app-status">COMMUNICATIONS</div>
+        </div>
+        <div class="app-card" onclick="openSite('chatgpt')">
+          <div class="app-icon"><i class="fas fa-robot"></i></div>
+          <div class="app-name">CHATGPT</div>
+          <div class="app-status">AI INTERFACE</div>
+        </div>
+        <div class="app-card" onclick="openSite('netflix')">
+          <div class="app-icon"><i class="fab fa-netflix"></i></div>
+          <div class="app-name">NETFLIX</div>
+          <div class="app-status">ENTERTAINMENT</div>
+        </div>
+        <div class="app-card" onclick="openSite('discord')">
+          <div class="app-icon"><i class="fab fa-discord"></i></div>
+          <div class="app-name">DISCORD</div>
+          <div class="app-status">COMMS HUB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI CORE VIEW -->
+  <div class="view" id="view-ai">
+    <div class="ai-core-wrap">
+      <div class="ai-orb-container">
+        <div class="ai-orb-ring or1"></div>
+        <div class="ai-orb-ring or2"></div>
+        <div class="ai-orb-ring or3"></div>
+        <div class="ai-orb" id="aiOrb">
+          <div class="ai-orb-inner"></div>
+        </div>
+        <div class="ai-orb-label">N.O.S AI CORE</div>
+      </div>
+      <div class="ai-panel">
+        <div class="ai-panel-header">NEURAL INTERFACE — COMMAND INPUT</div>
+        <div class="ai-chat" id="aiChat">
+          <div class="ai-msg ai-msg-system">
+            <div class="ai-msg-avatar"><i class="fas fa-brain"></i></div>
+            <div class="ai-msg-text">N.O.S AI CORE INITIALIZED. Say <strong>"Nitrogen Oxidiser"</strong> or type a command below.</div>
+          </div>
+        </div>
+        <div class="ai-input-row">
+          <input type="text" class="ai-input" id="aiInput" placeholder="ISSUE COMMAND..." autocomplete="off">
+          <button class="ai-send-btn" onclick="sendAICommand()"><i class="fas fa-paper-plane"></i></button>
+          <button class="ai-voice-btn" id="aiVoiceBtn" onclick="toggleVoiceRecognition()"><i class="fas fa-microphone"></i></button>
+        </div>
+        <div class="ai-voice-status" id="aiVoiceStatus">🎙 VOICE RECOGNITION: INACTIVE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RADAR VIEW -->
+  <div class="view" id="view-radar">
+    <div class="radar-wrap">
+      <div class="radar-title">NETWORK RADAR — SIGNAL ANALYSIS</div>
+      <div class="radar-container">
+        <canvas id="radarCanvas" width="400" height="400"></canvas>
+        <div class="radar-blips" id="radarBlips"></div>
+      </div>
+      <div class="radar-stats">
+        <div class="r-stat"><span class="r-label">PACKETS</span><span class="r-val" id="radarPackets">0</span></div>
+        <div class="r-stat"><span class="r-label">LATENCY</span><span class="r-val" id="radarLatency">0ms</span></div>
+        <div class="r-stat"><span class="r-label">UPLINK</span><span class="r-val" id="radarUplink">ACTIVE</span></div>
+        <div class="r-stat"><span class="r-label">THREATS</span><span class="r-val threat-val">NONE</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FLOATING PANELS ─────────────────────────────────── -->
+
+  <!-- AI Assistant Float -->
+  <div class="float-panel" id="aiAssistPanel" style="display:none;">
+    <div class="float-header">
+      <div class="float-orb"></div>
+      <span>N.O.S ASSISTANT</span>
+      <button class="float-close" onclick="hidePanel('aiAssistPanel')">✕</button>
+    </div>
+    <div class="float-body" id="aiAssistBody">
+      <div class="float-msg">System online. Awaiting commands.</div>
+    </div>
+  </div>
+
+  <!-- Notifications Panel -->
+  <div class="float-panel" id="notifPanel" style="display:none;">
+    <div class="float-header"><i class="fas fa-bell"></i><span>NOTIFICATIONS</span><button class="float-close" onclick="hidePanel('notifPanel')">✕</button></div>
+    <div class="float-body">
+      <div class="float-msg"><span class="dot-active">●</span> AI Core fully initialized</div>
+      <div class="float-msg"><span class="dot-warn">●</span> Voice recognition on standby</div>
+      <div class="float-msg"><span class="dot-info">●</span> Network uplink established</div>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="float-panel" id="settingsPanel" style="display:none;">
+    <div class="float-header"><i class="fas fa-sliders-h"></i><span>SETTINGS</span><button class="float-close" onclick="hidePanel('settingsPanel')">✕</button></div>
+    <div class="float-body settings-body">
+      <label class="setting-row"><span>Ambient Sound</span><input type="checkbox" class="tog" id="settAmbient" checked onchange="toggleAmbient()"></label>
+      <label class="setting-row"><span>Voice Commands</span><input type="checkbox" class="tog" id="settVoice" onchange="toggleVoiceFromSettings()"></label>
+      <label class="setting-row"><span>Particle BG</span><input type="checkbox" class="tog" id="settParticles" checked></label>
+      <label class="setting-row"><span>Scan Lines</span><input type="checkbox" class="tog" id="settScanlines" checked onchange="toggleScanlines()"></label>
+      <div class="setting-row"><span>Theme Hue</span>
+        <input type="range" min="160" max="220" value="190" id="hueSlider" oninput="changeHue(this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE INDICATOR -->
+  <div class="voice-indicator" id="voiceIndicator">
+    <div class="vi-ring"></div>
+    <div class="vi-ring vi-ring2"></div>
+    <i class="fas fa-microphone vi-icon"></i>
+    <div class="vi-text">LISTENING...</div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- SCANLINES OVERLAY -->
+  <div class="scanlines" id="scanlinesOverlay"></div>
+
+  <!-- CORNER HUD DECORATIONS -->
+  <div class="hud-corner hud-tl"></div>
+  <div class="hud-corner hud-tr"></div>
+  <div class="hud-corner hud-bl"></div>
+  <div class="hud-corner hud-br"></div>
+
+</div><!-- /mainOS -->
+
+<script src="script.js"></script>
+</body>
+</html>
