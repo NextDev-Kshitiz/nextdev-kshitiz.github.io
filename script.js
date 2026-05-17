@@ -3,7 +3,7 @@
    JARVIS-GRADE AI ASSISTANT — FULL FEATURED
    ══════════════════════════════════════════════════════════════════ */
 'use strict';
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 1 · GLOBAL STATE
 ───────────────────────────────────────────────────────────────── */
@@ -18,7 +18,7 @@ const state = {
   radarAngle:     0,
   radarBlips:     [],
   radarRunning:   false,
- 
+
   // JARVIS modules
   suitPower:      87,          // % power level
   suitOnline:     false,
@@ -38,7 +38,7 @@ const state = {
   ironLegionCount: 7,
   threatLevel:    'NONE',
 };
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 2 · SITE / APP MAP
 ───────────────────────────────────────────────────────────────── */
@@ -54,20 +54,20 @@ const SITES = {
   reddit:    'https://www.reddit.com',
   wikipedia: 'https://www.wikipedia.org',
 };
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 3 · AUDIO ENGINE (Web Audio API — no files needed)
 ───────────────────────────────────────────────────────────────── */
 let audioCtx = null;
 let ambientNodes = { gain: null, osc: null };
- 
+
 function initAudio() {
   if (audioCtx) return;
   try {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   } catch (e) { console.warn('Web Audio not supported'); }
 }
- 
+
 function playBeep(freq = 440, dur = 0.1, type = 'sine', vol = 0.15) {
   if (state.muted || !audioCtx) return;
   try {
@@ -83,7 +83,7 @@ function playBeep(freq = 440, dur = 0.1, type = 'sine', vol = 0.15) {
     osc.stop(audioCtx.currentTime + dur);
   } catch (e) {}
 }
- 
+
 function playStartupSound() {
   if (!audioCtx) return;
   const notes = [220, 330, 440, 550, 660, 880];
@@ -93,19 +93,19 @@ function playStartupSound() {
     setTimeout(() => playBeep(1320, 0.6, 'sine', 0.12), 200);
   }, notes.length * 120);
 }
- 
+
 function playActivationSound() {
   [440, 660, 880, 1100].forEach((f, i) =>
     setTimeout(() => playBeep(f, 0.15, 'sine', 0.1), i * 80)
   );
 }
- 
+
 function playAlertSound() {
   [880, 660, 440].forEach((f, i) =>
     setTimeout(() => playBeep(f, 0.12, 'sawtooth', 0.12), i * 90)
   );
 }
- 
+
 function toggleMute() {
   state.muted = !state.muted;
   const icon = document.getElementById('muteIcon');
@@ -113,7 +113,7 @@ function toggleMute() {
   showToast(state.muted ? '🔇 AUDIO MUTED' : '🔊 AUDIO ACTIVE');
   if (state.muted) stopAmbient(); else startAmbient();
 }
- 
+
 function startAmbient() {
   if (!audioCtx || ambientNodes.osc || state.muted) return;
   try {
@@ -128,7 +128,7 @@ function startAmbient() {
     ambientNodes = { osc, gain };
   } catch (e) {}
 }
- 
+
 function stopAmbient() {
   try {
     if (ambientNodes.osc) {
@@ -137,12 +137,12 @@ function stopAmbient() {
     }
   } catch (e) {}
 }
- 
+
 function toggleAmbient() {
   const cb = document.getElementById('settAmbient');
   if (cb?.checked) startAmbient(); else stopAmbient();
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 4 · BOOT SEQUENCE
 ───────────────────────────────────────────────────────────────── */
@@ -160,21 +160,21 @@ const BOOT_LOGS = [
   '[SYS]   SYSTEM INTEGRITY: 100%',
   '[NOS]   NITROGEN OXIDISER SYSTEM: ONLINE ✓',
 ];
- 
+
 function runBootSequence() {
   initAudio();
   playStartupSound();
   initBootCanvas();
- 
+
   const logsEl   = document.getElementById('bootLogs');
   const progress = document.getElementById('bootProgress');
   const pct      = document.getElementById('bootPct');
   const status   = document.getElementById('bootStatus');
- 
+
   logsEl.innerHTML = '';
   let step = 0;
   const total = BOOT_LOGS.length;
- 
+
   const tick = setInterval(() => {
     if (step < total) {
       const line = document.createElement('div');
@@ -182,12 +182,12 @@ function runBootSequence() {
       line.textContent = BOOT_LOGS[step];
       logsEl.appendChild(line);
       logsEl.scrollTop = logsEl.scrollHeight;
- 
+
       const p = Math.round(((step + 1) / total) * 100);
       if (progress) progress.style.width = p + '%';
       if (pct)      pct.textContent = p + '%';
       if (status)   status.textContent = BOOT_LOGS[step];
- 
+
       playBeep(200 + step * 55, 0.05, 'square', 0.05);
       step++;
     } else {
@@ -197,7 +197,7 @@ function runBootSequence() {
     }
   }, 260);
 }
- 
+
 function transitionToLogin() {
   const boot  = document.getElementById('bootScreen');
   const login = document.getElementById('loginScreen');
@@ -210,7 +210,7 @@ function transitionToLogin() {
     startFaceScan();
   }, 800);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 5 · FACE SCAN & LOGIN
 ───────────────────────────────────────────────────────────────── */
@@ -220,7 +220,7 @@ const SCAN_LABELS = [
   'CROSS-REFERENCING DATABASE...',
   'IDENTITY VERIFIED ✓',
 ];
- 
+
 function startFaceScan() {
   const label = document.getElementById('scanLabel');
   let i = 0;
@@ -230,7 +230,7 @@ function startFaceScan() {
     if (i >= SCAN_LABELS.length) clearInterval(iv);
   }, 1800);
 }
- 
+
 function attemptLogin() {
   initAudio();
   // Any input (or blank) grants access — same logic as original
@@ -242,12 +242,12 @@ function attemptLogin() {
     playBeep(180, 0.3, 'sawtooth', 0.15);
   }
 }
- 
+
 function guestLogin() {
   initAudio();
   doLogin();
 }
- 
+
 function doLogin() {
   playActivationSound();
   const login = document.getElementById('loginScreen');
@@ -260,7 +260,7 @@ function doLogin() {
     initOS();
   }, 800);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 6 · OS INITIALIZATION
 ───────────────────────────────────────────────────────────────── */
@@ -274,13 +274,13 @@ function initOS() {
   initRadar();
   startAmbient();
   startJarvisSimulation();  // JARVIS live data loop
- 
+
   setTimeout(() => {
     showToast('🟢 N.O.S ONLINE · WELCOME BACK, OPERATOR');
     speakText('Good day. N.O.S systems are fully operational. How may I assist you?');
   }, 700);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 7 · CLOCK
 ───────────────────────────────────────────────────────────────── */
@@ -294,7 +294,7 @@ function startClock() {
     const dateStr = now.toLocaleDateString('en-US', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     }).toUpperCase();
- 
+
     const els = {
       topbarTime:   timeStr,
       topbarDate:   dateStr.slice(0, 12),
@@ -309,7 +309,7 @@ function startClock() {
   update();
   setInterval(update, 1000);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 8 · SYSTEM METRICS (simulated live)
 ───────────────────────────────────────────────────────────────── */
@@ -332,17 +332,17 @@ function startMetrics() {
     });
   }, 850);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 9 · AI ACTIVITY CHART
 ───────────────────────────────────────────────────────────────── */
 let aiChartData = Array(40).fill(0).map(() => Math.random() * 60 + 10);
- 
+
 function startAIChart() {
   const canvas = document.getElementById('aiActivityChart');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
- 
+
   setInterval(() => {
     aiChartData.shift();
     aiChartData.push(
@@ -350,7 +350,7 @@ function startAIChart() {
       (state.voiceActive ? 30 : 0) +
       (state.aiSpeaking  ? 20 : 0)
     );
- 
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     const step = canvas.width / (aiChartData.length - 1);
@@ -364,7 +364,7 @@ function startAIChart() {
     ctx.shadowColor = '#00c8ff';
     ctx.shadowBlur  = 6;
     ctx.stroke();
- 
+
     ctx.lineTo(canvas.width, canvas.height);
     ctx.lineTo(0, canvas.height);
     ctx.closePath();
@@ -373,20 +373,20 @@ function startAIChart() {
     ctx.fill();
   }, 200);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 10 · RADAR
 ───────────────────────────────────────────────────────────────── */
 function initRadar() {
   if (state.radarRunning) return;
   state.radarRunning = true;
- 
+
   const canvas = document.getElementById('radarCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
   const cx = W / 2, cy = H / 2, r = W / 2 - 10;
- 
+
   // Seed blips
   state.radarBlips = [];
   for (let i = 0; i < 7; i++) {
@@ -398,12 +398,12 @@ function initRadar() {
       y: cy + Math.sin(angle) * dist,
     });
   }
- 
+
   let packets = 0;
- 
+
   const draw = () => {
     ctx.clearRect(0, 0, W, H);
- 
+
     // Rings
     ctx.strokeStyle = 'rgba(0,200,255,0.14)';
     ctx.lineWidth = 1;
@@ -412,13 +412,13 @@ function initRadar() {
       ctx.arc(cx, cy, r * f, 0, Math.PI * 2);
       ctx.stroke();
     });
- 
+
     // Crosshairs
     ctx.beginPath();
     ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy);
     ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r);
     ctx.stroke();
- 
+
     // Sweep fill
     state.radarAngle = (state.radarAngle + 0.024) % (Math.PI * 2);
     ctx.save();
@@ -433,7 +433,7 @@ function initRadar() {
     ctx.fillStyle = sweep;
     ctx.fill();
     ctx.restore();
- 
+
     // Sweep line
     ctx.beginPath();
     ctx.moveTo(cx, cy);
@@ -447,7 +447,7 @@ function initRadar() {
     ctx.shadowBlur  = 5;
     ctx.stroke();
     ctx.shadowBlur  = 0;
- 
+
     // Blips
     state.radarBlips.forEach(b => {
       b.life -= 0.0035;
@@ -466,44 +466,44 @@ function initRadar() {
       ctx.fill();
       ctx.shadowBlur  = 0;
     });
- 
+
     // Outer ring
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.strokeStyle = 'rgba(0,200,255,0.42)';
     ctx.lineWidth   = 2;
     ctx.stroke();
- 
+
     packets += Math.floor(Math.random() * 50);
     const pacEl = document.getElementById('radarPackets');
     const latEl = document.getElementById('radarLatency');
     if (pacEl) pacEl.textContent = packets.toLocaleString();
     if (latEl) latEl.textContent = (Math.random() * 8 + 2).toFixed(1) + 'ms';
   };
- 
+
   setInterval(draw, 30);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 11 · VIEW SWITCHING
 ───────────────────────────────────────────────────────────────── */
 function switchView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
- 
+
   const view = document.getElementById('view-' + name);
   if (view) view.classList.add('active');
- 
+
   const order = ['dashboard', 'terminal', 'launcher', 'ai', 'radar'];
   const idx   = order.indexOf(name);
   const items = document.querySelectorAll('.sidebar-item');
   if (idx >= 0 && items[idx]) items[idx].classList.add('active');
- 
+
   state.currentView = name;
   playBeep(440, 0.05, 'sine', 0.07);
   if (name === 'radar') initRadar();
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 12 · PANELS
 ───────────────────────────────────────────────────────────────── */
@@ -517,27 +517,27 @@ function showPanel(id) {
   panel.style.display =
     (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
 }
- 
+
 function hidePanel(id) {
   const el = document.getElementById(id);
   if (el) el.style.display = 'none';
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 13 · TERMINAL SYSTEM
 ───────────────────────────────────────────────────────────────── */
 const TERM_HISTORY = [];
 let termHistIdx = -1;
- 
+
 function initTerminal() {
   const input = document.getElementById('termInput');
   if (!input) return;
- 
+
   termPrint('system', 'N.O.S CYBER TERMINAL v3.0 — INITIALIZED');
   termPrint('info',   'Type "help" for available commands.');
   termPrint('info',   'Unknown commands are auto-searched on Google.');
   termPrint('info',   '─'.repeat(46));
- 
+
   input.addEventListener('keydown', e => {
     if (e.key === 'Enter') {
       const raw = input.value.trim();
@@ -557,7 +557,7 @@ function initTerminal() {
     }
   });
 }
- 
+
 function termPrint(type, text) {
   const out = document.getElementById('termOutput');
   if (!out) return;
@@ -567,16 +567,16 @@ function termPrint(type, text) {
   out.appendChild(line);
   out.scrollTop = out.scrollHeight;
 }
- 
+
 function terminalClear() {
   const out = document.getElementById('termOutput');
   if (out) out.innerHTML = '';
   termPrint('system', 'Terminal cleared. Ready.');
 }
- 
+
 /* ── Terminal command router ── */
 function processTermCmd(c, raw) {
- 
+
   // ── help ────────────────────────────────────
   if (c === 'help') {
     termPrint('out', '');
@@ -611,7 +611,7 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── status ──────────────────────────────────
   if (c === 'status') {
     termPrint('out', '');
@@ -634,16 +634,16 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── clear ────────────────────────────────────
   if (c === 'clear') { terminalClear(); return; }
- 
+
   // ── diagnostics ──────────────────────────────
   if (c === 'diagnostics') { runDiagnostics(); return; }
- 
+
   // ── scan system ──────────────────────────────
   if (c === 'scan system') { runScan(); return; }
- 
+
   // ── vitals ───────────────────────────────────
   if (c === 'vitals') {
     termPrint('out', '');
@@ -656,7 +656,7 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── suit status ──────────────────────────────
   if (c === 'suit status') {
     termPrint('out', '');
@@ -670,7 +670,7 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── flight data ──────────────────────────────
   if (c === 'flight data') {
     termPrint('out', '');
@@ -684,7 +684,7 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── toxicity ─────────────────────────────────
   if (c === 'toxicity') {
     const level = state.bloodToxicity;
@@ -694,7 +694,7 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── track [target] ───────────────────────────
   if (c.startsWith('track ')) {
     const target = raw.slice(6).trim() || 'Unknown Target';
@@ -711,7 +711,7 @@ function processTermCmd(c, raw) {
     }, 1200);
     return;
   }
- 
+
   // ── energy scan ──────────────────────────────
   if (c === 'energy scan') {
     termPrint('out', '');
@@ -729,7 +729,7 @@ function processTermCmd(c, raw) {
     }, 1400);
     return;
   }
- 
+
   // ── iron legion ──────────────────────────────
   if (c === 'iron legion') {
     termPrint('out', '');
@@ -743,7 +743,7 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── analyze [object] ─────────────────────────
   if (c.startsWith('analyze ')) {
     const obj = raw.slice(8).trim() || 'Unknown Object';
@@ -760,7 +760,7 @@ function processTermCmd(c, raw) {
     }, 1600);
     return;
   }
- 
+
   // ── reconstruct scene ────────────────────────
   if (c === 'reconstruct scene') {
     termPrint('out', '');
@@ -781,14 +781,14 @@ function processTermCmd(c, raw) {
     }, i * 500));
     return;
   }
- 
+
   // ── launch ai ────────────────────────────────
   if (c === 'launch ai') {
     switchView('ai');
     termPrint('success', '  → AI Core activated.');
     return;
   }
- 
+
   // ── open [app] ───────────────────────────────
   if (c.startsWith('open ')) {
     const site = c.replace('open ', '').trim();
@@ -800,7 +800,7 @@ function processTermCmd(c, raw) {
     }
     return;
   }
- 
+
   // ── search [query] — explicit ─────────────────
   if (c.startsWith('search ')) {
     const query = raw.slice(7).trim();
@@ -808,20 +808,20 @@ function processTermCmd(c, raw) {
     termPrint('success', `  → Searching Google for: "${query}"`);
     return;
   }
- 
+
   // ── whoami ───────────────────────────────────
   if (c === 'whoami') {
     termPrint('out', '  OPERATOR : N.O.S CLASSIFIED USER [GUEST]');
     termPrint('out', '  CLEARANCE: LEVEL 3 — RESTRICTED');
     return;
   }
- 
+
   // ── date ─────────────────────────────────────
   if (c === 'date') {
     termPrint('out', '  ' + new Date().toString());
     return;
   }
- 
+
   // ── sysinfo ──────────────────────────────────
   if (c === 'sysinfo') {
     termPrint('out', '');
@@ -834,19 +834,19 @@ function processTermCmd(c, raw) {
     termPrint('out', '');
     return;
   }
- 
+
   // ── matrix ───────────────────────────────────
   if (c === 'matrix') { runMatrix(); return; }
- 
+
   // ── shutdown ─────────────────────────────────
   if (c === 'shutdown') { shutdownOS(); return; }
- 
+
   // ── SMART FALLBACK: Google Search ────────────
   termPrint('info', `  ℹ Unknown command — routing to Google Search...`);
   googleSearch(raw);
   termPrint('success', `  → Searching: "${raw}"`);
 }
- 
+
 function runDiagnostics() {
   const steps = [
     '  [■□□□□□□□□□] Checking CPU registers...',
@@ -873,7 +873,7 @@ function runDiagnostics() {
     }, i * 380);
   });
 }
- 
+
 function runScan() {
   const steps = [
     '  INITIATING DEEP THREAT SCAN...',
@@ -891,7 +891,7 @@ function runScan() {
     playBeep(280 + i * 45, 0.04, 'sine', 0.05);
   }, i * 330));
 }
- 
+
 function runMatrix() {
   const chars = '01アイウエオカキクケコNOSニトロゲン量子01010101JARVIS';
   let count = 0;
@@ -904,7 +904,7 @@ function runMatrix() {
     if (count > 14) clearInterval(id);
   }, 90);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 14 · SITE LAUNCHER + GOOGLE FALLBACK
 ───────────────────────────────────────────────────────────────── */
@@ -915,7 +915,7 @@ function openSite(key) {
   showToast(`🚀 LAUNCHING ${key.toUpperCase()}`);
   playActivationSound();
 }
- 
+
 /* Google search — used as universal fallback */
 function googleSearch(query) {
   if (!query || !query.trim()) return;
@@ -924,11 +924,11 @@ function googleSearch(query) {
   showToast(`🔍 SEARCHING: ${query.slice(0, 40)}`);
   playBeep(500, 0.08, 'sine', 0.08);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 15 · AI ASSISTANT — JARVIS RESPONSES
 ───────────────────────────────────────────────────────────────── */
- 
+
 /* Static keyword → response map */
 const AI_RESPONSES = {
   // Greetings
@@ -937,20 +937,20 @@ const AI_RESPONSES = {
   'hey':                'Yes, sir? Standing by for your orders.',
   'good morning':       'Good morning. Current systems: nominal. No threats detected overnight.',
   'good evening':       'Good evening, sir. All systems remain secure.',
- 
+
   // Identity
   'who are you':        'I am N.O.S — the Nitrogen Oxidiser System AI Core, modelled after J.A.R.V.I.S. — Just A Rather Very Intelligent System. At your service.',
   'what are you':       'I am an artificial intelligence designed to manage your systems, monitor your health, control your armor, and assist with all operations.',
   'what can you do':    'I can manage the OS, launch applications, monitor your vitals, track the suit power, run diagnostics, track targets via satellite, control the Iron Legion, scan for energy sources, perform structural analysis, and execute voice commands.',
   'jarvis':             'That\'s my inspiration, sir. N.O.S operates on the same principles — at your complete service.',
- 
+
   // System status
   'status':             () => `All systems nominal. Suit power at ${state.suitPower}%. Blood toxicity at ${state.bloodToxicity.toFixed(1)}%. No threats detected.`,
   'system status':      () => `SYSTEM: ONLINE · AI: ACTIVE · SUIT: ${state.suitOnline?'ONLINE':'STANDBY'} · THREATS: ${state.threatLevel}`,
   'diagnostics':        'Running full system diagnostics. All cores responding. Neural network integrity: 100%. No anomalies found.',
   'scan system':        'Threat scan initiated... Complete. Zero intrusions detected. All firewalls intact. System secure.',
   'scan':               'Scanning all network nodes... No unauthorized access detected. Encryption layers intact.',
- 
+
   // Suit & flight
   'suit status':        () => `${state.armorMk} — Power: ${state.suitPower}%. Structural integrity: ${rnd(10)+90}%. ${state.icing?'⚠ Icing conditions active — flight ceiling reduced.':'All flight systems nominal.'}`,
   'suit power':         () => `Current power level: ${state.suitPower}%. ${state.suitPower < 20 ? 'Warning: critical power levels. Recommend immediate recharge.' : 'Power nominal.'}`,
@@ -961,13 +961,13 @@ const AI_RESPONSES = {
   'armor':              () => `${state.armorMk} — Status: ${state.suitOnline?'Online':'Standby'}. Power: ${state.suitPower}%. Completion: ${state.armorCompletion}%.`,
   'mark ii':            'Mark II flight systems were used to test the repulsor-powered exoskeleton. Icing levels were recorded at altitude — data logged.',
   'manufacture':        () => `Armor manufacturing progress: ${state.armorCompletion}%. Estimated completion: ${state.armorCompletion < 100 ? Math.round((100-state.armorCompletion)*0.3) + ' hours' : 'Complete'}.`,
- 
+
   // Vitals & toxicity
   'vitals':             () => `Heart rate: ${state.vitals.heartRate} BPM. Blood oxygen: ${state.vitals.bloodO2}%. Body temperature: ${state.vitals.temp}°C. Toxicity: ${state.bloodToxicity.toFixed(2)}%.`,
   'blood toxicity':     () => `Blood toxicity reading: ${state.bloodToxicity.toFixed(2)}%. ${state.bloodToxicity < 2 ? 'Well within safe parameters.' : state.bloodToxicity < 5 ? 'Mildly elevated — monitor closely.' : '⚠ Critical level — immediate treatment recommended.'}`,
   'health':             () => `Vitals are ${state.vitals.heartRate < 100 ? 'normal' : 'slightly elevated'}. Blood O₂: ${state.vitals.bloodO2}%. Temperature: ${state.vitals.temp}°C.`,
   'heart rate':         () => `Current heart rate: ${state.vitals.heartRate} BPM. ${state.vitals.heartRate > 100 ? 'Slightly elevated — possibly stress-related.' : 'Normal range.'}`,
- 
+
   // Intelligence gathering
   'track':              'Specify target for tracking. Accessing satellite network...',
   'locate':             'Accessing satellite array. Please specify target coordinates or name.',
@@ -981,7 +981,7 @@ const AI_RESPONSES = {
   'analyze':            'Initiating structural and compositional analysis. Please specify the target object.',
   'scene':              'Holographic scene reconstruction initiated. Accessing available environmental and thermal data...',
   'hologram':           'Holographic rendering system active. Ready to reconstruct any logged scene on your command.',
- 
+
   // Actions
   'launch dashboard':   'Switching to main dashboard view.',
   'launch terminal':    'Opening cyber terminal interface.',
@@ -998,7 +998,7 @@ const AI_RESPONSES = {
   'mute':               'Toggling audio mute.',
   'shutdown':           'Initiating shutdown sequence. Saving all state data. Goodbye, sir.',
   'self destruct':      'I\'m afraid I can\'t initiate self-destruct without a confirmed authorization code, sir.',
- 
+
   // Misc
   'help':               'Available commands: status, vitals, suit status, flight data, blood toxicity, track [target], energy scan, iron legion, analyze [object], open [app], search [query], shutdown. Or ask me anything.',
   'time':               () => `Current system time: ${new Date().toLocaleTimeString()}`,
@@ -1011,15 +1011,15 @@ const AI_RESPONSES = {
   'thanks':             'Of course. That\'s what I\'m here for.',
   'good job':           'Thank you, sir. I do try.',
 };
- 
+
 /* Resolve a response value (may be a function) */
 function resolveResponse(val) {
   return typeof val === 'function' ? val() : val;
 }
- 
+
 function getAIResponse(input) {
   const lower = input.toLowerCase().trim();
- 
+
   // Longest-match first — iterate all keys and pick the best match
   let bestKey = null, bestLen = 0;
   for (const key of Object.keys(AI_RESPONSES)) {
@@ -1029,7 +1029,7 @@ function getAIResponse(input) {
     }
   }
   if (bestKey) return resolveResponse(AI_RESPONSES[bestKey]);
- 
+
   // Fallback pool — Jarvis-style
   const fallbacks = [
     `Processing: "${input.slice(0,40)}". Shall I run a Google search for more information?`,
@@ -1040,23 +1040,23 @@ function getAIResponse(input) {
   ];
   return fallbacks[Math.floor(Math.random() * fallbacks.length)];
 }
- 
+
 /* Detect if the response is a fallback (triggers Google search) */
 function isFallbackResponse(resp) {
   return resp.includes('Google search') || resp.includes('web search') || resp.includes('web intelligence');
 }
- 
+
 function sendAICommand(inputOverride) {
   const input = document.getElementById('aiInput');
   const text  = inputOverride || (input ? input.value.trim() : '');
   if (!text) return;
   if (input) input.value = '';
- 
+
   appendAIMessage('user', text);
   playBeep(440, 0.05, 'sine', 0.08);
- 
+
   const lower = text.toLowerCase();
- 
+
   // ── App / site opens ──────────────────────
   if (lower.includes('open ') || lower.includes('launch ')) {
     for (const site of Object.keys(SITES)) {
@@ -1071,13 +1071,13 @@ function sendAICommand(inputOverride) {
       }
     }
   }
- 
+
   // ── View navigation ───────────────────────
   if (lower.includes('launch dashboard') || lower.includes('open dashboard')) setTimeout(() => switchView('dashboard'), 600);
   if (lower.includes('launch terminal')  || lower.includes('open terminal'))  setTimeout(() => switchView('terminal'), 600);
   if (lower.includes('launch radar')     || lower.includes('open radar'))     setTimeout(() => switchView('radar'), 600);
   if (lower.includes('launch launcher'))                                       setTimeout(() => switchView('launcher'), 600);
- 
+
   // ── Explicit web search ────────────────────
   if (lower.startsWith('search ')) {
     const query = text.slice(7).trim();
@@ -1085,10 +1085,10 @@ function sendAICommand(inputOverride) {
     setTimeout(() => appendAIMessage('system', `Searching Google for: "${query}"`), 300);
     return;
   }
- 
+
   // ── Shutdown ──────────────────────────────
   if (lower.includes('shutdown')) setTimeout(() => shutdownOS(), 1600);
- 
+
   // ── Typing indicator → delayed response ───
   const typingEl = appendAIMessage('system', '...');
   setTimeout(() => {
@@ -1096,44 +1096,44 @@ function sendAICommand(inputOverride) {
     if (typingEl) typingEl.textContent = resp;
     speakText(resp);
     playBeep(660, 0.06, 'sine', 0.06);
- 
+
     // Auto Google search on fallback responses
     if (isFallbackResponse(resp)) {
       setTimeout(() => googleSearch(text), 500);
     }
   }, 600 + Math.random() * 400);
 }
- 
+
 function appendAIMessage(role, text) {
   const chat = document.getElementById('aiChat');
   if (!chat) return null;
- 
+
   const msg    = document.createElement('div');
   msg.className = `ai-msg ai-msg-${role === 'user' ? 'user' : 'system'}`;
- 
+
   const avatar = document.createElement('div');
   avatar.className = 'ai-msg-avatar';
   avatar.innerHTML = role === 'user'
     ? '<i class="fas fa-user"></i>'
     : '<i class="fas fa-brain"></i>';
- 
+
   const textEl = document.createElement('div');
   textEl.className = 'ai-msg-text';
   textEl.textContent = text;
- 
+
   msg.appendChild(avatar);
   msg.appendChild(textEl);
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
   return textEl;
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 16 · VOICE RECOGNITION
 ───────────────────────────────────────────────────────────────── */
 let recognition     = null;
 let voiceRestartTimer = null;
- 
+
 function initVoiceRecognition() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
@@ -1145,7 +1145,7 @@ function initVoiceRecognition() {
   r.interimResults  = false;
   r.lang            = 'en-US';
   r.maxAlternatives = 1;
- 
+
   r.onresult = e => {
     const transcript = e.results[e.results.length - 1][0].transcript.trim();
     handleVoiceInput(transcript);
@@ -1163,37 +1163,37 @@ function initVoiceRecognition() {
   };
   return r;
 }
- 
+
 function handleVoiceInput(text) {
   const lower = text.toLowerCase();
   showToast(`🎙 "${text.slice(0, 55)}"`);
- 
+
   // Wake word
   if (lower.includes('nitrogen oxidiser') || lower.includes('nitrogen oxidizer') || lower.includes('nos activate')) {
     activateNOS();
     return;
   }
- 
+
   if (!state.loggedIn) return;
- 
+
   if (state.currentView === 'ai') {
     sendAICommand(text);
   } else {
     processVoiceCommand(lower, text);
   }
 }
- 
+
 function activateNOS() {
   playActivationSound();
   speakText('Online. All systems functional. Awaiting your orders, sir.');
   showToast('🟢 N.O.S ACTIVATED');
- 
+
   const orb = document.getElementById('aiOrb');
   if (orb) {
     orb.classList.add('speaking');
     setTimeout(() => orb.classList.remove('speaking'), 3000);
   }
- 
+
   const panel = document.getElementById('aiAssistPanel');
   const body  = document.getElementById('aiAssistBody');
   if (panel) {
@@ -1201,11 +1201,11 @@ function activateNOS() {
     if (body) body.innerHTML = '<div class="float-msg">Online. All systems functional. Awaiting your orders.</div>';
   }
   appendAIMessage('system', 'Online. All systems functional. Awaiting your orders, sir.');
- 
+
   if (!state.loggedIn) doLogin();
   switchView('ai');
 }
- 
+
 function processVoiceCommand(lower, original) {
   // Site launches
   for (const site of Object.keys(SITES)) {
@@ -1213,14 +1213,14 @@ function processVoiceCommand(lower, original) {
       openSite(site); return;
     }
   }
- 
+
   // View navigation
   if (lower.includes('dashboard'))                              { switchView('dashboard'); return; }
   if (lower.includes('terminal'))                               { switchView('terminal');  return; }
   if (lower.includes('launcher') || lower.includes('launch pad')) { switchView('launcher'); return; }
   if (lower.includes('radar'))                                  { switchView('radar');     return; }
   if (lower.includes(' ai') || lower.includes('ai core') || lower.includes('assistant')) { switchView('ai'); return; }
- 
+
   // System commands
   if (lower.includes('shutdown') || lower.includes('turn off'))  { shutdownOS(); return; }
   if (lower.includes('mute'))                                     { toggleMute(); return; }
@@ -1236,7 +1236,7 @@ function processVoiceCommand(lower, original) {
     const msg = `${state.armorMk} power at ${state.suitPower}%. ${state.icing ? 'Icing conditions active.' : 'Flight conditions clear.'}`;
     speakText(msg); showToast('🦾 SUIT STATUS'); return;
   }
- 
+
   // Search intent detection
   const searchTriggers = ['search for', 'search', 'find', 'look up', 'google', 'what is', 'who is', 'how to'];
   for (const trigger of searchTriggers) {
@@ -1245,14 +1245,14 @@ function processVoiceCommand(lower, original) {
       if (q) { googleSearch(q); return; }
     }
   }
- 
+
   // Default: route to AI chat
   sendAICommand(original);
 }
- 
+
 function toggleVoiceRecognition() {
   initAudio();
- 
+
   if (!state.voiceActive) {
     if (!recognition) recognition = initVoiceRecognition();
     if (!recognition) return;
@@ -1279,11 +1279,11 @@ function toggleVoiceRecognition() {
     showToast('🔇 VOICE DEACTIVATED');
   }
 }
- 
+
 function toggleVoiceFromSettings() {
   toggleVoiceRecognition();
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 17 · SPEECH SYNTHESIS
 ───────────────────────────────────────────────────────────────── */
@@ -1304,7 +1304,7 @@ function speakText(text) {
   utt.onend   = () => { state.aiSpeaking = false; if (orb) orb.classList.remove('speaking'); };
   window.speechSynthesis.speak(utt);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 18 · MUSIC CONTROL
 ───────────────────────────────────────────────────────────────── */
@@ -1321,7 +1321,7 @@ function musicControl(action) {
     showToast('⏮ PREVIOUS TRACK'); playBeep(380, 0.08, 'sine', 0.08);
   }
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 19 · SETTINGS
 ───────────────────────────────────────────────────────────────── */
@@ -1330,11 +1330,11 @@ function toggleScanlines() {
   const el = document.getElementById('scanlinesOverlay');
   if (el) el.style.opacity = cb?.checked ? '1' : '0';
 }
- 
+
 function changeHue(val) {
   document.documentElement.style.setProperty('--hue', val);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 20 · JARVIS LIVE SIMULATION
    Continuously updates suit power, vitals, flight data, toxicity
@@ -1347,7 +1347,7 @@ function startJarvisSimulation() {
     } else {
       state.suitPower = Math.min(100, state.suitPower + (Math.random() * 0.5));
     }
- 
+
     // Vitals drift naturally
     state.vitals.heartRate = Math.round(clamp(
       state.vitals.heartRate + (Math.random() - 0.5) * 2, 58, 105
@@ -1358,12 +1358,12 @@ function startJarvisSimulation() {
     state.vitals.temp = +( clamp(
       state.vitals.temp + (Math.random() - 0.5) * 0.05, 36.0, 37.5
     )).toFixed(1);
- 
+
     // Blood toxicity fluctuates slightly
     state.bloodToxicity = +( clamp(
       state.bloodToxicity + (Math.random() - 0.48) * 0.08, 0.1, 12.0
     )).toFixed(2);
- 
+
     // Toxicity alert
     if (state.bloodToxicity > 8 && !state._toxWarn) {
       state._toxWarn = true;
@@ -1373,7 +1373,7 @@ function startJarvisSimulation() {
     } else if (state.bloodToxicity < 6) {
       state._toxWarn = false;
     }
- 
+
     // Icing check when suit is online
     if (state.suitOnline) {
       state.icing = state.flightAlt > 8000 && Math.random() > 0.4;
@@ -1386,12 +1386,12 @@ function startJarvisSimulation() {
       state.icing = false;
       state._icingWarn = false;
     }
- 
+
     // Update dashboard badge if it exists
     _updateJarvisWidgets();
- 
+
   }, 3000);
- 
+
   // Flight data animation (only active when suit is online)
   setInterval(() => {
     if (state.suitOnline) {
@@ -1403,22 +1403,22 @@ function startJarvisSimulation() {
     }
   }, 2000);
 }
- 
+
 function _updateJarvisWidgets() {
   // Update suit power display if element exists
   const spEl = document.getElementById('suitPowerVal');
   if (spEl) spEl.textContent = Math.round(state.suitPower) + '%';
   const spFill = document.getElementById('suitPowerFill');
   if (spFill) spFill.style.width = state.suitPower + '%';
- 
+
   // Update blood toxicity
   const btEl = document.getElementById('toxicityVal');
   if (btEl) btEl.textContent = state.bloodToxicity.toFixed(2) + '%';
- 
+
   // Update heart rate
   const hrEl = document.getElementById('heartRateVal');
   if (hrEl) hrEl.textContent = state.vitals.heartRate + ' BPM';
- 
+
   // Update topbar status
   const ts = document.getElementById('topbarStatus');
   if (ts) {
@@ -1429,7 +1429,7 @@ function _updateJarvisWidgets() {
       : 'SYSTEM NOMINAL';
   }
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 21 · SHUTDOWN
 ───────────────────────────────────────────────────────────────── */
@@ -1446,7 +1446,7 @@ function shutdownOS() {
       os.classList.remove('active');
       os.style.opacity = '1';
       os.style.transition = '';
- 
+
       // Reset state
       state.loggedIn    = false;
       state.voiceActive = false;
@@ -1455,7 +1455,7 @@ function shutdownOS() {
       state.suitOnline  = false;
       stopAmbient();
       if (recognition) { try { recognition.stop(); } catch(e) {} }
- 
+
       // Reboot
       const boot = document.getElementById('bootScreen');
       if (boot) {
@@ -1475,7 +1475,7 @@ function shutdownOS() {
       if (bp) bp.style.width = '0%';
       const bpct = document.getElementById('bootPct');
       if (bpct) bpct.textContent = '0%';
- 
+
       setTimeout(() => {
         if (boot) {
           boot.style.transition = 'opacity 0.5s';
@@ -1489,7 +1489,7 @@ function shutdownOS() {
     }, 2100);
   }, 800);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 22 · TOAST
 ───────────────────────────────────────────────────────────────── */
@@ -1502,7 +1502,7 @@ function showToast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 23 · CANVAS: BOOT SCREEN
 ───────────────────────────────────────────────────────────────── */
@@ -1512,7 +1512,7 @@ function initBootCanvas() {
   const ctx = canvas.getContext('2d');
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
- 
+
   const particles = Array.from({ length: 90 }, () => ({
     x:       Math.random() * canvas.width,
     y:       Math.random() * canvas.height,
@@ -1521,16 +1521,16 @@ function initBootCanvas() {
     size:    Math.random() * 2 + 0.4,
     opacity: Math.random() * 0.55 + 0.15,
   }));
- 
+
   const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
- 
+
     // Grid
     ctx.strokeStyle = 'rgba(0,200,255,0.05)';
     ctx.lineWidth = 1;
     for (let x = 0; x < canvas.width;  x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
     for (let y = 0; y < canvas.height; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
- 
+
     // Particles
     particles.forEach(p => {
       p.x += p.vx; p.y += p.vy;
@@ -1541,12 +1541,12 @@ function initBootCanvas() {
       ctx.fillStyle = `rgba(0,200,255,${p.opacity})`;
       ctx.fill();
     });
- 
+
     requestAnimationFrame(draw);
   };
   draw();
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 24 · CANVAS: LOGIN SCREEN (matrix rain)
 ───────────────────────────────────────────────────────────────── */
@@ -1556,11 +1556,11 @@ function initLoginCanvas() {
   const ctx = canvas.getContext('2d');
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
- 
+
   const cols = Array.from({ length: Math.floor(canvas.width / 18) }, (_, i) => ({
     x: i * 18, y: Math.random() * canvas.height, speed: Math.random() * 2.2 + 0.8,
   }));
- 
+
   const draw = () => {
     ctx.fillStyle = 'rgba(2,8,16,0.055)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1575,7 +1575,7 @@ function initLoginCanvas() {
   };
   draw();
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 25 · CANVAS: OS BACKGROUND (particles + grid)
 ───────────────────────────────────────────────────────────────── */
@@ -1583,14 +1583,14 @@ function initBgCanvas() {
   const canvas = document.getElementById('bgCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
- 
+
   const resize = () => {
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;
   };
   resize();
   window.addEventListener('resize', resize, { passive: true });
- 
+
   const particles = Array.from({ length: 65 }, () => ({
     x:       Math.random() * canvas.width,
     y:       Math.random() * canvas.height,
@@ -1599,17 +1599,17 @@ function initBgCanvas() {
     size:    Math.random() * 1.5 + 0.3,
     opacity: Math.random() * 0.28 + 0.08,
   }));
- 
+
   const draw = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
- 
+
     const showParticles = document.getElementById('settParticles')?.checked !== false;
     if (showParticles) {
       ctx.strokeStyle = 'rgba(0,200,255,0.04)';
       ctx.lineWidth = 1;
       for (let x = 0; x < canvas.width;  x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
       for (let y = 0; y < canvas.height; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
- 
+
       particles.forEach(p => {
         p.x += p.vx; p.y += p.vy;
         if (p.x < 0) p.x = canvas.width;  if (p.x > canvas.width)  p.x = 0;
@@ -1620,26 +1620,26 @@ function initBgCanvas() {
         ctx.fill();
       });
     }
- 
+
     requestAnimationFrame(draw);
   };
   draw();
 }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 26 · UTILITY HELPERS
 ───────────────────────────────────────────────────────────────── */
 /** Random integer 0..max */
 function rnd(max) { return Math.floor(Math.random() * max); }
- 
+
 /** Clamp value between lo and hi */
 function clamp(val, lo, hi) { return Math.min(hi, Math.max(lo, val)); }
- 
+
 /* ─────────────────────────────────────────────────────────────────
    SECTION 27 · DOM READY — WIRE EVERYTHING UP
 ───────────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
- 
+
   /* AI input — Enter to send */
   const aiInput = document.getElementById('aiInput');
   if (aiInput) {
@@ -1647,7 +1647,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Enter') sendAICommand();
     });
   }
- 
+
   /* Launcher search — if it exists */
   const launcherInput = document.getElementById('launcherSearch');
   if (launcherInput) {
@@ -1664,7 +1664,7 @@ document.addEventListener('DOMContentLoaded', () => {
       googleSearch(val);
     });
   }
- 
+
   /* Login input — Enter to login */
   const loginInput = document.getElementById('loginInput');
   if (loginInput) {
@@ -1672,7 +1672,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Enter') attemptLogin();
     });
   }
- 
+
   /* AI orb click — toggles voice */
   const orb = document.getElementById('aiOrb');
   if (orb) {
@@ -1681,14 +1681,13 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleVoiceRecognition();
     });
   }
- 
+
   /* Preload speech synthesis voices */
   if (window.speechSynthesis) {
     window.speechSynthesis.getVoices();
     window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
   }
- 
+
   /* Kick off boot sequence */
   runBootSequence();
 });
- 
