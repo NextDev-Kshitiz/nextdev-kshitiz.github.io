@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>N.O.S — Nitrogen Oxidiser System</title>
+<title>N.O.S — JARVIS INTELLIGENCE SYSTEM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════ BOOT SCREEN ══ -->
+<!-- ══════════════════════════════════════════ BOOT SCREEN ══ -->
 <div id="bootScreen" class="boot-screen active">
   <canvas id="bootCanvas"></canvas>
   <div class="boot-content">
@@ -24,8 +24,8 @@
         <span class="nos-text">N.O.S</span>
       </div>
     </div>
-    <div class="boot-title">NITROGEN OXIDISER SYSTEM</div>
-    <div class="boot-version">BUILD 2.9.1 — CLASSIFIED</div>
+    <div class="boot-title">NITROGEN OXIDISER SYSTEM · JARVIS MODULE</div>
+    <div class="boot-version">BUILD 3.0.0 — CLASSIFIED · STARK TECH</div>
     <div class="boot-logs" id="bootLogs"></div>
     <div class="boot-progress-wrap">
       <div class="boot-progress-bar"><div class="boot-progress-fill" id="bootProgress"></div></div>
@@ -35,13 +35,13 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ LOGIN SCREEN ══ -->
+<!-- ══════════════════════════════════════════ LOGIN SCREEN ══ -->
 <div id="loginScreen" class="login-screen">
   <canvas id="loginCanvas"></canvas>
   <div class="login-content">
     <div class="login-header">
       <div class="login-logo">N.O.S</div>
-      <div class="login-subtitle">NITROGEN OXIDISER SYSTEM</div>
+      <div class="login-subtitle">NITROGEN OXIDISER SYSTEM · JARVIS MODULE</div>
     </div>
     <div class="login-panel">
       <div class="scan-container">
@@ -58,7 +58,7 @@
       <div class="login-options">
         <div class="login-input-wrap">
           <input type="password" id="loginInput" class="login-input" placeholder="ACCESS CODE" maxlength="20">
-          <button class="login-btn" id="loginBtn" onclick="attemptLogin()"><i class="fas fa-unlock-alt"></i> AUTHENTICATE</button>
+          <button class="login-btn" onclick="attemptLogin()"><i class="fas fa-unlock-alt"></i> AUTHENTICATE</button>
         </div>
         <div class="login-divider"><span>OR</span></div>
         <button class="guest-btn" onclick="guestLogin()"><i class="fas fa-user-secret"></i> GUEST ACCESS</button>
@@ -68,7 +68,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ MAIN OS ══ -->
+<!-- ══════════════════════════════════════════ MAIN OS ══ -->
 <div id="mainOS" class="main-os">
   <canvas id="bgCanvas"></canvas>
 
@@ -81,10 +81,17 @@
       <div class="topbar-date" id="topbarDate">--</div>
     </div>
     <div class="topbar-center">
-      <div class="topbar-status-dot"></div>
+      <div class="topbar-status-dot" id="statusDot"></div>
       <span id="topbarStatus">SYSTEM NOMINAL</span>
     </div>
     <div class="topbar-right">
+      <div class="topbar-vitals-mini">
+        <span class="tvm-item"><i class="fas fa-heartbeat"></i> <span id="tbHeartRate">72</span> BPM</span>
+        <span class="tvm-sep">|</span>
+        <span class="tvm-item tvm-tox"><i class="fas fa-flask"></i> <span id="tbToxicity">0.4</span>%</span>
+        <span class="tvm-sep">|</span>
+        <span class="tvm-item"><i class="fas fa-bolt"></i> <span id="tbSuitPower">87</span>%</span>
+      </div>
       <div class="topbar-icon" onclick="toggleMute()" title="Mute"><i class="fas fa-volume-up" id="muteIcon"></i></div>
       <div class="topbar-icon" id="voiceBtn" onclick="toggleVoiceRecognition()" title="Voice">
         <i class="fas fa-microphone" id="micIcon"></i>
@@ -96,16 +103,17 @@
 
   <!-- SIDEBAR -->
   <div class="sidebar">
-    <div class="sidebar-item active" onclick="switchView('dashboard')" title="Dashboard"><i class="fas fa-th-large"></i><span>Dashboard</span></div>
-    <div class="sidebar-item" onclick="switchView('terminal')" title="Terminal"><i class="fas fa-terminal"></i><span>Terminal</span></div>
+    <div class="sidebar-item active" onclick="switchView('dashboard')" title="Dashboard"><i class="fas fa-th-large"></i><span>Dash</span></div>
+    <div class="sidebar-item" onclick="switchView('jarvis')" title="JARVIS"><i class="fas fa-shield-alt"></i><span>JARVIS</span></div>
+    <div class="sidebar-item" onclick="switchView('terminal')" title="Terminal"><i class="fas fa-terminal"></i><span>Term</span></div>
     <div class="sidebar-item" onclick="switchView('launcher')" title="Launch"><i class="fas fa-rocket"></i><span>Launch</span></div>
     <div class="sidebar-item" onclick="switchView('ai')" title="AI Core"><i class="fas fa-brain"></i><span>AI Core</span></div>
     <div class="sidebar-item" onclick="switchView('radar')" title="Radar"><i class="fas fa-satellite-dish"></i><span>Radar</span></div>
     <div class="sidebar-divider"></div>
-    <div class="sidebar-item" onclick="showPanel('settingsPanel')" title="Settings"><i class="fas fa-sliders-h"></i><span>Settings</span></div>
+    <div class="sidebar-item" onclick="showPanel('settingsPanel')" title="Settings"><i class="fas fa-sliders-h"></i><span>Config</span></div>
   </div>
 
-  <!-- ── VIEWS ────────────────────────────────────────────── -->
+  <!-- ════════════════════ VIEWS ════════════════════ -->
 
   <!-- DASHBOARD VIEW -->
   <div class="view active" id="view-dashboard">
@@ -115,46 +123,82 @@
       <div class="widget widget-clock">
         <div class="widget-header"><i class="fas fa-clock"></i> CHRONOMETER</div>
         <div class="clock-display" id="clockDisplay">00:00:00</div>
-        <div class="clock-date" id="clockDate">SATURDAY · MAY 16 · 2026</div>
+        <div class="clock-date" id="clockDate">--</div>
         <div class="clock-ring"></div>
       </div>
 
       <!-- System metrics -->
       <div class="widget widget-metrics">
         <div class="widget-header"><i class="fas fa-microchip"></i> SYSTEM METRICS</div>
-        <div class="metric-row">
-          <span class="metric-label">CPU</span>
-          <div class="metric-bar"><div class="metric-fill cpu-fill" id="cpuFill"></div></div>
-          <span class="metric-val" id="cpuVal">--</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-label">RAM</span>
-          <div class="metric-bar"><div class="metric-fill ram-fill" id="ramFill"></div></div>
-          <span class="metric-val" id="ramVal">--</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-label">NET</span>
-          <div class="metric-bar"><div class="metric-fill net-fill" id="netFill"></div></div>
-          <span class="metric-val" id="netVal">--</span>
-        </div>
-        <div class="metric-row">
-          <span class="metric-label">GPU</span>
-          <div class="metric-bar"><div class="metric-fill gpu-fill" id="gpuFill"></div></div>
-          <span class="metric-val" id="gpuVal">--</span>
-        </div>
+        <div class="metric-row"><span class="metric-label">CPU</span><div class="metric-bar"><div class="metric-fill cpu-fill" id="cpuFill"></div></div><span class="metric-val" id="cpuVal">--</span></div>
+        <div class="metric-row"><span class="metric-label">RAM</span><div class="metric-bar"><div class="metric-fill ram-fill" id="ramFill"></div></div><span class="metric-val" id="ramVal">--</span></div>
+        <div class="metric-row"><span class="metric-label">NET</span><div class="metric-bar"><div class="metric-fill net-fill" id="netFill"></div></div><span class="metric-val" id="netVal">--</span></div>
+        <div class="metric-row"><span class="metric-label">GPU</span><div class="metric-bar"><div class="metric-fill gpu-fill" id="gpuFill"></div></div><span class="metric-val" id="gpuVal">--</span></div>
       </div>
 
       <!-- AI Monitor -->
       <div class="widget widget-ai-monitor">
         <div class="widget-header"><i class="fas fa-brain"></i> AI ACTIVITY MONITOR</div>
-        <canvas id="aiActivityChart" width="280" height="100"></canvas>
+        <canvas id="aiActivityChart" width="280" height="80"></canvas>
         <div class="ai-status-row">
           <div class="ai-status-dot active-dot"></div>
-          <span id="aiMonitorStatus">NEURAL NETWORK ACTIVE</span>
+          <span id="aiMonitorStatus">JARVIS NEURAL NETWORK ACTIVE — 47.3B PARAMS</span>
         </div>
       </div>
 
-      <!-- Weather -->
+      <!-- Operator Vitals -->
+      <div class="widget widget-vitals">
+        <div class="widget-header"><i class="fas fa-heartbeat"></i> OPERATOR VITALS</div>
+        <div class="vitals-grid">
+          <div class="vital-card">
+            <div class="vital-icon"><i class="fas fa-heartbeat"></i></div>
+            <div class="vital-val" id="vHeartRate">72</div>
+            <div class="vital-label">BPM</div>
+            <canvas class="vital-spark" id="sparkHR" width="80" height="28"></canvas>
+          </div>
+          <div class="vital-card">
+            <div class="vital-icon"><i class="fas fa-lungs"></i></div>
+            <div class="vital-val" id="vBloodO2">98</div>
+            <div class="vital-label">BLOOD O₂ %</div>
+            <canvas class="vital-spark" id="sparkO2" width="80" height="28"></canvas>
+          </div>
+          <div class="vital-card vital-tox" id="toxCard">
+            <div class="vital-icon"><i class="fas fa-flask"></i></div>
+            <div class="vital-val" id="vToxicity">0.4</div>
+            <div class="vital-label">TOXICITY %</div>
+            <canvas class="vital-spark" id="sparkTox" width="80" height="28"></canvas>
+          </div>
+          <div class="vital-card">
+            <div class="vital-icon"><i class="fas fa-thermometer-half"></i></div>
+            <div class="vital-val" id="vTemp">36.6</div>
+            <div class="vital-label">TEMP °C</div>
+            <canvas class="vital-spark" id="sparkTemp" width="80" height="28"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suit Power -->
+      <div class="widget widget-suit">
+        <div class="widget-header"><i class="fas fa-bolt"></i> SUIT MANAGEMENT — <span id="suitMarkLabel">MARK II</span></div>
+        <div class="suit-power-ring-wrap">
+          <canvas id="suitPowerRing" width="110" height="110"></canvas>
+          <div class="suit-ring-center">
+            <div class="suit-power-num" id="suitPowerDisp">87%</div>
+            <div class="suit-power-sub">POWER</div>
+          </div>
+        </div>
+        <div class="suit-stats">
+          <div class="suit-stat"><span class="ss-lbl">INTEGRITY</span><span class="ss-val" id="suitIntegrity">96%</span></div>
+          <div class="suit-stat"><span class="ss-lbl">ICING</span><span class="ss-val" id="suitIcing">CLEAR</span></div>
+          <div class="suit-stat"><span class="ss-lbl">ALTITUDE</span><span class="ss-val" id="suitAlt">0 m</span></div>
+          <div class="suit-stat"><span class="ss-lbl">SPEED</span><span class="ss-val" id="suitSpeed">0 km/h</span></div>
+        </div>
+        <button class="suit-toggle-btn" id="suitToggleBtn" onclick="toggleSuit()">
+          <i class="fas fa-power-off"></i> DEPLOY SUIT
+        </button>
+      </div>
+
+      <!-- Environment -->
       <div class="widget widget-weather">
         <div class="widget-header"><i class="fas fa-satellite"></i> ENVIRONMENT SCAN</div>
         <div class="weather-main">
@@ -173,8 +217,8 @@
       <div class="widget widget-notif">
         <div class="widget-header"><i class="fas fa-bell"></i> SIGNAL INTERCEPTS</div>
         <div class="notif-list" id="notifList">
-          <div class="notif-item"><div class="notif-dot"></div><span>AI Core fully initialized</span></div>
-          <div class="notif-item"><div class="notif-dot warn"></div><span>Voice recognition standby</span></div>
+          <div class="notif-item"><div class="notif-dot"></div><span>JARVIS AI fully initialized</span></div>
+          <div class="notif-item"><div class="notif-dot warn"></div><span>Voice recognition on standby</span></div>
           <div class="notif-item"><div class="notif-dot info"></div><span>Network uplink established</span></div>
         </div>
       </div>
@@ -214,18 +258,133 @@
     </div>
   </div>
 
+  <!-- JARVIS VIEW — THE NEW MAIN FEATURE -->
+  <div class="view" id="view-jarvis">
+    <div class="jarvis-wrap">
+      <div class="jarvis-header">
+        <div class="jarvis-title"><i class="fas fa-shield-alt"></i> J.A.R.V.I.S. OPERATIONS CENTER</div>
+        <div class="jarvis-subtitle">JUST A RATHER VERY INTELLIGENT SYSTEM — STARK TECH v3.0</div>
+      </div>
+      <div class="jarvis-grid">
+
+        <!-- Arc Reactor / Suit Power -->
+        <div class="j-card j-card-suit">
+          <div class="j-card-header"><i class="fas fa-bolt"></i> ARC REACTOR &amp; SUIT</div>
+          <div class="arc-reactor-visual">
+            <canvas id="arcReactorCanvas" width="160" height="160"></canvas>
+            <div class="arc-center-text">
+              <div class="arc-power-val" id="arcPowerVal">87%</div>
+              <div class="arc-power-lbl">ARC OUTPUT</div>
+            </div>
+          </div>
+          <div class="j-stat-row"><span>SUIT MODEL</span><span id="jSuitModel">MARK II</span></div>
+          <div class="j-stat-row"><span>INTEGRITY</span><span id="jIntegrity">96%</span></div>
+          <div class="j-stat-row"><span>REPULSORS</span><span class="j-green">CHARGED</span></div>
+          <div class="j-stat-row"><span>MANUF. ETA</span><span id="jManufEta">COMPLETE</span></div>
+          <div class="j-stat-row"><span>STATUS</span><span id="jSuitStatus" class="j-amber">STANDBY</span></div>
+        </div>
+
+        <!-- Operator Biometrics -->
+        <div class="j-card j-card-bio">
+          <div class="j-card-header"><i class="fas fa-heartbeat"></i> BIOMETRIC MONITORING</div>
+          <div class="bio-chart-wrap">
+            <canvas id="bioChart" width="260" height="80"></canvas>
+          </div>
+          <div class="j-stat-row"><span>HEART RATE</span><span id="jHR">72 BPM</span></div>
+          <div class="j-stat-row"><span>BLOOD O₂</span><span id="jO2">98%</span></div>
+          <div class="j-stat-row"><span>TEMP</span><span id="jTemp">36.6°C</span></div>
+          <div class="j-stat-row" id="jToxRow"><span>BLOOD TOXICITY</span><span id="jTox" class="j-green">0.4% — SAFE</span></div>
+          <div class="j-stat-row"><span>STRESS INDEX</span><span id="jStress">LOW</span></div>
+        </div>
+
+        <!-- Flight Telemetry -->
+        <div class="j-card j-card-flight">
+          <div class="j-card-header"><i class="fas fa-plane"></i> FLIGHT TELEMETRY</div>
+          <div class="flight-hud">
+            <canvas id="flightCanvas" width="260" height="100"></canvas>
+          </div>
+          <div class="j-stat-row"><span>ALTITUDE</span><span id="jAlt">0 m</span></div>
+          <div class="j-stat-row"><span>SPEED</span><span id="jSpeed">0 km/h</span></div>
+          <div class="j-stat-row"><span>G-FORCE</span><span id="jGforce">1.0g</span></div>
+          <div class="j-stat-row"><span>ICING LEVEL</span><span id="jIcing" class="j-green">CLEAR</span></div>
+          <div class="j-stat-row"><span>MAX CEILING</span><span>15,240 m</span></div>
+        </div>
+
+        <!-- Iron Legion -->
+        <div class="j-card j-card-legion">
+          <div class="j-card-header"><i class="fas fa-robot"></i> IRON LEGION CONTROL</div>
+          <div class="legion-grid" id="legionGrid">
+            <!-- Built by JS -->
+          </div>
+          <div class="j-stat-row" style="margin-top:10px"><span>TOTAL UNITS</span><span id="jLegionTotal">7 ACTIVE</span></div>
+          <div class="j-stat-row"><span>FORMATION</span><span class="j-green">DELTA-7</span></div>
+          <div class="j-stat-row"><span>COMM LINK</span><span class="j-green">ENCRYPTED</span></div>
+        </div>
+
+        <!-- Target Tracking -->
+        <div class="j-card j-card-track">
+          <div class="j-card-header"><i class="fas fa-crosshairs"></i> SATELLITE TRACKING</div>
+          <canvas id="trackCanvas" width="260" height="120"></canvas>
+          <div class="track-input-row">
+            <input type="text" id="trackInput" class="j-input" placeholder="Enter target name...">
+            <button class="j-btn" onclick="trackTarget()"><i class="fas fa-crosshairs"></i></button>
+          </div>
+          <div id="trackResult" class="track-result"></div>
+        </div>
+
+        <!-- Energy Scanner -->
+        <div class="j-card j-card-energy">
+          <div class="j-card-header"><i class="fas fa-atom"></i> ENERGY SOURCE SCANNER</div>
+          <canvas id="energyCanvas" width="260" height="80"></canvas>
+          <div id="energyList" class="energy-list"></div>
+          <button class="j-btn j-btn-full" onclick="runEnergyScan()"><i class="fas fa-search"></i> RUN DEEP SCAN</button>
+        </div>
+
+        <!-- Scene Reconstruction -->
+        <div class="j-card j-card-scene">
+          <div class="j-card-header"><i class="fas fa-cube"></i> HOLOGRAPHIC RECONSTRUCTION</div>
+          <canvas id="holoCanvas" width="260" height="130"></canvas>
+          <div class="scene-controls">
+            <button class="j-btn" onclick="reconstructScene()"><i class="fas fa-play"></i> RECONSTRUCT</button>
+            <button class="j-btn" onclick="analyzeScepter()"><i class="fas fa-wand-magic-sparkles"></i> ANALYZE ARTIFACT</button>
+          </div>
+          <div id="sceneLog" class="scene-log"></div>
+        </div>
+
+        <!-- Threat Assessment -->
+        <div class="j-card j-card-threat">
+          <div class="j-card-header"><i class="fas fa-shield-virus"></i> THREAT ASSESSMENT</div>
+          <div class="threat-meter">
+            <div class="threat-level-bar">
+              <div class="threat-fill" id="threatFill" style="width:5%"></div>
+            </div>
+            <div class="threat-scale">
+              <span>CLEAR</span><span>LOW</span><span>MED</span><span>HIGH</span><span>CRIT</span>
+            </div>
+          </div>
+          <div class="j-stat-row" style="margin-top:8px"><span>LEVEL</span><span id="jThreatLevel" class="j-green">NONE DETECTED</span></div>
+          <div class="j-stat-row"><span>PERIMETER</span><span id="jPerimeter" class="j-green">SECURE</span></div>
+          <div class="j-stat-row"><span>INDIVIDUALS AT RISK</span><span id="jIndividuals">0</span></div>
+          <div class="j-stat-row"><span>FIREWALL</span><span class="j-green">ACTIVE</span></div>
+          <button class="j-btn j-btn-full" style="margin-top:8px" onclick="runThreatScan()"><i class="fas fa-search"></i> SCAN PERIMETER</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- TERMINAL VIEW -->
   <div class="view" id="view-terminal">
     <div class="terminal-wrap">
       <div class="terminal-titlebar">
         <span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span>
-        <span class="term-title">N.O.S — CYBER TERMINAL v2.9</span>
+        <span class="term-title">N.O.S — CYBER TERMINAL v3.0 · JARVIS COMMAND LINE</span>
         <button class="term-clear-btn" onclick="terminalClear()">CLEAR</button>
       </div>
       <div class="terminal-output" id="termOutput"></div>
       <div class="terminal-input-row">
-        <span class="term-prompt">nos@system:~$</span>
-        <input type="text" class="term-input" id="termInput" placeholder="enter command..." autocomplete="off" spellcheck="false">
+        <span class="term-prompt">jarvis@nos:~$</span>
+        <input type="text" class="term-input" id="termInput" placeholder="enter command or ask anything..." autocomplete="off" spellcheck="false">
       </div>
     </div>
   </div>
@@ -234,43 +393,23 @@
   <div class="view" id="view-launcher">
     <div class="launcher-wrap">
       <div class="launcher-title">MISSION CONTROL — SITE LAUNCHER</div>
-      <div class="launcher-subtitle">SELECT TARGET TO DEPLOY</div>
-      <div class="launcher-apps">
-        <div class="app-card" onclick="openSite('spotify')">
-          <div class="app-icon"><i class="fab fa-spotify"></i></div>
-          <div class="app-name">SPOTIFY</div>
-          <div class="app-status">MUSIC STREAM</div>
-        </div>
-        <div class="app-card" onclick="openSite('youtube')">
-          <div class="app-icon"><i class="fab fa-youtube"></i></div>
-          <div class="app-name">YOUTUBE</div>
-          <div class="app-status">VIDEO STREAM</div>
-        </div>
-        <div class="app-card" onclick="openSite('github')">
-          <div class="app-icon"><i class="fab fa-github"></i></div>
-          <div class="app-name">GITHUB</div>
-          <div class="app-status">CODE REPOSITORY</div>
-        </div>
-        <div class="app-card" onclick="openSite('gmail')">
-          <div class="app-icon"><i class="fas fa-envelope"></i></div>
-          <div class="app-name">GMAIL</div>
-          <div class="app-status">COMMUNICATIONS</div>
-        </div>
-        <div class="app-card" onclick="openSite('chatgpt')">
-          <div class="app-icon"><i class="fas fa-robot"></i></div>
-          <div class="app-name">CHATGPT</div>
-          <div class="app-status">AI INTERFACE</div>
-        </div>
-        <div class="app-card" onclick="openSite('netflix')">
-          <div class="app-icon"><i class="fab fa-netflix"></i></div>
-          <div class="app-name">NETFLIX</div>
-          <div class="app-status">ENTERTAINMENT</div>
-        </div>
-        <div class="app-card" onclick="openSite('discord')">
-          <div class="app-icon"><i class="fab fa-discord"></i></div>
-          <div class="app-name">DISCORD</div>
-          <div class="app-status">COMMS HUB</div>
-        </div>
+      <div class="launcher-subtitle">SEARCH OR SELECT TARGET TO DEPLOY</div>
+      <div class="launcher-search-wrap">
+        <i class="fas fa-search launcher-search-icon"></i>
+        <input type="text" id="launcherSearch" class="launcher-search" placeholder="Search apps or type any query to Google search..." autocomplete="off">
+        <span class="launcher-hint">Press ENTER to Google search unknown queries</span>
+      </div>
+      <div class="launcher-apps" id="launcherApps">
+        <div class="app-card" onclick="openSite('spotify')"><div class="app-icon"><i class="fab fa-spotify"></i></div><div class="app-name">SPOTIFY</div><div class="app-status">MUSIC STREAM</div></div>
+        <div class="app-card" onclick="openSite('youtube')"><div class="app-icon"><i class="fab fa-youtube"></i></div><div class="app-name">YOUTUBE</div><div class="app-status">VIDEO STREAM</div></div>
+        <div class="app-card" onclick="openSite('github')"><div class="app-icon"><i class="fab fa-github"></i></div><div class="app-name">GITHUB</div><div class="app-status">CODE REPOSITORY</div></div>
+        <div class="app-card" onclick="openSite('gmail')"><div class="app-icon"><i class="fas fa-envelope"></i></div><div class="app-name">GMAIL</div><div class="app-status">COMMUNICATIONS</div></div>
+        <div class="app-card" onclick="openSite('chatgpt')"><div class="app-icon"><i class="fas fa-robot"></i></div><div class="app-name">CHATGPT</div><div class="app-status">AI INTERFACE</div></div>
+        <div class="app-card" onclick="openSite('netflix')"><div class="app-icon"><i class="fab fa-netflix"></i></div><div class="app-name">NETFLIX</div><div class="app-status">ENTERTAINMENT</div></div>
+        <div class="app-card" onclick="openSite('discord')"><div class="app-icon"><i class="fab fa-discord"></i></div><div class="app-name">DISCORD</div><div class="app-status">COMMS HUB</div></div>
+        <div class="app-card" onclick="openSite('twitter')"><div class="app-icon"><i class="fab fa-twitter"></i></div><div class="app-name">TWITTER</div><div class="app-status">SOCIAL INTEL</div></div>
+        <div class="app-card" onclick="openSite('reddit')"><div class="app-icon"><i class="fab fa-reddit"></i></div><div class="app-name">REDDIT</div><div class="app-status">INTEL FEED</div></div>
+        <div class="app-card" onclick="openSite('wikipedia')"><div class="app-icon"><i class="fab fa-wikipedia-w"></i></div><div class="app-name">WIKIPEDIA</div><div class="app-status">KNOWLEDGE BASE</div></div>
       </div>
     </div>
   </div>
@@ -285,18 +424,18 @@
         <div class="ai-orb" id="aiOrb">
           <div class="ai-orb-inner"></div>
         </div>
-        <div class="ai-orb-label">N.O.S AI CORE</div>
+        <div class="ai-orb-label">J.A.R.V.I.S. · N.O.S AI CORE</div>
       </div>
       <div class="ai-panel">
-        <div class="ai-panel-header">NEURAL INTERFACE — COMMAND INPUT</div>
+        <div class="ai-panel-header">NEURAL INTERFACE — JARVIS COMMAND INPUT</div>
         <div class="ai-chat" id="aiChat">
           <div class="ai-msg ai-msg-system">
             <div class="ai-msg-avatar"><i class="fas fa-brain"></i></div>
-            <div class="ai-msg-text">N.O.S AI CORE INITIALIZED. Say <strong>"Nitrogen Oxidiser"</strong> or type a command below.</div>
+            <div class="ai-msg-text">Good day. J.A.R.V.I.S. AI Core initialized. Say <strong>"Nitrogen Oxidiser"</strong> or type any command. Unknown queries are automatically searched on Google.</div>
           </div>
         </div>
         <div class="ai-input-row">
-          <input type="text" class="ai-input" id="aiInput" placeholder="ISSUE COMMAND..." autocomplete="off">
+          <input type="text" class="ai-input" id="aiInput" placeholder="ISSUE COMMAND OR ASK ANYTHING..." autocomplete="off">
           <button class="ai-send-btn" onclick="sendAICommand()"><i class="fas fa-paper-plane"></i></button>
           <button class="ai-voice-btn" id="aiVoiceBtn" onclick="toggleVoiceRecognition()"><i class="fas fa-microphone"></i></button>
         </div>
@@ -322,31 +461,21 @@
     </div>
   </div>
 
-  <!-- ── FLOATING PANELS ─────────────────────────────────── -->
-
-  <!-- AI Assistant Float -->
+  <!-- ════════════ FLOATING PANELS ════════════ -->
   <div class="float-panel" id="aiAssistPanel" style="display:none;">
-    <div class="float-header">
-      <div class="float-orb"></div>
-      <span>N.O.S ASSISTANT</span>
-      <button class="float-close" onclick="hidePanel('aiAssistPanel')">✕</button>
-    </div>
-    <div class="float-body" id="aiAssistBody">
-      <div class="float-msg">System online. Awaiting commands.</div>
-    </div>
+    <div class="float-header"><div class="float-orb"></div><span>J.A.R.V.I.S. ASSISTANT</span><button class="float-close" onclick="hidePanel('aiAssistPanel')">✕</button></div>
+    <div class="float-body" id="aiAssistBody"><div class="float-msg">System online. Awaiting commands, sir.</div></div>
   </div>
 
-  <!-- Notifications Panel -->
   <div class="float-panel" id="notifPanel" style="display:none;">
     <div class="float-header"><i class="fas fa-bell"></i><span>NOTIFICATIONS</span><button class="float-close" onclick="hidePanel('notifPanel')">✕</button></div>
-    <div class="float-body">
-      <div class="float-msg"><span class="dot-active">●</span> AI Core fully initialized</div>
+    <div class="float-body" id="floatNotifBody">
+      <div class="float-msg"><span class="dot-active">●</span> JARVIS AI Core fully initialized</div>
       <div class="float-msg"><span class="dot-warn">●</span> Voice recognition on standby</div>
       <div class="float-msg"><span class="dot-info">●</span> Network uplink established</div>
     </div>
   </div>
 
-  <!-- Settings Panel -->
   <div class="float-panel" id="settingsPanel" style="display:none;">
     <div class="float-header"><i class="fas fa-sliders-h"></i><span>SETTINGS</span><button class="float-close" onclick="hidePanel('settingsPanel')">✕</button></div>
     <div class="float-body settings-body">
@@ -354,18 +483,15 @@
       <label class="setting-row"><span>Voice Commands</span><input type="checkbox" class="tog" id="settVoice" onchange="toggleVoiceFromSettings()"></label>
       <label class="setting-row"><span>Particle BG</span><input type="checkbox" class="tog" id="settParticles" checked></label>
       <label class="setting-row"><span>Scan Lines</span><input type="checkbox" class="tog" id="settScanlines" checked onchange="toggleScanlines()"></label>
-      <div class="setting-row"><span>Theme Hue</span>
-        <input type="range" min="160" max="220" value="190" id="hueSlider" oninput="changeHue(this.value)">
-      </div>
+      <div class="setting-row"><span>Theme Hue</span><input type="range" min="160" max="220" value="190" id="hueSlider" oninput="changeHue(this.value)"></div>
     </div>
   </div>
 
   <!-- VOICE INDICATOR -->
   <div class="voice-indicator" id="voiceIndicator">
-    <div class="vi-ring"></div>
-    <div class="vi-ring vi-ring2"></div>
+    <div class="vi-ring"></div><div class="vi-ring vi-ring2"></div>
     <i class="fas fa-microphone vi-icon"></i>
-    <div class="vi-text">LISTENING...</div>
+    <div class="vi-text">JARVIS LISTENING...</div>
   </div>
 
   <!-- TOAST -->
