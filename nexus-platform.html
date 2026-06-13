@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Developer Community</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-network-wired"></i>
+                    <span>Nexus</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="feed">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-item" data-page="feed">
+                    <i class="fas fa-rss"></i>
+                    <span>Feed</span>
+                </a>
+                <a href="#" class="nav-item" data-page="messages">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="nav-item" data-page="challenges">
+                    <i class="fas fa-trophy"></i>
+                    <span>Challenges</span>
+                </a>
+                <a href="#" class="nav-item" data-page="portfolio">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Portfolio</span>
+                </a>
+                <a href="#" class="nav-item" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navigation -->
+            <header class="top-nav">
+                <div class="nav-left">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search posts, people, projects...">
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    <button class="icon-btn notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-menu">
+                        <button class="user-avatar-btn" id="userMenuBtn">
+                            <img id="userAvatarNav" src="https://ui-avatars.com/api/?name=User" alt="User">
+                        </button>
+                        <div class="dropdown-menu" id="userDropdown">
+                            <a href="#" class="dropdown-item" data-page="profile">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                            <a href="#" class="dropdown-item" data-page="settings">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <hr>
+                            <button class="dropdown-item" id="logoutDropdown">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Container -->
+            <div class="page-container">
+                <!-- Feed Page -->
+                <div id="feedPage" class="page active">
+                    <div class="feed-layout">
+                        <!-- Feed Section -->
+                        <div class="feed-section">
+                            <!-- Create Post -->
+                            <div class="create-post-card">
+                                <div class="create-post-header">
+                                    <img id="createPostAvatar" src="https://ui-avatars.com/api/?name=User" alt="User">
+                                    <input type="text" placeholder="Share your thoughts, projects, or ask a question..." class="create-post-input" id="createPostInput">
+                                </div>
+                                <div class="create-post-actions">
+                                    <button class="post-action-btn" id="postTypeText">
+                                        <i class="fas fa-pen"></i> Text
+                                    </button>
+                                    <button class="post-action-btn" id="postTypeProject">
+                                        <i class="fas fa-code"></i> Project
+                                    </button>
+                                    <button class="post-action-btn" id="postTypeLink">
+                                        <i class="fas fa-link"></i> Link
+                                    </button>
+                                    <button class="post-submit-btn" id="submitPostBtn">Post</button>
+                                </div>
+                            </div>
+
+                            <!-- Posts Feed -->
+                            <div id="postsFeed" class="posts-feed">
+                                <!-- Posts will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Right Sidebar -->
+                        <aside class="right-sidebar">
+                            <!-- Trending Tags -->
+                            <div class="sidebar-card">
+                                <h3 class="card-title">Trending Tags</h3>
+                                <div class="tags-list">
+                                    <a href="#" class="tag">#javascript</a>
+                                    <a href="#" class="tag">#react</a>
+                                    <a href="#" class="tag">#webdev</a>
+                                    <a href="#" class="tag">#nodejs</a>
+                                    <a href="#" class="tag">#python</a>
+                                    <a href="#" class="tag">#devops</a>
+                                </div>
+                            </div>
+
+                            <!-- Weekly Challenge -->
+                            <div class="sidebar-card">
+                                <h3 class="card-title">Weekly Challenge</h3>
+                                <div class="challenge-preview">
+                                    <h4>Build a Weather App</h4>
+                                    <p>Create a responsive weather application using any API and framework of your choice.</p>
+                                    <button class="btn-secondary">View Challenge</button>
+                                </div>
+                            </div>
+
+                            <!-- Community Stats -->
+                            <div class="sidebar-card">
+                                <h3 class="card-title">Community Stats</h3>
+                                <div class="stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Active Members</span>
+                                        <span class="stat-value" id="activeMembersCount">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Posts Today</span>
+                                        <span class="stat-value" id="postsTodayCount">0</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">New Projects</span>
+                                        <span class="stat-value" id="newProjectsCount">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Members -->
+                            <div class="sidebar-card">
+                                <h3 class="card-title">Active Members</h3>
+                                <div class="members-list" id="activeMembersList">
+                                    <!-- Members will be loaded here -->
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+                <!-- Messages Page -->
+                <div id="messagesPage" class="page">
+                    <div class="messages-layout">
+                        <!-- Conversations List -->
+                        <div class="conversations-panel">
+                            <div class="conversations-header">
+                                <h2>Messages</h2>
+                                <button class="icon-btn" id="newMessageBtn">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                            </div>
+
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search conversations...">
+                            </div>
+
+                            <div id="conversationsList" class="conversations-list">
+                                <!-- Conversations will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Chat Panel -->
+                        <div class="chat-panel">
+                            <div id="noChatSelected" class="no-chat-selected">
+                                <i class="fas fa-envelope"></i>
+                                <p>Select a conversation to start messaging</p>
+                            </div>
+
+                            <div id="chatContainer" class="chat-container" style="display: none;">
+                                <div class="chat-header">
+                                    <div class="chat-user-info">
+                                        <img id="chatUserAvatar" src="" alt="User">
+                                        <div>
+                                            <h3 id="chatUserName"></h3>
+                                            <span class="status-indicator">Online</span>
+                                        </div>
+                                    </div>
+                                    <button class="icon-btn">
+                                        <i class="fas fa-phone"></i>
+                                    </button>
+                                </div>
+
+                                <div id="messagesContainer" class="messages-container">
+                                    <!-- Messages will be loaded here -->
+                                </div>
+
+                                <div class="message-input-container">
+                                    <input type="text" placeholder="Type your message..." id="messageInput" class="message-input">
+                                    <button id="sendMessageBtn" class="icon-btn send-btn">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Challenges Page -->
+                <div id="challengesPage" class="page">
+                    <div class="challenges-container">
+                        <div class="page-header">
+                            <h1>Weekly Challenges</h1>
+                            <p>Improve your skills with community challenges</p>
+                        </div>
+
+                        <div class="challenges-grid" id="challengesGrid">
+                            <!-- Challenges will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Page -->
+                <div id="portfolioPage" class="page">
+                    <div class="portfolio-container">
+                        <div class="page-header">
+                            <h1>Portfolio Showcase</h1>
+                            <p>Discover amazing projects from the community</p>
+                            <button class="btn-primary" id="addProjectBtn">
+                                <i class="fas fa-plus"></i> Add Project
+                            </button>
+                        </div>
+
+                        <div class="portfolio-grid" id="portfolioGrid">
+                            <!-- Portfolio items will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Page -->
+                <div id="profilePage" class="page">
+                    <div class="profile-container">
+                        <!-- Profile Header -->
+                        <div class="profile-header">
+                            <div class="profile-background"></div>
+                            <div class="profile-info">
+                                <img id="profileAvatar" src="https://ui-avatars.com/api/?name=User" alt="User" class="profile-avatar">
+                                <div class="profile-details">
+                                    <h1 id="profileUsername">Loading...</h1>
+                                    <p id="profileBio">No bio yet</p>
+                                    <div class="profile-links">
+                                        <a href="#" id="profileGithub" target="_blank" class="profile-link">
+                                            <i class="fab fa-github"></i> GitHub
+                                        </a>
+                                        <a href="#" id="profilePortfolio" target="_blank" class="profile-link">
+                                            <i class="fas fa-globe"></i> Portfolio
+                                        </a>
+                                    </div>
+                                </div>
+                                <button class="btn-primary" id="editProfileBtn">Edit Profile</button>
+                            </div>
+                        </div>
+
+                        <!-- Profile Tabs -->
+                        <div class="profile-tabs">
+                            <button class="tab-btn active" data-tab="skills">Skills</button>
+                            <button class="tab-btn" data-tab="posts">Posts</button>
+                            <button class="tab-btn" data-tab="achievements">Achievements</button>
+                        </div>
+
+                        <!-- Skills Tab -->
+                        <div class="tab-content active" id="skillsTab">
+                            <div class="skills-container">
+                                <div class="skills-list" id="skillsList">
+                                    <!-- Skills will be loaded here -->
+                                </div>
+                                <button class="btn-secondary" id="addSkillBtn">Add Skill</button>
+                            </div>
+                        </div>
+
+                        <!-- Posts Tab -->
+                        <div class="tab-content" id="postsTab">
+                            <div id="userPostsList">
+                                <!-- User posts will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Achievements Tab -->
+                        <div class="tab-content" id="achievementsTab">
+                            <div class="achievements-grid" id="achievementsGrid">
+                                <!-- Achievements will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page">
+                    <div class="settings-container">
+                        <h1>Settings</h1>
+
+                        <div class="settings-section">
+                            <h2>Account</h2>
+                            <div class="setting-item">
+                                <label>Email</label>
+                                <input type="email" id="settingsEmail" readonly>
+                            </div>
+                            <div class="setting-item">
+                                <label>Username</label>
+                                <input type="text" id="settingsUsername">
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h2>Preferences</h2>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    Email Notifications
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <label>
+                                    <input type="checkbox" id="darkMode" checked>
+                                    Dark Mode
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h2>Danger Zone</h2>
+                            <button class="btn-danger">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h2>Welcome to Nexus</h2>
+                <button class="close-btn" onclick="closeAuthModal()">×</button>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-auth-tab="login">Login</button>
+                <button class="auth-tab-btn" data-auth-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <form id="emailLoginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Login</button>
+                </form>
+
+                <div class="divider">or</div>
+
+                <button class="btn-google" id="googleLoginBtn">
+                    <i class="fab fa-google"></i> Continue with Google
+                </button>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <form id="emailSignupForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="signupUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Create Account</button>
+                </form>
+
+                <div class="divider">or</div>
+
+                <button class="btn-google" id="googleSignupBtn">
+                    <i class="fab fa-google"></i> Sign Up with Google
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Modal -->
+    <div id="postModal" class="modal">
+        <div class="modal-content post-modal">
+            <div class="modal-header">
+                <h2 id="postModalTitle">Create Post</h2>
+                <button class="close-btn" onclick="closePostModal()">×</button>
+            </div>
+
+            <form id="postForm">
+                <div class="form-group">
+                    <label>What's on your mind?</label>
+                    <textarea id="postContent" placeholder="Share your thoughts..." required></textarea>
+                </div>
+
+                <div id="postTypeFields">
+                    <!-- Dynamic fields based on post type -->
+                </div>
+
+                <div class="form-group">
+                    <label>Tags</label>
+                    <input type="text" id="postTags" placeholder="Add tags separated by commas">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closePostModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Post</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div id="commentModal" class="modal">
+        <div class="modal-content comment-modal">
+            <div class="modal-header">
+                <h2>Add Comment</h2>
+                <button class="close-btn" onclick="closeCommentModal()">×</button>
+            </div>
+
+            <form id="commentForm">
+                <div class="form-group">
+                    <textarea id="commentContent" placeholder="Write your comment..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeCommentModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Comment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content edit-profile-modal">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <button class="close-btn" onclick="closeEditProfileModal()">×</button>
+            </div>
+
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label>Avatar URL</label>
+                    <input type="text" id="editAvatar">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="editUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="editBio" placeholder="Tell us about yourself"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>GitHub URL</label>
+                    <input type="url" id="editGithub">
+                </div>
+                <div class="form-group">
+                    <label>Portfolio URL</label>
+                    <input type="url" id="editPortfolio">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeEditProfileModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message User Modal -->
+    <div id="messageUserModal" class="modal">
+        <div class="modal-content message-user-modal">
+            <div class="modal-header">
+                <h2>Start Conversation</h2>
+                <button class="close-btn" onclick="closeMessageUserModal()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label>Search User</label>
+                <input type="text" id="userSearchInput" placeholder="Type username...">
+                <div id="userSearchResults" class="user-search-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
+    <script src="firebase.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
