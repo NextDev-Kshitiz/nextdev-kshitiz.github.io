@@ -1,29 +1,19 @@
-let currentUser = null;
-let currentPage = 'profile';
+// LOCAL DATA SYSTEM (No Firebase)
+let currentUser = {
+    uid: "local-user",
+    username: "Bro",
+    avatar: "https://ui-avatars.com/api/?name=Bro"
+};
+
+let posts = JSON.parse(localStorage.getItem("posts")) || [];
+let currentPage = 'feed';
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', async () => {
-    await initializeAuth();
+    showMainApp();
     setupEventListeners();
+    navigateToPage('feed');
 });
-
-// Firebase Auth
-async function initializeAuth() {
-    const user = firebase.auth().currentUser;
-    
-    if (user) {
-        currentUser = user;
-        const userData = await getUserData(user.uid);
-        if (userData) {
-            currentUser = { ...user, ...userData };
-            showMainApp();
-            updateUserUI();
-            navigateToPage('profile');
-        }
-    } else {
-        showAuthModal();
-    }
-}
 
 // Setup Event Listeners
 function setupEventListeners() {
@@ -38,19 +28,6 @@ function setupEventListeners() {
         });
     });
 
-    // Auth
-    document.getElementById('emailLoginForm').addEventListener('submit', emailLogin);
-    document.getElementById('emailSignupForm').addEventListener('submit', emailSignup);
-    document.getElementById('googleLoginBtn').addEventListener('click', googleLogin);
-    document.getElementById('googleSignupBtn').addEventListener('click', googleSignup);
-
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', logout);
-    document.getElementById('logoutDropdown').addEventListener('click', logout);
-
-    // User Menu
-    document.getElementById('userMenuBtn').addEventListener('click', toggleUserMenu);
-
     // Profile
     document.getElementById('editProfileBtn').addEventListener('click', openEditProfileModal);
     document.getElementById('editProfileForm').addEventListener('submit', updateProfile);
@@ -60,10 +37,10 @@ function setupEventListeners() {
         btn.addEventListener('click', switchTab);
     });
 
-    // Auth Tabs
-    document.querySelectorAll('.auth-tab-btn').forEach(btn => {
-        btn.addEventListener('click', switchAuthTab);
-    });
+    // Post Modal
+    if (document.getElementById('postModal')) {
+        document.getElementById('postForm').addEventListener('submit', submitPost);
+    }
 
     // Add Skill Button
     if (document.getElementById('addSkillBtn')) {
@@ -75,7 +52,8 @@ function setupEventListeners() {
         });
     }
 
-    // FIX #5: Replace global click listener with safer version
+    // User Menu
+    document.getElementById('userMenuBtn').addEventListener('click', toggleUserMenu);
     setTimeout(() => {
         document.addEventListener('click', () => {
             const menu = document.getElementById('userDropdown');
@@ -86,132 +64,15 @@ function setupEventListeners() {
     });
 }
 
-// Auth Functions
-async function emailLogin(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-
-    try {
-        const result = await firebase.auth().signInWithEmailAndPassword(email, password);
-        currentUser = result.user;
-        const userData = await getUserData(result.user.uid);
-        if (userData) {
-            currentUser = { ...result.user, ...userData };
-        }
-        closeAuthModal();
-        showMainApp();
-        updateUserUI();
-        navigateToPage('profile');
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-async function emailSignup(e) {
-    e.preventDefault();
-    const username = document.getElementById('signupUsername').value;
-    const email = document.getElementById('signupEmail').value;
-    const password = document.getElementById('signupPassword').value;
-    const confirmPassword = document.getElementById('signupConfirmPassword').value;
-
-    if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-    }
-
-    try {
-        const result = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        
-        const userData = {
-            uid: result.user.uid,
-            username: username,
-            email: email,
-            avatar: `https://ui-avatars.com/api/?name=${username}`,
-            bio: '',
-            skills: [],
-            github: '',
-            portfolio: '',
-            createdAt: new Date()
-        };
-
-        await firebase.firestore().collection('users').doc(result.user.uid).set(userData);
-        
-        currentUser = { ...result.user, ...userData };
-        closeAuthModal();
-        showMainApp();
-        updateUserUI();
-        navigateToPage('profile');
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-async function googleLogin() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-        const result = await firebase.auth().signInWithPopup(provider);
-        currentUser = result.user;
-        
-        const userDoc = await firebase.firestore().collection('users').doc(result.user.uid).get();
-        if (!userDoc.exists) {
-            const userData = {
-                uid: result.user.uid,
-                username: result.user.displayName || 'User',
-                email: result.user.email,
-                avatar: result.user.photoURL || `https://ui-avatars.com/api/?name=${result.user.displayName}`,
-                bio: '',
-                skills: [],
-                github: '',
-                portfolio: '',
-                createdAt: new Date()
-            };
-            await firebase.firestore().collection('users').doc(result.user.uid).set(userData);
-            currentUser = { ...result.user, ...userData };
-        } else {
-            currentUser = { ...result.user, ...userDoc.data() };
-        }
-        
-        closeAuthModal();
-        showMainApp();
-        updateUserUI();
-        navigateToPage('profile');
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-async function googleSignup() {
-    await googleLogin();
-}
-
-async function logout() {
-    await firebase.auth().signOut();
-    currentUser = null;
-    showAuthModal();
-}
-
 // UI Functions
-function showAuthModal() {
-    document.getElementById('authModal').classList.add('show');
-    document.querySelector('.page-container').style.display = 'none';
-}
-
-function closeAuthModal() {
-    document.getElementById('authModal').classList.remove('show');
-    document.querySelector('.page-container').style.display = 'flex';
-}
-
 function showMainApp() {
     document.getElementById('authModal').classList.remove('show');
     document.querySelector('.page-container').style.display = 'flex';
 }
 
 function updateUserUI() {
-    if (currentUser) {
-        const avatar = currentUser.photoURL || currentUser.avatar || `https://ui-avatars.com/api/?name=${currentUser.username}`;
-        document.getElementById('userAvatarNav').src = avatar;
-    }
+    const avatar = currentUser.avatar || `https://ui-avatars.com/api/?name=${currentUser.username}`;
+    document.getElementById('userAvatarNav').src = avatar;
 }
 
 function toggleUserMenu() {
@@ -235,42 +96,153 @@ function navigateToPage(page) {
         p.classList.remove('active');
     });
 
-    document.getElementById(page + 'Page').classList.add('active');
+    const pageElement = document.getElementById(page + 'Page');
+    if (pageElement) {
+        pageElement.classList.add('active');
+    }
 
     // Load page content
-    if (page === 'profile') {
+    if (page === 'feed') {
+        loadFeed();
+    } else if (page === 'profile') {
         loadProfile();
     }
 }
 
-// Profile
-async function loadProfile() {
-    if (!currentUser) return;
+// ===== FEED SYSTEM =====
+function loadFeed() {
+    const feedContainer = document.getElementById('postsFeed');
+    if (!feedContainer) return;
+    
+    feedContainer.innerHTML = '';
 
-    const userData = await getUserData(currentUser.uid);
+    if (posts.length === 0) {
+        feedContainer.innerHTML = '<p style="text-align:center; color: var(--text-tertiary);">No posts yet. Be the first to post!</p>';
+        return;
+    }
 
-    document.getElementById('profileUsername').textContent = userData.username;
-    document.getElementById('profileBio').textContent = userData.bio || 'No bio yet';
-    document.getElementById('profileAvatar').src = userData.avatar;
+    posts.forEach(post => {
+        const div = document.createElement('div');
+        div.className = 'post-card';
 
-    if (userData.github) {
-        document.getElementById('profileGithub').href = userData.github;
+        const timeAgo = getTimeAgo(new Date(post.createdAt));
+        const likeCount = post.likes ? post.likes.length : 0;
+        const isLiked = post.likes && post.likes.includes(currentUser.uid);
+
+        div.innerHTML = `
+            <div class="post-header">
+                <img src="${escapeHtml(post.avatar)}" class="post-avatar" alt="${escapeHtml(post.username)}">
+                <div>
+                    <strong>${escapeHtml(post.username)}</strong>
+                    <div style="font-size: 0.85em; color: var(--text-tertiary);">${timeAgo}</div>
+                </div>
+            </div>
+
+            <div class="post-content">${escapeHtml(post.content)}</div>
+
+            ${post.tags ? `<div class="post-tags">${escapeHtml(post.tags)}</div>` : ''}
+
+            <div class="post-footer">
+                <button onclick="likePost('${post.id}')" style="background: ${isLiked ? '#ff4458' : 'transparent'}; color: ${isLiked ? 'white' : 'inherit'};">
+                    ❤️ ${likeCount}
+                </button>
+            </div>
+        `;
+
+        feedContainer.appendChild(div);
+    });
+}
+
+function submitPost(e) {
+    e.preventDefault();
+
+    const content = document.getElementById('postContent').value.trim();
+    const tags = document.getElementById('postTags').value.trim();
+
+    if (!content) {
+        alert('Please write something!');
+        return;
+    }
+
+    const post = {
+        id: Date.now().toString(),
+        userId: currentUser.uid,
+        username: currentUser.username,
+        avatar: currentUser.avatar,
+        content,
+        tags,
+        likes: [],
+        createdAt: new Date().toISOString()
+    };
+
+    posts.unshift(post);
+    localStorage.setItem("posts", JSON.stringify(posts));
+
+    document.getElementById('postContent').value = '';
+    document.getElementById('postTags').value = '';
+
+    closePostModal();
+    loadFeed();
+}
+
+function likePost(id) {
+    posts = posts.map(p => {
+        if (p.id === id) {
+            if (!p.likes) p.likes = [];
+            
+            if (!p.likes.includes(currentUser.uid)) {
+                p.likes.push(currentUser.uid);
+            } else {
+                p.likes = p.likes.filter(uid => uid !== currentUser.uid);
+            }
+        }
+        return p;
+    });
+
+    localStorage.setItem("posts", JSON.stringify(posts));
+    loadFeed();
+}
+
+function openPostModal() {
+    const modal = document.getElementById('postModal');
+    if (modal) {
+        modal.classList.add('show');
+    }
+}
+
+function closePostModal() {
+    const modal = document.getElementById('postModal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+// ===== PROFILE SYSTEM =====
+function loadProfile() {
+    document.getElementById('profileUsername').textContent = currentUser.username;
+    document.getElementById('profileBio').textContent = currentUser.bio || 'No bio yet';
+    document.getElementById('profileAvatar').src = currentUser.avatar;
+
+    if (currentUser.github) {
+        document.getElementById('profileGithub').href = currentUser.github;
         document.getElementById('profileGithub').style.display = 'inline-block';
     }
-    if (userData.portfolio) {
-        document.getElementById('profilePortfolio').href = userData.portfolio;
+    if (currentUser.portfolio) {
+        document.getElementById('profilePortfolio').href = currentUser.portfolio;
         document.getElementById('profilePortfolio').style.display = 'inline-block';
     }
 
-    loadProfileSkills(userData.skills);
+    loadProfileSkills(currentUser.skills || []);
 
     // Update settings page too
-    document.getElementById('settingsEmail').value = userData.email;
-    document.getElementById('settingsUsername').value = userData.username;
+    document.getElementById('settingsEmail').value = currentUser.email || '';
+    document.getElementById('settingsUsername').value = currentUser.username;
 }
 
-async function loadProfileSkills(skills) {
+function loadProfileSkills(skills) {
     const container = document.getElementById('skillsList');
+    if (!container) return;
+    
     container.innerHTML = '';
 
     if (!skills || skills.length === 0) {
@@ -282,22 +254,25 @@ async function loadProfileSkills(skills) {
         const skillDiv = document.createElement('div');
         skillDiv.className = 'skill-item';
         skillDiv.innerHTML = `
-            <h4>${skill}</h4>
+            <h4>${escapeHtml(skill)}</h4>
             <div class="skill-level">Intermediate</div>
         `;
         container.appendChild(skillDiv);
     });
 }
 
-async function addSkill(skill) {
-    const userRef = firebase.firestore().collection('users').doc(currentUser.uid);
-    const userData = (await userRef.get()).data();
-    const skills = userData.skills || [];
+function addSkill(skill) {
+    if (!currentUser.skills) {
+        currentUser.skills = [];
+    }
 
-    if (!skills.includes(skill)) {
-        skills.push(skill);
-        await userRef.update({ skills });
+    if (!currentUser.skills.includes(skill)) {
+        currentUser.skills.push(skill);
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
         loadProfile();
+        alert('Skill added!');
+    } else {
+        alert('Skill already exists!');
     }
 }
 
@@ -312,16 +287,19 @@ function switchTab(e) {
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
-    document.getElementById(tabName + 'Tab').classList.add('active');
+    
+    const tabElement = document.getElementById(tabName + 'Tab');
+    if (tabElement) {
+        tabElement.classList.add('active');
+    }
 }
 
 function openEditProfileModal() {
-    const userData = currentUser;
-    document.getElementById('editUsername').value = userData.username || '';
-    document.getElementById('editBio').value = userData.bio || '';
-    document.getElementById('editGithub').value = userData.github || '';
-    document.getElementById('editPortfolio').value = userData.portfolio || '';
-    document.getElementById('editAvatar').value = userData.avatar || '';
+    document.getElementById('editUsername').value = currentUser.username || '';
+    document.getElementById('editBio').value = currentUser.bio || '';
+    document.getElementById('editGithub').value = currentUser.github || '';
+    document.getElementById('editPortfolio').value = currentUser.portfolio || '';
+    document.getElementById('editAvatar').value = currentUser.avatar || '';
     document.getElementById('editProfileModal').classList.add('show');
 }
 
@@ -329,7 +307,7 @@ function closeEditProfileModal() {
     document.getElementById('editProfileModal').classList.remove('show');
 }
 
-async function updateProfile(e) {
+function updateProfile(e) {
     e.preventDefault();
 
     const updates = {
@@ -340,49 +318,20 @@ async function updateProfile(e) {
         avatar: document.getElementById('editAvatar').value
     };
 
-    try {
-        await firebase.firestore().collection('users').doc(currentUser.uid).update(updates);
-        currentUser = { ...currentUser, ...updates };
-        closeEditProfileModal();
-        loadProfile();
-        updateUserUI();
-        alert('Profile updated successfully!');
-    } catch (error) {
-        alert('Error updating profile: ' + error.message);
-    }
+    currentUser = { ...currentUser, ...updates };
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    
+    closeEditProfileModal();
+    loadProfile();
+    updateUserUI();
+    alert('Profile updated successfully!');
 }
 
-// Auth Tab Switching
-function switchAuthTab(e) {
-    const tabName = e.target.dataset.authTab;
-
-    document.querySelectorAll('.auth-tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    e.target.classList.add('active');
-
-    document.querySelectorAll('.auth-form').forEach(form => {
-        form.classList.remove('active');
-    });
-    document.getElementById(tabName + 'Form').classList.add('active');
-}
-
-// Helper Functions
-async function getUserData(userId) {
-    try {
-        const doc = await firebase.firestore().collection('users').doc(userId).get();
-        return doc.data() || {};
-    } catch (error) {
-        console.error('Error getting user data:', error);
-        return {};
-    }
-}
-
-// FIX #3: Fixed getTimeAgo() with proper null handling
+// ===== HELPER FUNCTIONS =====
 function getTimeAgo(date) {
     if (!date) return 'now';
 
-    const d = date.toDate ? date.toDate() : new Date(date);
+    const d = date instanceof Date ? date : new Date(date);
     const seconds = Math.floor((new Date() - d) / 1000);
 
     let interval = seconds / 31536000;
@@ -403,7 +352,6 @@ function getTimeAgo(date) {
     return 'just now';
 }
 
-// FIX #4: Fixed escapeHtml() with null-safe handling
 function escapeHtml(text) {
     const map = {
         '&': '&amp;',
