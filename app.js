@@ -74,6 +74,16 @@ function setupEventListeners() {
             }
         });
     }
+
+    // FIX #5: Replace global click listener with safer version
+    setTimeout(() => {
+        document.addEventListener('click', () => {
+            const menu = document.getElementById('userDropdown');
+            if (menu) {
+                menu.classList.remove('show');
+            }
+        }, { once: true });
+    });
 }
 
 // Auth Functions
@@ -368,6 +378,32 @@ async function getUserData(userId) {
     }
 }
 
+// FIX #3: Fixed getTimeAgo() with proper null handling
+function getTimeAgo(date) {
+    if (!date) return 'now';
+
+    const d = date.toDate ? date.toDate() : new Date(date);
+    const seconds = Math.floor((new Date() - d) / 1000);
+
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + ' years ago';
+
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + ' months ago';
+
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + ' days ago';
+
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + ' hours ago';
+
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + ' minutes ago';
+
+    return 'just now';
+}
+
+// FIX #4: Fixed escapeHtml() with null-safe handling
 function escapeHtml(text) {
     const map = {
         '&': '&amp;',
@@ -376,5 +412,5 @@ function escapeHtml(text) {
         '"': '&quot;',
         "'": '&#039;'
     };
-    return text.replace(/[&<>"']/g, m => map[m]);
+    return (text || '').replace(/[&<>"']/g, m => map[m]);
 }
