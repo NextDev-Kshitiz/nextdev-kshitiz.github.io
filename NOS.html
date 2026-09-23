@@ -1,513 +1,1366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>N.O.S — JARVIS INTELLIGENCE SYSTEM</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ULTRON — Just A Rather Very Intelligent System</title>
+    <meta name="description" content="ULTRON — a personal AI assistant built by Kshitiz Jain. Voice, vision, memory and desktop intelligence in one system.">
+
+    <link rel="icon" href="assets/ultron-logo.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #05070a;
+            --bg-soft: #090d12;
+            --panel: rgba(13, 18, 24, 0.72);
+            --panel-solid: #0d1218;
+            --line: rgba(255,255,255,0.09);
+
+            --cyan: #00eaff;
+            --cyan-soft: rgba(0,234,255,0.15);
+            --text: #f4f8fb;
+            --muted: #8996a3;
+
+            --radius: 24px;
+            --max: 1180px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, sans-serif;
+            background:
+                radial-gradient(circle at 50% -10%, rgba(0,234,255,0.13), transparent 35%),
+                var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        /* BACKGROUND */
+
+        .grid {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            pointer-events: none;
+            opacity: 0.35;
+
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+
+            background-size: 60px 60px;
+
+            mask-image: linear-gradient(to bottom, black, transparent 85%);
+        }
+
+        .glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: rgba(0,234,255,0.06);
+            filter: blur(100px);
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        /* NAVBAR */
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 18px 24px;
+        }
+
+        .nav {
+            max-width: var(--max);
+            margin: auto;
+
+            height: 64px;
+            padding: 0 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: rgba(7,10,14,0.78);
+            backdrop-filter: blur(18px);
+
+            border: 1px solid var(--line);
+            border-radius: 18px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            font-family: Orbitron, sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+
+            display: grid;
+            place-items: center;
+
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+
+            box-shadow:
+                0 0 15px rgba(0,234,255,0.35),
+                inset 0 0 15px rgba(0,234,255,0.08);
+
+            font-size: 12px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #9ba8b4;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-button {
+            padding: 10px 17px;
+            border-radius: 10px;
+
+            background: white;
+            color: #05070a !important;
+
+            font-size: 13px !important;
+            font-weight: 700;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 100vh;
+            max-width: var(--max);
+            margin: auto;
+
+            padding: 170px 24px 90px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+
+            padding: 8px 13px;
+            border-radius: 999px;
+
+            border: 1px solid rgba(0,234,255,0.2);
+            background: rgba(0,234,255,0.05);
+
+            color: #9ceff7;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+
+            margin-bottom: 28px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--cyan);
+            box-shadow: 0 0 12px var(--cyan);
+        }
+
+        .hero h1 {
+            font-family: Orbitron, sans-serif;
+
+            font-size: clamp(62px, 12vw, 145px);
+            line-height: 0.9;
+
+            letter-spacing: -5px;
+
+            background: linear-gradient(
+                180deg,
+                #ffffff 15%,
+                #a9bac6 55%,
+                #52616d 100%
+            );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+
+            margin-bottom: 25px;
+        }
+
+        .hero-subtitle {
+            font-family: Orbitron, sans-serif;
+            font-size: clamp(15px, 2vw, 21px);
+            letter-spacing: 3px;
+            color: var(--cyan);
+
+            margin-bottom: 22px;
+        }
+
+        .hero-description {
+            max-width: 650px;
+
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 16px;
+
+            margin-bottom: 35px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 13px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            padding: 14px 22px;
+            border-radius: 12px;
+
+            font-weight: 700;
+            font-size: 14px;
+
+            transition: 0.25s;
+        }
+
+        .primary-btn {
+            background: white;
+            color: black;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.12);
+        }
+
+        .secondary-btn {
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.03);
+            color: white;
+        }
+
+        .secondary-btn:hover {
+            border-color: rgba(0,234,255,0.4);
+            background: rgba(0,234,255,0.06);
+        }
+
+        /* SYSTEM PREVIEW */
+
+        .preview-wrap {
+            width: 100%;
+            max-width: 1050px;
+            margin-top: 80px;
+
+            position: relative;
+        }
+
+        .preview-glow {
+            position: absolute;
+            inset: 20% 15%;
+            background: rgba(0,234,255,0.12);
+            filter: blur(80px);
+            z-index: -1;
+        }
+
+        .system-window {
+            background: #080c11;
+
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 40px 100px rgba(0,0,0,0.6),
+                0 0 80px rgba(0,234,255,0.06);
+
+            text-align: left;
+        }
+
+        .window-bar {
+            height: 48px;
+            padding: 0 17px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: #0c1117;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 7px;
+        }
+
+        .window-dots span {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #303b45;
+        }
+
+        .window-title {
+            color: #71808d;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .system-body {
+            min-height: 420px;
+
+            display: grid;
+            grid-template-columns: 190px 1fr;
+        }
+
+        .sidebar {
+            padding: 18px;
+
+            border-right: 1px solid var(--line);
+            background: #090e14;
+        }
+
+        .side-title {
+            font-family: Orbitron;
+            font-size: 12px;
+            color: var(--cyan);
+            letter-spacing: 2px;
+            margin-bottom: 22px;
+        }
+
+        .side-item {
+            padding: 10px 11px;
+            margin-bottom: 5px;
+
+            color: #778592;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+
+        .side-item.active {
+            color: white;
+            background: rgba(0,234,255,0.08);
+            border: 1px solid rgba(0,234,255,0.13);
+        }
+
+        .terminal {
+            padding: 28px;
+            font-family: monospace;
+            font-size: 13px;
+            color: #91a0ab;
+        }
+
+        .terminal-line {
+            margin-bottom: 13px;
+        }
+
+        .terminal-line span {
+            color: var(--cyan);
+        }
+
+        .terminal-main {
+            margin-top: 35px;
+
+            padding: 22px;
+
+            border: 1px solid rgba(0,234,255,0.1);
+            border-radius: 13px;
+
+            background: rgba(0,234,255,0.025);
+        }
+
+        .terminal-main h3 {
+            font-family: Orbitron;
+            font-size: 18px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .terminal-main p {
+            color: #74818d;
+            line-height: 1.7;
+        }
+
+        /* SECTIONS */
+
+        section {
+            max-width: var(--max);
+            margin: auto;
+            padding: 110px 24px;
+        }
+
+        .section-label {
+            color: var(--cyan);
+            font-family: Orbitron;
+            font-size: 11px;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: clamp(32px, 5vw, 55px);
+            letter-spacing: -2px;
+            margin-bottom: 16px;
+        }
+
+        .section-description {
+            color: var(--muted);
+            max-width: 650px;
+            line-height: 1.8;
+            margin-bottom: 45px;
+        }
+
+        /* FEATURES */
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .feature {
+            padding: 28px;
+
+            min-height: 220px;
+
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+
+            transition: 0.3s;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0,234,255,0.28);
+            background: rgba(0,234,255,0.035);
+        }
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+
+            display: grid;
+            place-items: center;
+
+            border: 1px solid rgba(0,234,255,0.25);
+            border-radius: 12px;
+
+            color: var(--cyan);
+            margin-bottom: 25px;
+        }
+
+        .feature h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .feature p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* COMMANDS */
+
+        .command-box {
+            padding: 28px;
+
+            background: #080c11;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+
+            font-family: monospace;
+        }
+
+        .command {
+            display: flex;
+            gap: 20px;
+
+            padding: 15px 0;
+
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .command:last-child {
+            border-bottom: none;
+        }
+
+        .command-code {
+            color: var(--cyan);
+            min-width: 160px;
+        }
+
+        .command-desc {
+            color: #77838e;
+        }
+
+        /* HOW */
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .step {
+            padding: 28px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--panel);
+        }
+
+        .step-number {
+            font-family: Orbitron;
+            font-size: 12px;
+            color: var(--cyan);
+            margin-bottom: 30px;
+        }
+
+        .step h3 {
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        /* CREATOR */
+
+        .creator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .creator-card {
+            padding: 40px;
+
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+
+            background:
+                radial-gradient(circle at 100% 0%, rgba(0,234,255,0.08), transparent 40%),
+                var(--panel);
+        }
+
+        .creator-card h2 {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .creator-card p {
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .creator-tag {
+            display: inline-block;
+            margin-top: 25px;
+
+            padding: 8px 12px;
+
+            border-radius: 8px;
+
+            color: var(--cyan);
+            background: rgba(0,234,255,0.07);
+            border: 1px solid rgba(0,234,255,0.15);
+
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        /* CTA */
+
+        .cta {
+            text-align: center;
+
+            padding: 90px 30px;
+
+            border: 1px solid var(--line);
+            border-radius: 30px;
+
+            background:
+                radial-gradient(circle at 50% 0%, rgba(0,234,255,0.1), transparent 45%),
+                #090d12;
+        }
+
+        .cta h2 {
+            font-family: Orbitron;
+            font-size: clamp(32px, 5vw, 60px);
+            margin-bottom: 18px;
+        }
+
+        .cta p {
+            color: var(--muted);
+            margin-bottom: 30px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 35px 24px;
+        }
+
+        .footer-inner {
+            max-width: var(--max);
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            color: #66727d;
+            font-size: 12px;
+        }
+
+        .footer-brand {
+            font-family: Orbitron;
+            color: white;
+            letter-spacing: 2px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .nav-links a:not(.nav-button) {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 145px;
+            }
+
+            .hero h1 {
+                letter-spacing: -3px;
+            }
+
+            .system-body {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .features,
+            .steps,
+            .creator {
+                grid-template-columns: 1fr;
+            }
+
+            .command {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            header {
+                padding: 10px;
+            }
+
+            .nav {
+                height: 58px;
+            }
+
+            .brand {
+                font-size: 13px;
+            }
+
+            .hero {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+
+            section {
+                padding: 80px 18px;
+            }
+
+            .hero h1 {
+                font-size: 58px;
+            }
+
+            .system-body {
+                min-height: 360px;
+            }
+
+            .terminal {
+                padding: 20px;
+                font-size: 11px;
+            }
+
+            .creator-card {
+                padding: 28px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- ══════════════════════════════════════════ BOOT SCREEN ══ -->
-<div id="bootScreen" class="boot-screen active">
-  <canvas id="bootCanvas"></canvas>
-  <div class="boot-content">
-    <div class="boot-logo">
-      <div class="boot-logo-ring ring1"></div>
-      <div class="boot-logo-ring ring2"></div>
-      <div class="boot-logo-ring ring3"></div>
-      <div class="boot-logo-core">
-        <span class="nos-text">N.O.S</span>
-      </div>
+<div class="grid"></div>
+<div class="glow"></div>
+
+<!-- NAVBAR -->
+
+<header>
+    <nav class="nav">
+
+        <a href="#" class="brand">
+            <span class="brand-icon">U</span>
+            ULTRON
+        </a>
+
+        <div class="nav-links">
+            <a href="#features">Capabilities</a>
+            <a href="#commands">Commands</a>
+            <a href="#creator">Creator</a>
+
+            <a
+                href="https://github.com/KshitizJain-Developer/ULTRON"
+                target="_blank"
+                class="nav-button"
+            >
+                GitHub
+            </a>
+        </div>
+
+    </nav>
+</header>
+
+
+<!-- HERO -->
+
+<main>
+
+<section class="hero">
+
+    <div class="status">
+        <span class="status-dot"></span>
+        ULTRON SYSTEM ONLINE
     </div>
-    <div class="boot-title">NITROGEN OXIDISER SYSTEM · JARVIS MODULE</div>
-    <div class="boot-version">BUILD 3.0.0 — CLASSIFIED · STARK TECH</div>
-    <div class="boot-logs" id="bootLogs"></div>
-    <div class="boot-progress-wrap">
-      <div class="boot-progress-bar"><div class="boot-progress-fill" id="bootProgress"></div></div>
-      <div class="boot-progress-pct" id="bootPct">0%</div>
+
+    <h1>ULTRON</h1>
+
+    <div class="hero-subtitle">
+        JUST A RATHER VERY INTELLIGENT SYSTEM
     </div>
-    <div class="boot-status" id="bootStatus">INITIALIZING CORE SYSTEMS...</div>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════ LOGIN SCREEN ══ -->
-<div id="loginScreen" class="login-screen">
-  <canvas id="loginCanvas"></canvas>
-  <div class="login-content">
-    <div class="login-header">
-      <div class="login-logo">N.O.S</div>
-      <div class="login-subtitle">NITROGEN OXIDISER SYSTEM · JARVIS MODULE</div>
-    </div>
-    <div class="login-panel">
-      <div class="scan-container">
-        <div class="face-scan">
-          <div class="scan-line"></div>
-          <div class="scan-corners">
-            <span class="corner tl"></span><span class="corner tr"></span>
-            <span class="corner bl"></span><span class="corner br"></span>
-          </div>
-          <div class="scan-user-icon"><i class="fas fa-user-astronaut"></i></div>
-          <div class="scan-label" id="scanLabel">SCANNING IDENTITY...</div>
-        </div>
-      </div>
-      <div class="login-options">
-        <div class="login-input-wrap">
-          <input type="password" id="loginInput" class="login-input" placeholder="ACCESS CODE" maxlength="20">
-          <button class="login-btn" onclick="attemptLogin()"><i class="fas fa-unlock-alt"></i> AUTHENTICATE</button>
-        </div>
-        <div class="login-divider"><span>OR</span></div>
-        <button class="guest-btn" onclick="guestLogin()"><i class="fas fa-user-secret"></i> GUEST ACCESS</button>
-      </div>
-      <div class="login-hint">Say <span class="hint-phrase">"Nitrogen Oxidiser"</span> to wake the system</div>
-    </div>
-  </div>
-</div>
+    <p class="hero-description">
+        A personal AI system built to understand, assist and interact
+        with your digital world — combining intelligence, voice,
+        vision, memory and desktop control into one system.
+    </p>
 
-<!-- ══════════════════════════════════════════ MAIN OS ══ -->
-<div id="mainOS" class="main-os">
-  <canvas id="bgCanvas"></canvas>
+    <div class="hero-buttons">
 
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-logo">N.O.S</div>
-      <div class="topbar-sep"></div>
-      <div class="topbar-time" id="topbarTime">00:00:00</div>
-      <div class="topbar-date" id="topbarDate">--</div>
-    </div>
-    <div class="topbar-center">
-      <div class="topbar-status-dot" id="statusDot"></div>
-      <span id="topbarStatus">SYSTEM NOMINAL</span>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-vitals-mini">
-        <span class="tvm-item"><i class="fas fa-heartbeat"></i> <span id="tbHeartRate">72</span> BPM</span>
-        <span class="tvm-sep">|</span>
-        <span class="tvm-item tvm-tox"><i class="fas fa-flask"></i> <span id="tbToxicity">0.4</span>%</span>
-        <span class="tvm-sep">|</span>
-        <span class="tvm-item"><i class="fas fa-bolt"></i> <span id="tbSuitPower">87</span>%</span>
-      </div>
-      <div class="topbar-icon" onclick="toggleMute()" title="Mute"><i class="fas fa-volume-up" id="muteIcon"></i></div>
-      <div class="topbar-icon" id="voiceBtn" onclick="toggleVoiceRecognition()" title="Voice">
-        <i class="fas fa-microphone" id="micIcon"></i>
-      </div>
-      <div class="topbar-icon" onclick="showPanel('notifPanel')" title="Alerts"><i class="fas fa-bell"></i><span class="badge" id="notifBadge">3</span></div>
-      <div class="topbar-icon" onclick="shutdownOS()" title="Shutdown"><i class="fas fa-power-off"></i></div>
-    </div>
-  </div>
+        <a href="#system" class="primary-btn">
+            Explore ULTRON
+        </a>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sidebar-item active" onclick="switchView('dashboard')" title="Dashboard"><i class="fas fa-th-large"></i><span>Dash</span></div>
-    <div class="sidebar-item" onclick="switchView('jarvis')" title="JARVIS"><i class="fas fa-shield-alt"></i><span>JARVIS</span></div>
-    <div class="sidebar-item" onclick="switchView('terminal')" title="Terminal"><i class="fas fa-terminal"></i><span>Term</span></div>
-    <div class="sidebar-item" onclick="switchView('launcher')" title="Launch"><i class="fas fa-rocket"></i><span>Launch</span></div>
-    <div class="sidebar-item" onclick="switchView('ai')" title="AI Core"><i class="fas fa-brain"></i><span>AI Core</span></div>
-    <div class="sidebar-item" onclick="switchView('radar')" title="Radar"><i class="fas fa-satellite-dish"></i><span>Radar</span></div>
-    <div class="sidebar-divider"></div>
-    <div class="sidebar-item" onclick="showPanel('settingsPanel')" title="Settings"><i class="fas fa-sliders-h"></i><span>Config</span></div>
-  </div>
-
-  <!-- ════════════════════ VIEWS ════════════════════ -->
-
-  <!-- DASHBOARD VIEW -->
-  <div class="view active" id="view-dashboard">
-    <div class="dashboard-grid">
-
-      <!-- Clock widget -->
-      <div class="widget widget-clock">
-        <div class="widget-header"><i class="fas fa-clock"></i> CHRONOMETER</div>
-        <div class="clock-display" id="clockDisplay">00:00:00</div>
-        <div class="clock-date" id="clockDate">--</div>
-        <div class="clock-ring"></div>
-      </div>
-
-      <!-- System metrics -->
-      <div class="widget widget-metrics">
-        <div class="widget-header"><i class="fas fa-microchip"></i> SYSTEM METRICS</div>
-        <div class="metric-row"><span class="metric-label">CPU</span><div class="metric-bar"><div class="metric-fill cpu-fill" id="cpuFill"></div></div><span class="metric-val" id="cpuVal">--</span></div>
-        <div class="metric-row"><span class="metric-label">RAM</span><div class="metric-bar"><div class="metric-fill ram-fill" id="ramFill"></div></div><span class="metric-val" id="ramVal">--</span></div>
-        <div class="metric-row"><span class="metric-label">NET</span><div class="metric-bar"><div class="metric-fill net-fill" id="netFill"></div></div><span class="metric-val" id="netVal">--</span></div>
-        <div class="metric-row"><span class="metric-label">GPU</span><div class="metric-bar"><div class="metric-fill gpu-fill" id="gpuFill"></div></div><span class="metric-val" id="gpuVal">--</span></div>
-      </div>
-
-      <!-- AI Monitor -->
-      <div class="widget widget-ai-monitor">
-        <div class="widget-header"><i class="fas fa-brain"></i> AI ACTIVITY MONITOR</div>
-        <canvas id="aiActivityChart" width="280" height="80"></canvas>
-        <div class="ai-status-row">
-          <div class="ai-status-dot active-dot"></div>
-          <span id="aiMonitorStatus">JARVIS NEURAL NETWORK ACTIVE — 47.3B PARAMS</span>
-        </div>
-      </div>
-
-      <!-- Operator Vitals -->
-      <div class="widget widget-vitals">
-        <div class="widget-header"><i class="fas fa-heartbeat"></i> OPERATOR VITALS</div>
-        <div class="vitals-grid">
-          <div class="vital-card">
-            <div class="vital-icon"><i class="fas fa-heartbeat"></i></div>
-            <div class="vital-val" id="vHeartRate">72</div>
-            <div class="vital-label">BPM</div>
-            <canvas class="vital-spark" id="sparkHR" width="80" height="28"></canvas>
-          </div>
-          <div class="vital-card">
-            <div class="vital-icon"><i class="fas fa-lungs"></i></div>
-            <div class="vital-val" id="vBloodO2">98</div>
-            <div class="vital-label">BLOOD O₂ %</div>
-            <canvas class="vital-spark" id="sparkO2" width="80" height="28"></canvas>
-          </div>
-          <div class="vital-card vital-tox" id="toxCard">
-            <div class="vital-icon"><i class="fas fa-flask"></i></div>
-            <div class="vital-val" id="vToxicity">0.4</div>
-            <div class="vital-label">TOXICITY %</div>
-            <canvas class="vital-spark" id="sparkTox" width="80" height="28"></canvas>
-          </div>
-          <div class="vital-card">
-            <div class="vital-icon"><i class="fas fa-thermometer-half"></i></div>
-            <div class="vital-val" id="vTemp">36.6</div>
-            <div class="vital-label">TEMP °C</div>
-            <canvas class="vital-spark" id="sparkTemp" width="80" height="28"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Suit Power -->
-      <div class="widget widget-suit">
-        <div class="widget-header"><i class="fas fa-bolt"></i> SUIT MANAGEMENT — <span id="suitMarkLabel">MARK II</span></div>
-        <div class="suit-power-ring-wrap">
-          <canvas id="suitPowerRing" width="110" height="110"></canvas>
-          <div class="suit-ring-center">
-            <div class="suit-power-num" id="suitPowerDisp">87%</div>
-            <div class="suit-power-sub">POWER</div>
-          </div>
-        </div>
-        <div class="suit-stats">
-          <div class="suit-stat"><span class="ss-lbl">INTEGRITY</span><span class="ss-val" id="suitIntegrity">96%</span></div>
-          <div class="suit-stat"><span class="ss-lbl">ICING</span><span class="ss-val" id="suitIcing">CLEAR</span></div>
-          <div class="suit-stat"><span class="ss-lbl">ALTITUDE</span><span class="ss-val" id="suitAlt">0 m</span></div>
-          <div class="suit-stat"><span class="ss-lbl">SPEED</span><span class="ss-val" id="suitSpeed">0 km/h</span></div>
-        </div>
-        <button class="suit-toggle-btn" id="suitToggleBtn" onclick="toggleSuit()">
-          <i class="fas fa-power-off"></i> DEPLOY SUIT
-        </button>
-      </div>
-
-      <!-- Environment -->
-      <div class="widget widget-weather">
-        <div class="widget-header"><i class="fas fa-satellite"></i> ENVIRONMENT SCAN</div>
-        <div class="weather-main">
-          <div class="weather-icon"><i class="fas fa-cloud-sun"></i></div>
-          <div class="weather-temp">28°C</div>
-        </div>
-        <div class="weather-desc">NEW DELHI · PARTLY CLOUDY</div>
-        <div class="weather-stats">
-          <div class="w-stat"><i class="fas fa-wind"></i> 12 km/h</div>
-          <div class="w-stat"><i class="fas fa-tint"></i> 65%</div>
-          <div class="w-stat"><i class="fas fa-eye"></i> 10 km</div>
-        </div>
-      </div>
-
-      <!-- Notifications -->
-      <div class="widget widget-notif">
-        <div class="widget-header"><i class="fas fa-bell"></i> SIGNAL INTERCEPTS</div>
-        <div class="notif-list" id="notifList">
-          <div class="notif-item"><div class="notif-dot"></div><span>JARVIS AI fully initialized</span></div>
-          <div class="notif-item"><div class="notif-dot warn"></div><span>Voice recognition on standby</span></div>
-          <div class="notif-item"><div class="notif-dot info"></div><span>Network uplink established</span></div>
-        </div>
-      </div>
-
-      <!-- Music Player -->
-      <div class="widget widget-music">
-        <div class="widget-header"><i class="fas fa-music"></i> AUDIO MATRIX</div>
-        <div class="music-visualizer" id="musicViz">
-          <div class="viz-bar" style="--h:60%"></div><div class="viz-bar" style="--h:80%"></div>
-          <div class="viz-bar" style="--h:40%"></div><div class="viz-bar" style="--h:90%"></div>
-          <div class="viz-bar" style="--h:55%"></div><div class="viz-bar" style="--h:75%"></div>
-          <div class="viz-bar" style="--h:30%"></div><div class="viz-bar" style="--h:85%"></div>
-          <div class="viz-bar" style="--h:50%"></div><div class="viz-bar" style="--h:70%"></div>
-        </div>
-        <div class="music-track">SYSTEM AMBIENT LOOP v3.1</div>
-        <div class="music-controls">
-          <button class="music-btn" onclick="musicControl('prev')"><i class="fas fa-step-backward"></i></button>
-          <button class="music-btn music-play" id="musicPlayBtn" onclick="musicControl('play')"><i class="fas fa-play" id="musicPlayIcon"></i></button>
-          <button class="music-btn" onclick="musicControl('next')"><i class="fas fa-step-forward"></i></button>
-        </div>
-        <div class="music-open-btn" onclick="openSite('spotify')"><i class="fab fa-spotify"></i> OPEN SPOTIFY</div>
-      </div>
-
-      <!-- Quick Launch -->
-      <div class="widget widget-launch">
-        <div class="widget-header"><i class="fas fa-rocket"></i> QUICK LAUNCH</div>
-        <div class="launch-grid">
-          <div class="launch-item" onclick="openSite('youtube')"><i class="fab fa-youtube"></i><span>YouTube</span></div>
-          <div class="launch-item" onclick="openSite('github')"><i class="fab fa-github"></i><span>GitHub</span></div>
-          <div class="launch-item" onclick="openSite('chatgpt')"><i class="fas fa-robot"></i><span>ChatGPT</span></div>
-          <div class="launch-item" onclick="openSite('gmail')"><i class="fas fa-envelope"></i><span>Gmail</span></div>
-          <div class="launch-item" onclick="openSite('netflix')"><i class="fab fa-netflix"></i><span>Netflix</span></div>
-          <div class="launch-item" onclick="openSite('discord')"><i class="fab fa-discord"></i><span>Discord</span></div>
-        </div>
-      </div>
+        <a
+            href="https://github.com/KshitizJain-Developer/ULTRON"
+            target="_blank"
+            class="secondary-btn"
+        >
+            View on GitHub ↗
+        </a>
 
     </div>
-  </div>
 
-  <!-- JARVIS VIEW — THE NEW MAIN FEATURE -->
-  <div class="view" id="view-jarvis">
-    <div class="jarvis-wrap">
-      <div class="jarvis-header">
-        <div class="jarvis-title"><i class="fas fa-shield-alt"></i> J.A.R.V.I.S. OPERATIONS CENTER</div>
-        <div class="jarvis-subtitle">JUST A RATHER VERY INTELLIGENT SYSTEM — STARK TECH v3.0</div>
-      </div>
-      <div class="jarvis-grid">
 
-        <!-- Arc Reactor / Suit Power -->
-        <div class="j-card j-card-suit">
-          <div class="j-card-header"><i class="fas fa-bolt"></i> ARC REACTOR &amp; SUIT</div>
-          <div class="arc-reactor-visual">
-            <canvas id="arcReactorCanvas" width="160" height="160"></canvas>
-            <div class="arc-center-text">
-              <div class="arc-power-val" id="arcPowerVal">87%</div>
-              <div class="arc-power-lbl">ARC OUTPUT</div>
+    <!-- SYSTEM PREVIEW -->
+
+    <div class="preview-wrap" id="system">
+
+        <div class="preview-glow"></div>
+
+        <div class="system-window">
+
+            <div class="window-bar">
+
+                <div class="window-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <div class="window-title">
+                    ULTRON // COMMAND CENTER
+                </div>
+
+                <div></div>
+
             </div>
-          </div>
-          <div class="j-stat-row"><span>SUIT MODEL</span><span id="jSuitModel">MARK II</span></div>
-          <div class="j-stat-row"><span>INTEGRITY</span><span id="jIntegrity">96%</span></div>
-          <div class="j-stat-row"><span>REPULSORS</span><span class="j-green">CHARGED</span></div>
-          <div class="j-stat-row"><span>MANUF. ETA</span><span id="jManufEta">COMPLETE</span></div>
-          <div class="j-stat-row"><span>STATUS</span><span id="jSuitStatus" class="j-amber">STANDBY</span></div>
-        </div>
 
-        <!-- Operator Biometrics -->
-        <div class="j-card j-card-bio">
-          <div class="j-card-header"><i class="fas fa-heartbeat"></i> BIOMETRIC MONITORING</div>
-          <div class="bio-chart-wrap">
-            <canvas id="bioChart" width="260" height="80"></canvas>
-          </div>
-          <div class="j-stat-row"><span>HEART RATE</span><span id="jHR">72 BPM</span></div>
-          <div class="j-stat-row"><span>BLOOD O₂</span><span id="jO2">98%</span></div>
-          <div class="j-stat-row"><span>TEMP</span><span id="jTemp">36.6°C</span></div>
-          <div class="j-stat-row" id="jToxRow"><span>BLOOD TOXICITY</span><span id="jTox" class="j-green">0.4% — SAFE</span></div>
-          <div class="j-stat-row"><span>STRESS INDEX</span><span id="jStress">LOW</span></div>
-        </div>
 
-        <!-- Flight Telemetry -->
-        <div class="j-card j-card-flight">
-          <div class="j-card-header"><i class="fas fa-plane"></i> FLIGHT TELEMETRY</div>
-          <div class="flight-hud">
-            <canvas id="flightCanvas" width="260" height="100"></canvas>
-          </div>
-          <div class="j-stat-row"><span>ALTITUDE</span><span id="jAlt">0 m</span></div>
-          <div class="j-stat-row"><span>SPEED</span><span id="jSpeed">0 km/h</span></div>
-          <div class="j-stat-row"><span>G-FORCE</span><span id="jGforce">1.0g</span></div>
-          <div class="j-stat-row"><span>ICING LEVEL</span><span id="jIcing" class="j-green">CLEAR</span></div>
-          <div class="j-stat-row"><span>MAX CEILING</span><span>15,240 m</span></div>
-        </div>
+            <div class="system-body">
 
-        <!-- Iron Legion -->
-        <div class="j-card j-card-legion">
-          <div class="j-card-header"><i class="fas fa-robot"></i> IRON LEGION CONTROL</div>
-          <div class="legion-grid" id="legionGrid">
-            <!-- Built by JS -->
-          </div>
-          <div class="j-stat-row" style="margin-top:10px"><span>TOTAL UNITS</span><span id="jLegionTotal">7 ACTIVE</span></div>
-          <div class="j-stat-row"><span>FORMATION</span><span class="j-green">DELTA-7</span></div>
-          <div class="j-stat-row"><span>COMM LINK</span><span class="j-green">ENCRYPTED</span></div>
-        </div>
+                <aside class="sidebar">
 
-        <!-- Target Tracking -->
-        <div class="j-card j-card-track">
-          <div class="j-card-header"><i class="fas fa-crosshairs"></i> SATELLITE TRACKING</div>
-          <canvas id="trackCanvas" width="260" height="120"></canvas>
-          <div class="track-input-row">
-            <input type="text" id="trackInput" class="j-input" placeholder="Enter target name...">
-            <button class="j-btn" onclick="trackTarget()"><i class="fas fa-crosshairs"></i></button>
-          </div>
-          <div id="trackResult" class="track-result"></div>
-        </div>
+                    <div class="side-title">
+                        ULTRON
+                    </div>
 
-        <!-- Energy Scanner -->
-        <div class="j-card j-card-energy">
-          <div class="j-card-header"><i class="fas fa-atom"></i> ENERGY SOURCE SCANNER</div>
-          <canvas id="energyCanvas" width="260" height="80"></canvas>
-          <div id="energyList" class="energy-list"></div>
-          <button class="j-btn j-btn-full" onclick="runEnergyScan()"><i class="fas fa-search"></i> RUN DEEP SCAN</button>
-        </div>
+                    <div class="side-item active">
+                        Command Center
+                    </div>
 
-        <!-- Scene Reconstruction -->
-        <div class="j-card j-card-scene">
-          <div class="j-card-header"><i class="fas fa-cube"></i> HOLOGRAPHIC RECONSTRUCTION</div>
-          <canvas id="holoCanvas" width="260" height="130"></canvas>
-          <div class="scene-controls">
-            <button class="j-btn" onclick="reconstructScene()"><i class="fas fa-play"></i> RECONSTRUCT</button>
-            <button class="j-btn" onclick="analyzeScepter()"><i class="fas fa-wand-magic-sparkles"></i> ANALYZE ARTIFACT</button>
-          </div>
-          <div id="sceneLog" class="scene-log"></div>
-        </div>
+                    <div class="side-item">
+                        AI Core
+                    </div>
 
-        <!-- Threat Assessment -->
-        <div class="j-card j-card-threat">
-          <div class="j-card-header"><i class="fas fa-shield-virus"></i> THREAT ASSESSMENT</div>
-          <div class="threat-meter">
-            <div class="threat-level-bar">
-              <div class="threat-fill" id="threatFill" style="width:5%"></div>
+                    <div class="side-item">
+                        Voice
+                    </div>
+
+                    <div class="side-item">
+                        Vision
+                    </div>
+
+                    <div class="side-item">
+                        Memory
+                    </div>
+
+                    <div class="side-item">
+                        System
+                    </div>
+
+                </aside>
+
+
+                <div class="terminal">
+
+                    <div class="terminal-line">
+                        <span>ULTRON://</span> boot sequence initiated...
+                    </div>
+
+                    <div class="terminal-line">
+                        <span>CORE</span> intelligence module loaded
+                    </div>
+
+                    <div class="terminal-line">
+                        <span>VOICE</span> voice interface ready
+                    </div>
+
+                    <div class="terminal-line">
+                        <span>MEMORY</span> local memory connected
+                    </div>
+
+                    <div class="terminal-line">
+                        <span>SYSTEM</span> desktop interface ready
+                    </div>
+
+
+                    <div class="terminal-main">
+
+                        <h3>
+                            Hello, Kshitiz.
+                        </h3>
+
+                        <p>
+                            ULTRON is ready to assist.
+                            Your command interface is online.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
-            <div class="threat-scale">
-              <span>CLEAR</span><span>LOW</span><span>MED</span><span>HIGH</span><span>CRIT</span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section id="features">
+
+    <div class="section-label">
+        CAPABILITIES
+    </div>
+
+    <h2 class="section-title">
+        More than a chatbot.
+    </h2>
+
+    <p class="section-description">
+        ULTRON is designed as a modular personal computer assistant,
+        giving intelligence a direct connection to your desktop.
+    </p>
+
+
+    <div class="features">
+
+        <article class="feature">
+
+            <div class="feature-icon">AI</div>
+
+            <h3>AI Intelligence</h3>
+
+            <p>
+                Connect ULTRON with Gemini-powered intelligence
+                for natural conversations, reasoning and assistance.
+            </p>
+
+        </article>
+
+
+        <article class="feature">
+
+            <div class="feature-icon">◉</div>
+
+            <h3>Voice Control</h3>
+
+            <p>
+                Interact with ULTRON through voice commands
+                and control the system without constantly typing.
+            </p>
+
+        </article>
+
+
+        <article class="feature">
+
+            <div class="feature-icon">◈</div>
+
+            <h3>Vision</h3>
+
+            <p>
+                Designed to extend beyond text with camera
+                and screen-based interaction capabilities.
+            </p>
+
+        </article>
+
+
+        <article class="feature">
+
+            <div class="feature-icon">M</div>
+
+            <h3>Memory</h3>
+
+            <p>
+                Local memory modules allow ULTRON to maintain
+                useful context and personalized information.
+            </p>
+
+        </article>
+
+
+        <article class="feature">
+
+            <div class="feature-icon">⌘</div>
+
+            <h3>Desktop Control</h3>
+
+            <p>
+                Launch applications, interact with your computer
+                and perform useful desktop actions through commands.
+            </p>
+
+        </article>
+
+
+        <article class="feature">
+
+            <div class="feature-icon">+</div>
+
+            <h3>Modular Core</h3>
+
+            <p>
+                Built with separate modules so new capabilities
+                can be added without rebuilding the entire system.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- COMMANDS -->
+
+<section id="commands">
+
+    <div class="section-label">
+        COMMAND CENTER
+    </div>
+
+    <h2 class="section-title">
+        Speak. Type. Command.
+    </h2>
+
+    <p class="section-description">
+        ULTRON is built around a simple command interface.
+        These are examples of the kind of interactions the system supports.
+    </p>
+
+
+    <div class="command-box">
+
+        <div class="command">
+            <div class="command-code">help</div>
+            <div class="command-desc">
+                Display available ULTRON commands.
             </div>
-          </div>
-          <div class="j-stat-row" style="margin-top:8px"><span>LEVEL</span><span id="jThreatLevel" class="j-green">NONE DETECTED</span></div>
-          <div class="j-stat-row"><span>PERIMETER</span><span id="jPerimeter" class="j-green">SECURE</span></div>
-          <div class="j-stat-row"><span>INDIVIDUALS AT RISK</span><span id="jIndividuals">0</span></div>
-          <div class="j-stat-row"><span>FIREWALL</span><span class="j-green">ACTIVE</span></div>
-          <button class="j-btn j-btn-full" style="margin-top:8px" onclick="runThreatScan()"><i class="fas fa-search"></i> SCAN PERIMETER</button>
         </div>
 
-      </div>
-    </div>
-  </div>
-
-  <!-- TERMINAL VIEW -->
-  <div class="view" id="view-terminal">
-    <div class="terminal-wrap">
-      <div class="terminal-titlebar">
-        <span class="term-dot red"></span><span class="term-dot yellow"></span><span class="term-dot green"></span>
-        <span class="term-title">N.O.S — CYBER TERMINAL v3.0 · JARVIS COMMAND LINE</span>
-        <button class="term-clear-btn" onclick="terminalClear()">CLEAR</button>
-      </div>
-      <div class="terminal-output" id="termOutput"></div>
-      <div class="terminal-input-row">
-        <span class="term-prompt">jarvis@nos:~$</span>
-        <input type="text" class="term-input" id="termInput" placeholder="enter command or ask anything..." autocomplete="off" spellcheck="false">
-      </div>
-    </div>
-  </div>
-
-  <!-- LAUNCHER VIEW -->
-  <div class="view" id="view-launcher">
-    <div class="launcher-wrap">
-      <div class="launcher-title">MISSION CONTROL — SITE LAUNCHER</div>
-      <div class="launcher-subtitle">SEARCH OR SELECT TARGET TO DEPLOY</div>
-      <div class="launcher-search-wrap">
-        <i class="fas fa-search launcher-search-icon"></i>
-        <input type="text" id="launcherSearch" class="launcher-search" placeholder="Search apps or type any query to Google search..." autocomplete="off">
-        <span class="launcher-hint">Press ENTER to Google search unknown queries</span>
-      </div>
-      <div class="launcher-apps" id="launcherApps">
-        <div class="app-card" onclick="openSite('spotify')"><div class="app-icon"><i class="fab fa-spotify"></i></div><div class="app-name">SPOTIFY</div><div class="app-status">MUSIC STREAM</div></div>
-        <div class="app-card" onclick="openSite('youtube')"><div class="app-icon"><i class="fab fa-youtube"></i></div><div class="app-name">YOUTUBE</div><div class="app-status">VIDEO STREAM</div></div>
-        <div class="app-card" onclick="openSite('github')"><div class="app-icon"><i class="fab fa-github"></i></div><div class="app-name">GITHUB</div><div class="app-status">CODE REPOSITORY</div></div>
-        <div class="app-card" onclick="openSite('gmail')"><div class="app-icon"><i class="fas fa-envelope"></i></div><div class="app-name">GMAIL</div><div class="app-status">COMMUNICATIONS</div></div>
-        <div class="app-card" onclick="openSite('chatgpt')"><div class="app-icon"><i class="fas fa-robot"></i></div><div class="app-name">CHATGPT</div><div class="app-status">AI INTERFACE</div></div>
-        <div class="app-card" onclick="openSite('netflix')"><div class="app-icon"><i class="fab fa-netflix"></i></div><div class="app-name">NETFLIX</div><div class="app-status">ENTERTAINMENT</div></div>
-        <div class="app-card" onclick="openSite('discord')"><div class="app-icon"><i class="fab fa-discord"></i></div><div class="app-name">DISCORD</div><div class="app-status">COMMS HUB</div></div>
-        <div class="app-card" onclick="openSite('twitter')"><div class="app-icon"><i class="fab fa-twitter"></i></div><div class="app-name">TWITTER</div><div class="app-status">SOCIAL INTEL</div></div>
-        <div class="app-card" onclick="openSite('reddit')"><div class="app-icon"><i class="fab fa-reddit"></i></div><div class="app-name">REDDIT</div><div class="app-status">INTEL FEED</div></div>
-        <div class="app-card" onclick="openSite('wikipedia')"><div class="app-icon"><i class="fab fa-wikipedia-w"></i></div><div class="app-name">WIKIPEDIA</div><div class="app-status">KNOWLEDGE BASE</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- AI CORE VIEW -->
-  <div class="view" id="view-ai">
-    <div class="ai-core-wrap">
-      <div class="ai-orb-container">
-        <div class="ai-orb-ring or1"></div>
-        <div class="ai-orb-ring or2"></div>
-        <div class="ai-orb-ring or3"></div>
-        <div class="ai-orb" id="aiOrb">
-          <div class="ai-orb-inner"></div>
+        <div class="command">
+            <div class="command-code">mic on</div>
+            <div class="command-desc">
+                Activate the microphone interface.
+            </div>
         </div>
-        <div class="ai-orb-label">J.A.R.V.I.S. · N.O.S AI CORE</div>
-      </div>
-      <div class="ai-panel">
-        <div class="ai-panel-header">NEURAL INTERFACE — JARVIS COMMAND INPUT</div>
-        <div class="ai-chat" id="aiChat">
-          <div class="ai-msg ai-msg-system">
-            <div class="ai-msg-avatar"><i class="fas fa-brain"></i></div>
-            <div class="ai-msg-text">Good day. J.A.R.V.I.S. AI Core initialized. Say <strong>"Nitrogen Oxidiser"</strong> or type any command. Unknown queries are automatically searched on Google.</div>
-          </div>
+
+        <div class="command">
+            <div class="command-code">mic off</div>
+            <div class="command-desc">
+                Disable microphone listening.
+            </div>
         </div>
-        <div class="ai-input-row">
-          <input type="text" class="ai-input" id="aiInput" placeholder="ISSUE COMMAND OR ASK ANYTHING..." autocomplete="off">
-          <button class="ai-send-btn" onclick="sendAICommand()"><i class="fas fa-paper-plane"></i></button>
-          <button class="ai-voice-btn" id="aiVoiceBtn" onclick="toggleVoiceRecognition()"><i class="fas fa-microphone"></i></button>
+
+        <div class="command">
+            <div class="command-code">open vscode</div>
+            <div class="command-desc">
+                Launch Visual Studio Code.
+            </div>
         </div>
-        <div class="ai-voice-status" id="aiVoiceStatus">🎙 VOICE RECOGNITION: INACTIVE</div>
-      </div>
+
+        <div class="command">
+            <div class="command-code">memory</div>
+            <div class="command-desc">
+                Access the local memory system.
+            </div>
+        </div>
+
     </div>
-  </div>
 
-  <!-- RADAR VIEW -->
-  <div class="view" id="view-radar">
-    <div class="radar-wrap">
-      <div class="radar-title">NETWORK RADAR — SIGNAL ANALYSIS</div>
-      <div class="radar-container">
-        <canvas id="radarCanvas" width="400" height="400"></canvas>
-        <div class="radar-blips" id="radarBlips"></div>
-      </div>
-      <div class="radar-stats">
-        <div class="r-stat"><span class="r-label">PACKETS</span><span class="r-val" id="radarPackets">0</span></div>
-        <div class="r-stat"><span class="r-label">LATENCY</span><span class="r-val" id="radarLatency">0ms</span></div>
-        <div class="r-stat"><span class="r-label">UPLINK</span><span class="r-val" id="radarUplink">ACTIVE</span></div>
-        <div class="r-stat"><span class="r-label">THREATS</span><span class="r-val threat-val">NONE</span></div>
-      </div>
+</section>
+
+
+<!-- HOW IT WORKS -->
+
+<section>
+
+    <div class="section-label">
+        ARCHITECTURE
     </div>
-  </div>
 
-  <!-- ════════════ FLOATING PANELS ════════════ -->
-  <div class="float-panel" id="aiAssistPanel" style="display:none;">
-    <div class="float-header"><div class="float-orb"></div><span>J.A.R.V.I.S. ASSISTANT</span><button class="float-close" onclick="hidePanel('aiAssistPanel')">✕</button></div>
-    <div class="float-body" id="aiAssistBody"><div class="float-msg">System online. Awaiting commands, sir.</div></div>
-  </div>
+    <h2 class="section-title">
+        Built around your system.
+    </h2>
 
-  <div class="float-panel" id="notifPanel" style="display:none;">
-    <div class="float-header"><i class="fas fa-bell"></i><span>NOTIFICATIONS</span><button class="float-close" onclick="hidePanel('notifPanel')">✕</button></div>
-    <div class="float-body" id="floatNotifBody">
-      <div class="float-msg"><span class="dot-active">●</span> JARVIS AI Core fully initialized</div>
-      <div class="float-msg"><span class="dot-warn">●</span> Voice recognition on standby</div>
-      <div class="float-msg"><span class="dot-info">●</span> Network uplink established</div>
+    <p class="section-description">
+        ULTRON connects intelligence with local modules instead
+        of behaving like a standalone chat window.
+    </p>
+
+
+    <div class="steps">
+
+        <article class="step">
+
+            <div class="step-number">
+                01 // INPUT
+            </div>
+
+            <h3>
+                You interact
+            </h3>
+
+            <p>
+                Type a command, use your voice or provide
+                information through supported interfaces.
+            </p>
+
+        </article>
+
+
+        <article class="step">
+
+            <div class="step-number">
+                02 // INTELLIGENCE
+            </div>
+
+            <h3>
+                ULTRON processes
+            </h3>
+
+            <p>
+                The AI core interprets the request and routes
+                it through the appropriate system module.
+            </p>
+
+        </article>
+
+
+        <article class="step">
+
+            <div class="step-number">
+                03 // ACTION
+            </div>
+
+            <h3>
+                Your system responds
+            </h3>
+
+            <p>
+                ULTRON returns an answer or performs the
+                corresponding supported desktop action.
+            </p>
+
+        </article>
+
     </div>
-  </div>
 
-  <div class="float-panel" id="settingsPanel" style="display:none;">
-    <div class="float-header"><i class="fas fa-sliders-h"></i><span>SETTINGS</span><button class="float-close" onclick="hidePanel('settingsPanel')">✕</button></div>
-    <div class="float-body settings-body">
-      <label class="setting-row"><span>Ambient Sound</span><input type="checkbox" class="tog" id="settAmbient" checked onchange="toggleAmbient()"></label>
-      <label class="setting-row"><span>Voice Commands</span><input type="checkbox" class="tog" id="settVoice" onchange="toggleVoiceFromSettings()"></label>
-      <label class="setting-row"><span>Particle BG</span><input type="checkbox" class="tog" id="settParticles" checked></label>
-      <label class="setting-row"><span>Scan Lines</span><input type="checkbox" class="tog" id="settScanlines" checked onchange="toggleScanlines()"></label>
-      <div class="setting-row"><span>Theme Hue</span><input type="range" min="160" max="220" value="190" id="hueSlider" oninput="changeHue(this.value)"></div>
+</section>
+
+
+<!-- CREATOR -->
+
+<section id="creator">
+
+    <div class="creator">
+
+        <div class="creator-card">
+
+            <div class="section-label">
+                THE CREATOR
+            </div>
+
+            <h2>
+                Built by Kshitiz.
+            </h2>
+
+            <p>
+                ULTRON is a personal AI project created by
+                Kshitiz Jain as an exploration of artificial
+                intelligence, software development and
+                human-computer interaction.
+            </p>
+
+            <span class="creator-tag">
+                KSHITIZ JAIN // DEVELOPER
+            </span>
+
+        </div>
+
+
+        <div class="creator-card">
+
+            <div class="section-label">
+                PROJECT
+            </div>
+
+            <h2>
+                Open source.
+            </h2>
+
+            <p>
+                ULTRON is developed as a modular Python-based
+                project. Explore the source, follow development
+                and see how the system evolves.
+            </p>
+
+            <br>
+
+            <a
+                href="https://github.com/KshitizJain-Developer/ULTRON"
+                target="_blank"
+                class="primary-btn"
+                style="display:inline-block;"
+            >
+                Open GitHub ↗
+            </a>
+
+        </div>
+
     </div>
-  </div>
 
-  <!-- VOICE INDICATOR -->
-  <div class="voice-indicator" id="voiceIndicator">
-    <div class="vi-ring"></div><div class="vi-ring vi-ring2"></div>
-    <i class="fas fa-microphone vi-icon"></i>
-    <div class="vi-text">JARVIS LISTENING...</div>
-  </div>
+</section>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast"></div>
 
-  <!-- SCANLINES OVERLAY -->
-  <div class="scanlines" id="scanlinesOverlay"></div>
+<!-- CTA -->
 
-  <!-- CORNER HUD DECORATIONS -->
-  <div class="hud-corner hud-tl"></div>
-  <div class="hud-corner hud-tr"></div>
-  <div class="hud-corner hud-bl"></div>
-  <div class="hud-corner hud-br"></div>
+<section>
 
-</div><!-- /mainOS -->
+    <div class="cta">
 
-<script src="script.js"></script>
+        <div class="section-label">
+            SYSTEM READY
+        </div>
+
+        <h2>
+            Meet ULTRON.
+        </h2>
+
+        <p>
+            A personal intelligence system built for your digital world.
+        </p>
+
+        <a
+            href="https://github.com/KshitizJain-Developer/ULTRON"
+            target="_blank"
+            class="primary-btn"
+            style="display:inline-block;"
+        >
+            Explore the Project ↗
+        </a>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <div class="footer-inner">
+
+        <div class="footer-brand">
+            ULTRON
+        </div>
+
+        <div>
+            Just A Rather Very Intelligent System
+        </div>
+
+        <div>
+            © 2026 Kshitiz Jain
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script>
+
+    // Small status animation
+
+    const status = document.querySelector(".status");
+
+    setInterval(() => {
+
+        status.style.opacity =
+            status.style.opacity === "0.55"
+                ? "1"
+                : "0.55";
+
+    }, 1800);
+
+
+    // Smooth reveal on scroll
+
+    const observer = new IntersectionObserver(
+        entries => {
+
+            entries.forEach(entry => {
+
+                if (entry.isIntersecting) {
+
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+
+                }
+
+            });
+
+        },
+        {
+            threshold: 0.12
+        }
+    );
+
+
+    document.querySelectorAll(
+        ".feature, .step, .creator-card, .command-box"
+    ).forEach(element => {
+
+        element.style.opacity = "0";
+        element.style.transform = "translateY(20px)";
+        element.style.transition = "opacity .6s ease, transform .6s ease";
+
+        observer.observe(element);
+
+    });
+
+</script>
+
 </body>
 </html>
